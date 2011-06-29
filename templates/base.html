@@ -3,16 +3,30 @@
   <head>
     <meta charset="utf-8" />
     <title>Admin</title>
-    <link href="/static/css/admin.css" rel="stylesheet" />
+    <link href="/admin/static/css/base.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
     <script>
       if (typeof jQuery == 'undefined') {
-        document.write(unescape('%3Cscript src="/static/js/jquery-1.6.1.min.js"%3E%3C/script%3E'));
+        document.write(unescape('%3Cscript src="/admin/static/js/jquery-1.6.1.min.js"%3E%3C/script%3E'));
       }
     </script>
-    <script src="/static/js/admin.js"></script>
+    <script src="/admin/static/js/jquery.ba-bbq.min.js"></script>
+    <script src="/admin/static/js/base.js"></script>
   </head>
   <body>
-    <p>admin</p>
+    <header>
+      <h1 class="logo"><a href="/admin">ADMIN</a></h1>
+      <ul>
+        <li><a href="#docs">DOCS</a></li>
+        <li><a href="#templates">TEMPLATES</a></li>
+        <li><a href="#models">MODELS</a></li>
+        <li><a href="#users">USERS</a></li>
+      </ul>
+    </header>
+    <section class="content">
+      <form class="search">
+        <input type="text" name="q"> <input type="submit" value="SEARCH">
+      </form>
+    </section>
   </body>
 </html>
