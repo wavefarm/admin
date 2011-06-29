@@ -1,7 +1,7 @@
 var whiskers = require('lib/whiskers');
 
 $(function() {
-  $('form.search').submit(function() {
+  $('form.search').live('submit', function() {
     $.bbq.pushState('#q='+encodeURIComponent($(this).find('input[name=q]').val()));
     return false;
   });
@@ -24,7 +24,7 @@ $(function() {
       if (hash.indexOf('q=') == 0) {
         $('form.search input[name=q]').val(decodeURIComponent(hash.substr(2)));
       }
-      $('section.results').html('<p>bob</p>');
+      $('#main').html(whiskers.render(ddoc.templates.search));
     }
   });
   $(window).trigger('hashchange');
