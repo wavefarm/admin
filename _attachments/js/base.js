@@ -1,17 +1,31 @@
+var whiskers = require('lib/whiskers');
+
 $(function() {
   $('form.search').submit(function() {
-    $.bbq.pushState('#docs?q='+encodeURIComponent($(this).find('input[name=q]').val()));
+    $.bbq.pushState('#q='+encodeURIComponent($(this).find('input[name=q]').val()));
     return false;
   });
   $(window).bind('hashchange', function(e) {
     var hash = e.fragment;
-    var query = {};
-    var section = '';
-    if (hash.indexOf('?') > -1) {
-      query = $.deparam(hash.slice(hash.indexOf('?')+1, hash.length));
-      section = hash.slice(0, hash.indexOf('?'));
+    var routes = {
+      'templates': function() {
+        $('#main').html('<section class="templates"><h1>Templates</h1></section>');
+      },
+      'models': function() {
+        $('#main').html('<section class="models"><h1>Models</h1></section>');
+      },
+      'users': function() {
+        $('#main').html('<section class="users"><h1>Users</h1></section>');
+      }
+    };
+    if (routes[hash]) {
+      routes[hash]();
+    } else {
+      if (hash.indexOf('q=') == 0) {
+        $('form.search input[name=q]').val(decodeURIComponent(hash.substr(2)));
+      }
+      $('section.results').html('<p>bob</p>');
     }
-    $('form.search input[name=q]').val(query.q);
   });
   $(window).trigger('hashchange');
 });

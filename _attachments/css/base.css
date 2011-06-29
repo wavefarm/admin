@@ -6,6 +6,9 @@ body {
   margin: 0 0 0 0;
   padding: 0 0 0 0;
 }
+div.main {
+  padding: 10px 0;
+}
 form.search {
 }
 form.search input[type=text] {
@@ -42,7 +45,4 @@ header ul a:hover {
 header li {
   float: left;
   margin: 0 0 0 10px;
-}
-section.content {
-  padding: 10px 0;
 }
