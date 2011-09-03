@@ -1,14 +1,14 @@
 var http = require('http');
-var lap = require('lap');
 var querystring = require('querystring');
+var snout = require('snout');
 var sys = require('sys');
 var url = require('url');
 var util = require('util');
 var whiskers = require('whiskers');
 
-var app = lap.app('ad', __dirname+'/templates');
+var app = snout.app(__dirname+'/templates');
 
-app.route(/^\/$/, function(req, res) {
+app.route('/', function(req, res) {
   var context = {};
   //var partials = {
   //  content: app.templates.index
