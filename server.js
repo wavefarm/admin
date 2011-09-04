@@ -1,4 +1,5 @@
 var http = require('http');
+var Lazy = require('lazy');
 var querystring = require('querystring');
 var snout = require('snout');
 var sys = require('sys');
@@ -27,14 +28,20 @@ app.route('/data-check', function(req, res) {
   };
   var repoLog = '';
   var repoReq = http.get(repoOptions, function(repoRes) {
-    repoRes.on('data', function(chunk) {
-      repoLog += chunk;
+    var lazy = new Lazy(repoRes);
+    var count = 0;
+    lazy.lines.forEach(function(line) {
+      count++;
+      console.log(count + ' ' + line);
     });
+    //repoRes.on('data', function(chunk) {
+    //  repoLog += chunk;
+    //});
     repoRes.on('end', function() {
       if (repoRes.statusCode == 200) {
         message['log retrieved'] = true;
       }
-      console.log('repo log: ' + repoLog);
+      //console.log('repo log: ' + repoLog);
       res.end(JSON.stringify(message));
     });
   });
