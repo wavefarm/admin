@@ -1,0 +1,9 @@
+{
+  "mappings": {
+    "artist": {
+      "properties": {
+        "sort_name": {"type": "string", "index": "not_analyzed"}
+      }
+    }
+  }
+}
