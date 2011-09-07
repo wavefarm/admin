@@ -22,6 +22,7 @@ app.route('/', function(req, res) {
 var timestampRe = /^/gm;
 app.route('/data-check', function(req, res) {
   res.writeHead(200, {'Content-Type': 'application/json'});
+  // TODO: get all log files
   var repoOptions = {
     host: 'data.free103point9.org',
     port: 80,
