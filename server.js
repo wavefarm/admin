@@ -63,7 +63,7 @@ app.route('/data-check', function(req, res) {
               var esOptions = {
                 host: '127.0.0.1',
                 port: 9200,
-                path: '/ta/' + doc.type + '/' + doc._id,
+                path: '/free103/' + doc.type + '/' + doc._id,
                 method: 'PUT'
               };
               var esReq = http.request(esOptions, function(esRes) {
