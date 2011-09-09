@@ -1,0 +1,13 @@
+{
+    "type" : "couchdb",
+    "couchdb" : {
+        "host" : "localhost",
+        "port" : 5984,
+        "db" : "free103",
+        "filter" : null
+    },
+    "index" : {
+        "index" : "free103",
+        "type" : "artist"
+    }
+}
