@@ -1,8 +1,30 @@
 {
   "mappings": {
-    "artist": {
-      "properties": {
-        "sort_name": {"type": "string", "index": "not_analyzed"}
+    "_default_": {
+      "dynamic_templates": [
+        {
+          "base": {
+            "match": "*_sort",
+            "mapping": {
+              "type": "multi_field", 
+              "fields": {
+                "{name}": {"type": "string"},
+                "sort": {"type": "string", "analyzer": "sort"}
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "sort": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": "lowercase"
+        }
       }
     }
   }
