@@ -16,6 +16,11 @@ app.route('/', function(req, res) {
   res.end(whiskers.render(app.templates.base, context));
 });
 
+app.route('/_app', function(req, res) {
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  res.end(JSON.stringify(app));
+});
+
 var timestampRe = /^/gm;
 app.route('/data-check', function(req, res) {
   res.writeHead(200, {'Content-Type': 'application/json'});
