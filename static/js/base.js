@@ -1,5 +1,3 @@
-var whiskers = require('lib/whiskers');
-
 $(function() {
   $('form.search').live('submit', function() {
     $.bbq.pushState('#q='+encodeURIComponent($(this).find('input[name=q]').val()));
@@ -24,7 +22,7 @@ $(function() {
       if (hash.indexOf('q=') == 0) {
         $('form.search input[name=q]').val(decodeURIComponent(hash.substr(2)));
       }
-      $('#main').html(whiskers.render(ddoc.templates.search));
+      $('#main').html(whiskers.render(app.templates.search));
     }
   });
   $(window).trigger('hashchange');
