@@ -1,0 +1,63 @@
+{
+  "name": "artist",
+  "fields": [
+    {
+      "name": "active",
+      "type": "boolean"
+    },
+    {
+      "name": "name"
+    },
+    {
+      "name": "name_sort",
+      "sort": true
+    },
+    {
+      "name": "bio",
+      "type": "text"
+    },
+    {
+      "name": "url",
+      "type": "url"
+    },
+    {
+      "name": "email",
+      "type": "email"
+    },
+    {
+      "name": "email_public",
+      "type": "boolean"
+    },
+    {
+      "name": "image",
+      "type": "url"
+    },
+    {
+      "name": "image_caption"
+    },
+    {
+      "name": "old_id",
+      "type": "integer"
+    },
+    {
+      "name": "related_files",
+      "type": "rel:file"
+    },
+    {
+      "name": "related_works",
+      "type": "rel:work"
+    },
+    {
+      "name": "related_shows",
+      "type": "rel:show"
+    },
+    {
+      "name": "related_events",
+      "type": "rel:event"
+    },
+    {
+      "name": "see_also",
+      "type": "rel:artist"
+    }
+  ]
+}
