@@ -42,6 +42,22 @@ app.route('dash', function(query) {
   $('#main').html(whiskers.render(app.templates.dash));
   if (query.q) {
     $('form.search input[name=q]').val(query.q);
+    // TODO parse query
+    var search = JSON.stringify({query: query.q});
+    $.ajax({
+      url: '_search',
+      contentType: 'application/json',
+      data: search, 
+      dataType: 'json',
+      processData: false,
+      type: 'POST',
+      error: function() {
+        $('section.results').html('<p>No results.</p>');
+      },
+      success: function(data) {
+        $('section.results').html(whiskers.render(app.templates.results, data));
+      }
+    });
   }
 });
 app.route('dash/([0-9a-f]{7})', function(query, captures) {

@@ -1,3 +1,4 @@
+var es = require('es');
 var http = require('http');
 var lazy = require('lazy');
 var pairtree = require('pairtree');
@@ -19,6 +20,53 @@ app.route('/', function(req, res) {
 app.route('/_app', function(req, res) {
   res.writeHead(200, {'Content-Type': 'application/json'});
   res.end(JSON.stringify(app));
+});
+
+app.route('/_search', function(req, res) {
+  var data = '';
+  req.on('data', function(chunk) {
+    data += chunk;
+  });
+  req.on('end', function() {
+    var search = JSON.parse(data);
+    // TODO use dismax for query
+    var esSearch = {
+      query: {
+        query_string: {
+          query: search.query
+        }
+      }
+    };
+    //console.log(esSearch);
+    var options = {
+      path: '/free103/_search',//?pretty=true', 
+      method: 'POST',
+      data: esSearch,
+      debug: true
+    };
+    es.request(options, function(err, result) {
+      if (err) {
+        res.writeHead(500, {'Content-Type': 'text/plain'});
+        res.end('500');
+      } else {
+        // TODO munge result as needed
+        //context['artists'] = [];
+        //if (options.debug) {
+        //  // total defaults to 10 unless size is set in request
+        //  console.log('length: '+result.hits.hits.length+' total: '+result.hits.total);
+        //}
+        //for (var i=0, l=result.hits.hits.length, artist; i<l; i++) {
+        //  artist = result.hits.hits[i]._source;
+        //  context['artists'].push({
+        //    name: artist.name_sort,
+        //    id: artist._id
+        //  });
+        //}
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify(result));
+      }
+    });
+  });
 });
 
 var timestampRe = /^/gm;
