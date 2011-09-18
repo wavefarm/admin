@@ -22,6 +22,25 @@ app.route('/_app', function(req, res) {
   res.end(JSON.stringify(app));
 });
 
+app.route('/_get', function(req, res) {
+  var query = url.parse(req.url, true).query;
+  if (query) {
+    var options = {
+      path: '/free103/_all/'+query.id,
+      debug: true
+    };
+    es.request(options, function(err, result) {
+      if (err) {
+        res.writeHead(404, {'Content-Type': 'text/plain'});
+        res.end('404');
+      } else {
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify(result._source));
+      }
+    });
+  }
+});
+
 app.route('/_search', function(req, res) {
   var data = '';
   req.on('data', function(chunk) {
@@ -49,19 +68,6 @@ app.route('/_search', function(req, res) {
         res.writeHead(500, {'Content-Type': 'text/plain'});
         res.end('500');
       } else {
-        // TODO munge result as needed
-        //context['artists'] = [];
-        //if (options.debug) {
-        //  // total defaults to 10 unless size is set in request
-        //  console.log('length: '+result.hits.hits.length+' total: '+result.hits.total);
-        //}
-        //for (var i=0, l=result.hits.hits.length, artist; i<l; i++) {
-        //  artist = result.hits.hits[i]._source;
-        //  context['artists'].push({
-        //    name: artist.name_sort,
-        //    id: artist._id
-        //  });
-        //}
         res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(result));
       }

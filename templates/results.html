@@ -1,3 +1,5 @@
-{for hit in hits.hits}
-  <p>{hit._source.name}</p>
+<div class="results">
+{for hit in results}
+  <p><a href="#dash/{hit.id}">{hit.name}</a></p>
 {/for}
+</div>
