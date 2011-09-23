@@ -41,6 +41,96 @@ app.route('/_get', function(req, res) {
   }
 });
 
+app.route('/_index', function(req, res) {
+  var data, options, query = url.parse(req.url, true).query;
+  if (query) {
+    if (query.reindex) {
+      // reindex by switching free103 alias back and forth
+      // between free103a and free103b
+      options = {
+        path: '/_aliases',
+        debug: true
+      };
+      es.request(options, function(err, result) {
+        var source, dest;
+        // TODO generate mappings from models
+        var settings = { 
+          "mappings": {
+            "_default_": {
+              "dynamic_templates": [
+                {
+                  "base": {
+                    "match": "*_sort",
+                    "mapping": {
+                      "type": "multi_field", 
+                      "fields": {
+                        "{name}": {"type": "string"},
+                        "sort": {"type": "string", "analyzer": "sort"}
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "settings": {
+            "analysis": {
+              "analyzer": {
+                "sort": {
+                  "type": "custom",
+                  "tokenizer": "keyword",
+                  "filter": "lowercase"
+                }
+              }
+            }
+          }
+        };
+        if (result.free103a) {
+          source = 'free103a';
+          dest = 'free103b';
+        } else {
+          source = 'free103b';
+          dest = 'free103a';
+        }
+        // create dest
+        options = {
+          path: '/' + dest,
+          method: 'PUT',
+          data: settings,
+          debug: true
+        };
+        es.request(options, function(err, result) {
+          // TODO scan source and add all documents to dest
+          // point alias at dest
+          options = {
+            path: '/_aliases',
+            method: 'POST',
+            data: {
+              actions: [
+                {remove: {index: source, alias: 'free103'}},
+                {add: {index: dest, alias: 'free103'}}
+              ]
+            },
+            debug: true
+          }
+          es.request(options, function(err, result) {
+            // now delete source
+            options = {
+              path: '/' + source,
+              method: 'DELETE',
+              debug: true
+            };
+            es.request(options, function(err, result) {
+              res.writeHead(200, {'Content-Type': 'application/json'});
+              res.end(JSON.stringify(result));
+            });
+          });
+        });
+      });
+    }
+  }
+});
+
 app.route('/_search', function(req, res) {
   var data = '';
   req.on('data', function(chunk) {
