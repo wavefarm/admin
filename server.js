@@ -12,12 +12,6 @@ var whiskers = require('whiskers');
 var app = snout.app(__dirname);
 app.name = 'free103';
 
-var esErr = function(res, err) {
-  res.writeHead(JSON.parse(err.message).status, {'Content-Type': 'application/json'});
-  res.end(err.message);
-  return;
-};
-
 app.route('/', function(req, res) {
   // PUT creates index "A" with alias at index
   if (req.method == 'PUT') {
@@ -53,16 +47,16 @@ app.route('/', function(req, res) {
         }
       }
     };
-    options = {
+    // create index "A"
+    es.request({
       path: '/'+app.name+'a',
       method: 'PUT',
       data: settings,
+      res: res,
       debug: true
-    };
-    // create index "A"
-    es.request(options, function(err, result) {
-      if (err) return esErr(res, err);
-      options = {
+    }, function() {
+      // create alias
+      es.request({
         path: '/_aliases',
         method: 'POST',
         data: {
@@ -70,28 +64,21 @@ app.route('/', function(req, res) {
             {add: {index: app.name+'a', alias: app.name}}
           ]
         },
+        res: res,
+        respond: true,
         debug: true
-      };
-      // create alias
-      es.request(options, function(err, result) {
-        if (err) return esErr(res, err);
-        res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify(result));
       });
     });
     return;
   }
   // DELETE deletes index "A" and alias
   if (req.method == 'DELETE') {
-    options = {
+    es.request({
       path: '/'+app.name+'a',
       method: 'DELETE',
+      res: res,
+      respond: true,
       debug: true
-    };
-    es.request(options, function(err, result) {
-      if (err) return esErr(res, err);
-      res.writeHead(200, {'Content-Type': 'application/json'});
-      res.end(JSON.stringify(result));
     });
     return;
   }
