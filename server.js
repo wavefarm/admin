@@ -12,6 +12,8 @@ var whiskers = require('whiskers');
 var app = snout.app(__dirname);
 app.name = 'free103';
 
+es.DEBUG = true;
+
 app.route('/', function(req, res) {
   // PUT creates index "A" with alias at index
   if (req.method == 'PUT') {
@@ -53,7 +55,6 @@ app.route('/', function(req, res) {
       method: 'PUT',
       body: settings,
       res: res,
-      debug: true
     }, function() {
       // create alias
       es.request({
@@ -66,7 +67,6 @@ app.route('/', function(req, res) {
         },
         res: res,
         respond: true,
-        debug: true
       });
     });
     return;
@@ -78,7 +78,6 @@ app.route('/', function(req, res) {
       method: 'DELETE',
       res: res,
       respond: true,
-      debug: true
     });
     return;
   }
