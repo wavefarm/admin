@@ -51,7 +51,7 @@ app.route('/', function(req, res) {
     es.request({
       path: '/'+app.name+'a',
       method: 'PUT',
-      data: settings,
+      body: settings,
       res: res,
       debug: true
     }, function() {
@@ -59,7 +59,7 @@ app.route('/', function(req, res) {
       es.request({
         path: '/_aliases',
         method: 'POST',
-        data: {
+        body: {
           actions: [
             {add: {index: app.name+'a', alias: app.name}}
           ]
