@@ -12,9 +12,89 @@ var whiskers = require('whiskers');
 var app = snout.app(__dirname);
 app.name = 'free103';
 
+var esErr = function(res, err) {
+  res.writeHead(JSON.parse(err.message).status, {'Content-Type': 'application/json'});
+  res.end(err.message);
+  return;
+};
+
 app.route('/', function(req, res) {
-  // PUT creates indexA with alias at index
-  // DELETE deletes indexA and alias
+  // PUT creates index "A" with alias at index
+  if (req.method == 'PUT') {
+    // TODO generate mappings from models
+    var settings = { 
+      "mappings": {
+        "_default_": {
+          "dynamic_templates": [
+            {
+              "base": {
+                "match": "*_sort",
+                "mapping": {
+                  "type": "multi_field", 
+                  "fields": {
+                    "{name}": {"type": "string"},
+                    "sort": {"type": "string", "analyzer": "sort"}
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "settings": {
+        "analysis": {
+          "analyzer": {
+            "sort": {
+              "type": "custom",
+              "tokenizer": "keyword",
+              "filter": "lowercase"
+            }
+          }
+        }
+      }
+    };
+    options = {
+      path: '/'+app.name+'a',
+      method: 'PUT',
+      data: settings,
+      debug: true
+    };
+    // create index "A"
+    es.request(options, function(err, result) {
+      if (err) return esErr(res, err);
+      options = {
+        path: '/_aliases',
+        method: 'POST',
+        data: {
+          actions: [
+            {add: {index: app.name+'a', alias: app.name}}
+          ]
+        },
+        debug: true
+      };
+      // create alias
+      es.request(options, function(err, result) {
+        if (err) return esErr(res, err);
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify(result));
+      });
+    });
+    return;
+  }
+  // DELETE deletes index "A" and alias
+  if (req.method == 'DELETE') {
+    options = {
+      path: '/'+app.name+'a',
+      method: 'DELETE',
+      debug: true
+    };
+    es.request(options, function(err, result) {
+      if (err) return esErr(res, err);
+      res.writeHead(200, {'Content-Type': 'application/json'});
+      res.end(JSON.stringify(result));
+    });
+    return;
+  }
   var context = {};
   res.writeHead(200, {'Content-Type': 'text/html'});
   res.end(whiskers.render(app.templates.base, context));
