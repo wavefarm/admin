@@ -71,10 +71,10 @@ app.route('/', function(req, res) {
     });
     return;
   }
-  // DELETE deletes index "A" and alias
+  // DELETE deletes alias and whichever index it points at
   if (req.method == 'DELETE') {
     es.request({
-      path: '/'+app.name+'a',
+      path: '/'+app.name,
       method: 'DELETE',
       res: res,
       respond: true,
