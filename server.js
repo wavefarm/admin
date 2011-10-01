@@ -53,18 +53,18 @@ app.route('/', function(req, res) {
     es.request({
       path: '/'+app.name+'a',
       method: 'PUT',
-      body: settings,
+      data: JSON.stringify(settings),
       res: res,
     }, function() {
       // create alias
       es.request({
         path: '/_aliases',
         method: 'POST',
-        body: {
+        data: JSON.stringify({
           actions: [
             {add: {index: app.name+'a', alias: app.name}}
           ]
-        },
+        }),
         res: res,
         respond: true,
       });
