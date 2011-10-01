@@ -91,6 +91,21 @@ app.route('/_app', function(req, res) {
   res.end(JSON.stringify(app));
 });
 
+app.route('/_bulk', function(req, res) {
+  var data = '', query = url.parse(req.url, true).query;
+  req.on('data', function(chunk) {data += chunk;});
+  req.on('end', function() {
+    //console.log(data);
+    es.request({
+      path: '/_bulk',
+      method: 'POST',
+      data: data,
+      res: res,
+      respond: true,
+    });
+  });
+});
+
 app.route('/_get', function(req, res) {
   var query = url.parse(req.url, true).query;
   if (query) {
