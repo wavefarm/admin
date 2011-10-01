@@ -17,34 +17,28 @@ es.DEBUG = true;
 app.route('/', function(req, res) {
   // PUT creates index "A" with alias at index
   if (req.method == 'PUT') {
-    // TODO generate mappings from models
     var settings = { 
-      "mappings": {
-        "_default_": {
-          "dynamic_templates": [
-            {
-              "base": {
-                "match": "*_sort",
-                "mapping": {
-                  "type": "multi_field", 
-                  "fields": {
-                    "{name}": {"type": "string"},
-                    "sort": {"type": "string", "analyzer": "sort"}
-                  }
-                }
-              }
+      mappings: {},
+      settings: {
+        analysis: {
+          analyzer: {
+            sort: {
+              type: "custom",
+              tokenizer: "keyword",
+              filter: "lowercase"
             }
-          ]
+          }
         }
-      },
-      "settings": {
-        "analysis": {
-          "analyzer": {
-            "sort": {
-              "type": "custom",
-              "tokenizer": "keyword",
-              "filter": "lowercase"
-            }
+      }
+    };
+    // TODO generate mappings from models
+    settings.mappings["artist"] = {
+      "properties": {
+        "sort_name": {
+          "type": "multi_field", 
+          "fields": {
+            "sort_name": {"type": "string"},
+            "sort": {"type": "string", "analyzer": "sort"}
           }
         }
       }
