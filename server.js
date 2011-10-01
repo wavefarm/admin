@@ -113,13 +113,13 @@ app.route('/_get', function(req, res) {
       path: '/'+app.name+'/_all/'+query.id,
       debug: true
     };
-    es.request(options, function(err, result) {
+    es.request(options, function(err, data) {
       if (err) {
         res.writeHead(404, {'Content-Type': 'text/plain'});
         res.end('404');
       } else {
         res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify(result._source));
+        res.end(JSON.stringify(JSON.parse(data)._source));
       }
     });
   }
@@ -254,16 +254,16 @@ app.route('/_search', function(req, res) {
     var options = {
       path: '/'+app.name+'/_search',//?pretty=true', 
       method: 'POST',
-      data: esSearch,
+      data: JSON.stringify(esSearch),
       debug: true
     };
-    es.request(options, function(err, result) {
+    es.request(options, function(err, data) {
       if (err) {
         res.writeHead(500, {'Content-Type': 'text/plain'});
         res.end('500');
       } else {
         res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify(result));
+        res.end(data);
       }
     });
   });
