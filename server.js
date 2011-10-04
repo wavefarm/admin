@@ -31,18 +31,28 @@ app.route('/', function(req, res) {
         }
       }
     };
-    // TODO generate mappings from models
-    settings.mappings["artist"] = {
-      "properties": {
-        "sort_name": {
-          "type": "multi_field", 
-          "fields": {
-            "sort_name": {"type": "string"},
-            "sort": {"type": "string", "analyzer": "sort"}
+    for (model in app.models) {
+      if (model.indexOf('.') == -1) {
+        console.log(model);
+        var fields = JSON.parse(app.models[model]).fields;
+        settings.mappings[model] = {
+          properties: {}
+        };
+        for (var i=0, l=fields.length, field; i<l; i++) {
+          field = fields[i];
+          if (field.sort) {
+            var sortField = {
+              type: 'multi_field',
+              fields: {
+                sort: {type: 'string', analyzer: 'sort'}
+              }
+            };
+            sortField.fields[field.name] = {type: 'string'};
+            settings.mappings[model].properties[field.name] = sortField;
           }
         }
       }
-    };
+    }
     // create index "A"
     es.request({
       path: '/'+app.name+'a',

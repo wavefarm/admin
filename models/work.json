@@ -1,20 +1,17 @@
 {
-  "name": "artist",
-  "description": "Generic, top-level artist model.",
+  "name": "work",
+  "description": "Generic, top-level work model.",
   "fields": [
     {
       "name": "active",
       "type": "boolean"
     },
     {
-      "name": "name"
-    },
-    {
-      "name": "sortName",
+      "name": "title",
       "sort": true
     },
     {
-      "name": "bio",
+      "name": "description",
       "type": "text"
     },
     {
@@ -45,8 +42,8 @@
       "type": "rel:file"
     },
     {
-      "name": "relatedWorks",
-      "type": "rel:work"
+      "name": "relatedArtists",
+      "type": "rel:artist"
     },
     {
       "name": "relatedShows",
@@ -58,7 +55,7 @@
     },
     {
       "name": "seeAlso",
-      "type": "rel:artist"
+      "type": "rel:work"
     },
     {
       "name": "timestamp",
