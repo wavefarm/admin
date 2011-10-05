@@ -14,50 +14,54 @@ app.name = 'free103';
 
 es.DEBUG = true;
 
-app.route('/', function(req, res) {
-  // PUT creates index "A" with alias at index
-  if (req.method == 'PUT') {
-    var settings = { 
-      mappings: {},
-      settings: {
-        analysis: {
-          analyzer: {
-            sort: {
-              type: "custom",
-              tokenizer: "keyword",
-              filter: "lowercase"
-            }
-          }
-        }
-      }
-    };
-    for (model in app.models) {
-      if (model.indexOf('.') == -1) {
-        console.log(model);
-        var fields = JSON.parse(app.models[model]).fields;
-        settings.mappings[model] = {
-          properties: {}
-        };
-        for (var i=0, l=fields.length, field; i<l; i++) {
-          field = fields[i];
-          if (field.sort) {
-            var sortField = {
-              type: 'multi_field',
-              fields: {
-                sort: {type: 'string', analyzer: 'sort'}
-              }
-            };
-            sortField.fields[field.name] = {type: 'string'};
-            settings.mappings[model].properties[field.name] = sortField;
+var getSettings = function() {
+  var settings = { 
+    mappings: {},
+    settings: {
+      analysis: {
+        analyzer: {
+          sort: {
+            type: "custom",
+            tokenizer: "keyword",
+            filter: "lowercase"
           }
         }
       }
     }
+  };
+  for (model in app.models) {
+    if (model.indexOf('.') == -1) {
+      console.log(model);
+      var fields = JSON.parse(app.models[model]).fields;
+      settings.mappings[model] = {
+        properties: {}
+      };
+      for (var i=0, l=fields.length, field; i<l; i++) {
+        field = fields[i];
+        if (field.sort) {
+          var sortField = {
+            type: 'multi_field',
+            fields: {
+              sort: {type: 'string', analyzer: 'sort'}
+            }
+          };
+          sortField.fields[field.name] = {type: 'string'};
+          settings.mappings[model].properties[field.name] = sortField;
+        }
+      }
+    }
+  }
+  return settings;
+};
+  
+app.route('/', function(req, res) {
+  // PUT creates index "A" with alias at index
+  if (req.method == 'PUT') {
     // create index "A"
     es.request({
       path: '/'+app.name+'a',
       method: 'PUT',
-      data: JSON.stringify(settings),
+      data: JSON.stringify(getSettings()),
       res: res,
     }, function() {
       // create alias
@@ -99,7 +103,61 @@ app.route('/_bulk', function(req, res) {
   var data = '', query = url.parse(req.url, true).query;
   req.on('data', function(chunk) {data += chunk;});
   req.on('end', function() {
-    //console.log(data);
+    console.log(query);
+    if (query.clean) {
+      // TODO switch to new es api if it gets extended
+      // check aliases for which index to create
+      es.request({
+        path: '/'+app.name+'a',
+        method: 'HEAD'
+      }, function(err) {
+        var index, oldIndex;
+        if (err) { // app.name+'a' doesn't exist
+          index = app.name+'a';
+          oldIndex = app.name+'b';
+        } else {
+          index = app.name+'b';
+          oldIndex = app.name+'a';
+        }
+        // create alternative index
+        es.request({
+          path: '/'+index,
+          method: 'PUT',
+          data: JSON.stringify(getSettings()),
+          res: res,
+        }, function() {
+          // switch alias
+          es.request({
+            path: '/_aliases',
+            method: 'POST',
+            data: JSON.stringify({
+              actions: [
+                {remove: {index: oldIndex, alias: app.name}},
+                {add: {index: index, alias: app.name}}
+              ]
+            }),
+            res: res,
+          }, function() {
+            // load bulk
+            es.request({
+              path: '/_bulk',
+              method: 'POST',
+              data: data,
+              res: res
+            }, function() {
+              // delete old index
+              es.request({
+                path: '/'+oldIndex,
+                method: 'DELETE',
+                res: res,
+                respond: true,
+              });
+            });
+          });
+        });
+      });
+      return;
+    }
     es.request({
       path: '/_bulk',
       method: 'POST',
