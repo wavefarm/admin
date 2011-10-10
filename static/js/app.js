@@ -54,23 +54,32 @@ app.route('', function() {
 });
 app.route('dash', function(captures, query) {
   $('#main').html(whiskers.render(app.templates.dash));
+  var showResults = function(data) {
+    var result, results = data.hits.hits;
+    for (var i=0, l=results.length; i<l; i++) {
+      results[i] = results[i]._source;
+    }
+    var context = {results: results};
+    $('section.content').html(whiskers.render(app.templates.results, context));
+  };
   if (query.q) {
     $('form.search input[name=q]').val(query.q);
     // TODO parse query
-    var search = JSON.stringify({query: query.q});
+    var search = JSON.stringify({query: {query_string: {query: query.q}}});
     app.request({
       data: search, 
       error: function() {
         $('section.content').html('<div class="results"><p>No results.</p></div>');
       },
-      success: function(data) {
-        var result, results = data.hits.hits;
-        for (var i=0, l=results.length; i<l; i++) {
-          results[i] = results[i]._source;
-        }
-        var context = {results: results};
-        $('section.content').html(whiskers.render(app.templates.results, context));
-      }
+      success: showResults
+    });
+  } else {
+    app.request({
+      data: JSON.stringify({
+        query: {match_all: {}},
+        sort: [{timestamp: 'desc'}]
+      }),
+      success: showResults
     });
   }
 });

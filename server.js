@@ -303,20 +303,10 @@ app.route('/_search', function(req, res) {
     data += chunk;
   });
   req.on('end', function() {
-    var search = JSON.parse(data);
-    // TODO use dismax for query
-    var esSearch = {
-      query: {
-        query_string: {
-          query: search.query
-        }
-      }
-    };
-    //console.log(esSearch);
     var options = {
       path: '/'+app.name+'/_search',//?pretty=true', 
       method: 'POST',
-      data: JSON.stringify(esSearch),
+      data: data,
       debug: true
     };
     es.request(options, function(err, data) {
