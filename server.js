@@ -331,6 +331,4 @@ app.route('/_search', function(req, res) {
   });
 });
 
-exports.start = function(port) {
-  app.listen(port);
-};
+app.listen(8126);
