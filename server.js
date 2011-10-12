@@ -1,5 +1,6 @@
 var es = require('es');
 var http = require('http');
+var paperboy = require('paperboy');
 var querystring = require('querystring');
 var snout = require('snout');
 var sys = require('sys');
@@ -315,6 +316,10 @@ app.route('/_search', function(req, res) {
       }
     });
   });
+});
+
+app.route('/static/.*', function(req, res) {
+  paperboy.deliver(__dirname, req, res);
 });
 
 app.listen(8126);
