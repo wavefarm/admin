@@ -1,7 +1,5 @@
 var es = require('es');
 var http = require('http');
-var lazy = require('lazy');
-var pairtree = require('pairtree');
 var querystring = require('querystring');
 var snout = require('snout');
 var sys = require('sys');
