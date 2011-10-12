@@ -10,8 +10,6 @@ var whiskers = require('whiskers');
 var app = snout.app(__dirname);
 app.name = 'free103';
 
-es.DEBUG = true;
-
 var getSettings = function() {
   var settings = { 
     mappings: {},
