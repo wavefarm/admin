@@ -169,8 +169,7 @@ app.route('/_get', function(req, res) {
   var query = url.parse(req.url, true).query;
   if (query) {
     var options = {
-      path: '/'+app.name+'/_all/'+query.id,
-      debug: true
+      path: '/'+app.name+'/_all/'+query.id
     };
     es.request(options, function(err, data) {
       if (err) {
@@ -226,8 +225,7 @@ app.route('/_index', function(req, res) {
       options = {
         path: '/' + indexName,
         method: 'PUT',
-        data: settings,
-        debug: true
+        data: settings
       };
       es.request(options, function(err, result) {
         if (err) {
@@ -243,8 +241,7 @@ app.route('/_index', function(req, res) {
       // between a and b index
       // check aliases for current active index
       options = {
-        path: '/_aliases',
-        debug: true
+        path: '/_aliases'
       };
       es.request(options, function(err, result) {
         var source, dest;
@@ -259,8 +256,7 @@ app.route('/_index', function(req, res) {
         options = {
           path: '/' + dest,
           method: 'PUT',
-          data: settings,
-          debug: true
+          data: settings
         };
         es.request(options, function(err, result) {
           // TODO scan source and add all documents to dest
@@ -273,15 +269,13 @@ app.route('/_index', function(req, res) {
                 {remove: {index: source, alias: app.name}},
                 {add: {index: dest, alias: app.name}}
               ]
-            },
-            debug: true
+            }
           }
           es.request(options, function(err, result) {
             // now delete source
             options = {
               path: '/' + source,
-              method: 'DELETE',
-              debug: true
+              method: 'DELETE'
             };
             es.request(options, function(err, result) {
               res.writeHead(200, {'Content-Type': 'application/json'});
@@ -303,8 +297,7 @@ app.route('/_search', function(req, res) {
     var options = {
       path: '/'+app.name+'/_search',//?pretty=true', 
       method: 'POST',
-      data: data,
-      debug: true
+      data: data
     };
     es.request(options, function(err, data) {
       if (err) {
