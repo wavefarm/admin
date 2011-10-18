@@ -3,7 +3,6 @@ var http = require('http');
 var paperboy = require('paperboy');
 var querystring = require('querystring');
 var snout = require('snout');
-var sys = require('sys');
 var url = require('url');
 var util = require('util');
 var whiskers = require('whiskers');
