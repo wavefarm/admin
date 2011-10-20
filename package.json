@@ -3,6 +3,7 @@
 , "version": "0.0.1"
 , "author": "Gabriel Farrell <g@grrawr.com>"
 , "engines": { "node": ">=0.4.0" }
+, "main": "app"
 , "repository":
   { "type": "git"
   , "url": "http://github.com/free103point9/admin.free103point9.org.git"
