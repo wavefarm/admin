@@ -27,7 +27,7 @@ var getSettings = function() {
   };
   for (model in app.models) {
     if (model.indexOf('.') == -1) {
-      console.log(model);
+      //console.log(model);
       var fields = JSON.parse(app.models[model]).fields;
       settings.mappings[model] = {
         properties: {}
@@ -99,7 +99,7 @@ app.route('/_bulk', function(req, res) {
   var data = '', query = url.parse(req.url, true).query;
   req.on('data', function(chunk) {data += chunk;});
   req.on('end', function() {
-    console.log(query);
+    //console.log(query);
     if (query.clean) {
       // TODO switch to new es api if it gets extended
       // check aliases for which index to create
