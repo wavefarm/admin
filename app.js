@@ -288,6 +288,8 @@ app.route('/_index', function(req, res) {
 });
 
 app.route('/_search', function(req, res) {
+  // TODO convert to GET and parse url query instead of passing
+  // POST data through
   var data = '';
   req.on('data', function(chunk) {
     data += chunk;
