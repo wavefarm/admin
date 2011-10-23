@@ -99,56 +99,59 @@ app.route('/_bulk', function(req, res) {
   var data = '', query = url.parse(req.url, true).query;
   req.on('data', function(chunk) {data += chunk;});
   req.on('end', function() {
-    //console.log(query);
     if (query.clean) {
       // TODO switch to new es api if it gets extended
       // check aliases for which index to create
       es.request({
-        path: '/'+app.name+'a',
-        method: 'HEAD'
-      }, function(err) {
+        path: '/_aliases',
+        res: res
+      }, function(err, json) {
+        var indices = JSON.parse(json);
         var index, oldIndex;
-        if (err) { // app.name+'a' doesn't exist
+        if (!indices[app.name+'a']) {
           index = app.name+'a';
-          oldIndex = app.name+'b';
+          // check in case there are no indexes
+          if (indices[app.name+'b']) {
+            oldIndex = app.name+'b';
+          }
         } else {
           index = app.name+'b';
           oldIndex = app.name+'a';
         }
-        // create alternative index
+        // create new index
         es.request({
           path: '/'+index,
           method: 'PUT',
           data: JSON.stringify(getSettings()),
           res: res,
         }, function() {
-          // switch alias
+          // add alias and remove old if necessary
+          var actions = [{add: {index: index, alias: app.name}}];
+          if (oldIndex) {
+            actions.unshift({remove: {index: oldIndex, alias: app.name}});
+          }
           es.request({
             path: '/_aliases',
             method: 'POST',
-            data: JSON.stringify({
-              actions: [
-                {remove: {index: oldIndex, alias: app.name}},
-                {add: {index: index, alias: app.name}}
-              ]
-            }),
-            res: res,
+            data: JSON.stringify({actions: actions}),
+            res: res
           }, function() {
             // load bulk
             es.request({
               path: '/_bulk',
               method: 'POST',
               data: data,
-              res: res
-            }, function() {
-              // delete old index
+              res: res,
+              respond: true
+            });
+            // delete old index if necessary
+            if (oldIndex) {
               es.request({
                 path: '/'+oldIndex,
                 method: 'DELETE',
-                res: res,
-                respond: true,
+                res: res
               });
-            });
+            }
           });
         });
       });
@@ -159,7 +162,7 @@ app.route('/_bulk', function(req, res) {
       method: 'POST',
       data: data,
       res: res,
-      respond: true,
+      respond: true
     });
   });
 });
