@@ -7,7 +7,10 @@ var url = require('url');
 var util = require('util');
 var whiskers = require('whiskers');
 
-var app = snout.app(__dirname);
+var app = snout.app({
+  dir: __dirname,
+  watch: true
+});
 app.name = 'free103';
 
 var getSettings = function() {
