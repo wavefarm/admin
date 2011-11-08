@@ -107,6 +107,11 @@ app.route('/_bulk', function(req, res) {
   req.on('data', function(chunk) {data += chunk;});
   req.on('end', function() {
     if (query.clean) {
+      res.writeHead(301, {'Content-Type': 'application/json'});
+      res.end('{"moved": "Use replace instead"}');
+      return;
+    }
+    if (query.replace) {
       // TODO switch to new es api if it gets extended
       // check aliases for which index to create
       es.request({
