@@ -64,8 +64,14 @@ app.route('dash', function(captures, query) {
   };
   if (query.q) {
     $('form.search input[name=q]').val(query.q);
-    // TODO parse query
-    var search = JSON.stringify({query: {query_string: {query: query.q}}});
+    // the most basic of query parsing
+    var parsed = (function(q) {
+      if (q.indexOf(':') == -1) {
+        return q+' main:('+q+')';
+      }
+      return q;
+    })(query.q);
+    var search = JSON.stringify({query: {query_string: {query: parsed}}});
     app.request({
       data: search, 
       error: function() {
