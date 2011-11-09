@@ -64,14 +64,19 @@ app.route('dash', function(captures, query) {
   };
   if (query.q) {
     $('form.search input[name=q]').val(query.q);
-    // the most basic of query parsing
-    var parsed = (function(q) {
-      if (q.indexOf(':') == -1) {
-        return q+' main:('+q+')';
+    var search = JSON.stringify({
+      query: {
+        query_string: {
+          'default_operator': 'AND',
+          query: (function(q) {
+            if (q.indexOf(':') == -1) {
+              return q+' OR main:('+q+')';
+            }
+            return q;
+          })(query.q)
+        }
       }
-      return q;
-    })(query.q);
-    var search = JSON.stringify({query: {query_string: {query: parsed}}});
+    });
     app.request({
       data: search, 
       error: function() {
