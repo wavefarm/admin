@@ -55,7 +55,7 @@ app.route('', function() {
 app.route('dash', function(captures, query) {
   $('#main').html(whiskers.render(app.templates.dash));
   var showResults = function(data) {
-    var result, results = data.hits.hits;
+    var results = data.hits.hits;
     for (var i=0, l=results.length; i<l; i++) {
       results[i] = results[i]._source;
     }
@@ -101,7 +101,7 @@ app.route('dash/([0-9a-f]{7})', function(captures, query) {
     url: '_get?id='+id,
     type: 'GET',
     success: function(data) {
-      data.raw = JSON.stringify(data, null, '  ');
+      data.raw = _.escape(JSON.stringify(data, null, '  '));
       var context = {item: data};
       $('section.content').html(whiskers.render(app.templates.item, context));
     }
