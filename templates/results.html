@@ -1,5 +1,6 @@
+<p class="count">{count} results</p>
 <div class="results">
-{for hit in results}
-  <p><a href="#dash/{hit.id}">{hit.main} ({hit.type})</a></p>
-{/for}
+  {for hit in results}
+    <p><a href="#dash/{hit.id}">{hit.main} ({hit.type})</a></p>
+  {/for}
 </div>

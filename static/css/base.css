@@ -43,6 +43,9 @@ header li {
   float: left;
   margin: 0 0 0 10px;
 }
+.count {
+  font-size: smaller;
+}
 #main {
   padding: 10px;
 }

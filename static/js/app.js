@@ -59,7 +59,11 @@ app.route('dash', function(captures, query) {
     for (var i=0, l=results.length; i<l; i++) {
       results[i] = results[i]._source;
     }
-    var context = {results: results};
+    var context = {
+      //data: _.escape(JSON.stringify(data)), 
+      count: data.hits.total,
+      results: results
+    };
     $('section.content').html(whiskers.render(app.templates.results, context));
   };
   if (query.q) {
