@@ -98,7 +98,7 @@ app.route('dash', function(captures, query) {
     });
   }
 });
-app.route('dash/([0-9a-f]{7})', function(captures, query) {
+app.route('dash/(\\w{6})', function(captures, query) {
   $('#main').html(whiskers.render(app.templates.dash));
   var id = captures[1];
   app.request({
