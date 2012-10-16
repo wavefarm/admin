@@ -1,17 +1,21 @@
-{ "name": "admin.free103point9.org"
-, "description": "Admin site for free103point9"
-, "version": "0.0.1"
-, "author": "Gabriel Farrell <g@grrawr.com>"
-, "engines": { "node": ">=0.4.0" }
-, "main": "app"
-, "repository":
-  { "type": "git"
-  , "url": "http://github.com/free103point9/admin.free103point9.org.git"
-  }
-, "dependencies":
-  { "es": ">=0.0.3"
-  , "paperboy": ">=0.0.2"
-  , "snout": ">=0.0.3"
-  , "whiskers": ">=0.0.6"
+{
+  "name": "admin.free103point9.org",
+  "description": "Admin site for free103point9",
+  "version": "0.0.1",
+  "author": "Gabriel Farrell <g@grrawr.com>",
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
+  },
+  "main": "server",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/free103point9/admin.free103point9.org.git"
+  },
+  "dependencies": {
+    "es": "0.0.5",
+    "rut": "0.0.1",
+    "send": "0.1.0",
+    "stack": "0.1.0"
   }
 }
