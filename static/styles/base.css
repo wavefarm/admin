@@ -26,22 +26,18 @@ header {
   overflow: auto;
   padding: 0 4px;
 }
-header ul {
+header div {
   float: right;
   list-style: none;
   margin: 0;
   padding: 0;
 }
-header ul a {
+header div a {
   color: #333;
   font-weight: bold;
 }
-header ul a:hover {
+header div a:hover {
   background: #ddd;
-}
-header li {
-  float: left;
-  margin: 0 0 0 10px;
 }
 .count {
   font-size: smaller;
