@@ -1,4 +1,5 @@
 var fs = require('fs')
+var hash = require('./lib/hash')
 var http = require('http')
 var rut = require('rut')
 var send = require('send')
@@ -9,9 +10,15 @@ var port = process.argv[2] || process.env.PORT || 1039
 http.createServer(stack(
   // TODO basic auth for now with hedge
   function (req, res, next) {
-    // prep data and html for routes
-    res.data = {}
-    res.html = {}
+    res.send = function (out) {
+      var etag = hash(out)
+      if (req.headers['if-none-match'] === etag) {
+        res.statusCode = 304
+        return res.end()
+      }
+      res.writeHead(200, {'Content-Type': 'text/html', 'ETag': etag})
+      res.end(out)
+    }
     next()
   },
   rut.get('/', require('./routes/index')),

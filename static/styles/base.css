@@ -9,7 +9,7 @@ body {
 form.search {
 }
 form.search input[type=text] {
-  width: 400px;
+  width: 300px;
 }
 h1.logo {
   float: left;
@@ -22,13 +22,11 @@ h1.logo a {
   color: #000;
 }
 header {
-  height: 36px;
-  overflow: auto;
+  min-width: 600px;
+  overflow: hidden;
   padding: 0 4px;
 }
 header div {
-  float: right;
-  list-style: none;
   margin: 0;
   padding: 0;
 }
@@ -39,6 +37,11 @@ header div a {
 header div a:hover {
   background: #ddd;
 }
+.controls {
+  float: left;
+  padding: 3px 10px;
+}
+
 .count {
   font-size: smaller;
 }

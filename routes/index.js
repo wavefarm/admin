@@ -1,39 +1,34 @@
-var fs = require('fs')
+//var db = require('./db')
+var load = require('../lib/load')
 var pile = require('pile')
 var swap = require('swap')
+var url = require('url')
 
 module.exports = pile(
-  load('layout'),
-  load('index'),
-  load('results'),
-  load('result'),
+  load('layout.html'),
+  load('brief.html'),
+  load('results.html'),
   function (req, res, last) {
-    // TODO fetch results from ES
-    res.data.results = [
+    //var query = url.parse(req.url, true).query
+    //var q = query && query.q
+    //db.search(q, function (err, results) {
+    //  if (err) return last(err)
+    //  res.results = results
+    //  last()
+    //})
+    res.results = [
       {id: '123', name: 'Sue', type: 'western'},
       {id: '124', name: 'JR', type: 'cool'},
-      {id: '125', name: 'Nan', type: 'western'}
+      {id: '126', name: 'Nan', type: 'western'}
     ]
     last()
   },
-  function (req, res, next) {
-    var results = ''
-    res.data.results.forEach(function (result) {
-      results += swap(res.html.result, result)
+  function (req, res) {
+    var results = []
+    res.results.forEach(function (result) {
+      results.push(swap(res.templates['brief.html'], result))
     })
-    var content = swap(res.html.results, {results: results})
-    var main = swap(res.html.index, {content: content})
-    res.writeHead(200, {'Content-Type': 'text/html'})
-    res.end(swap(res.html.layout, {main: main}))
+    var main = swap(res.templates['results.html'], {results: results.join('')})
+    res.send(swap(res.templates['layout.html'], {main: main}))
   }
 );
-
-function load (name) {
-  return function (req, res, next) {
-    fs.readFile('static/templates/'+name+'.html', 'utf8', function (err, template) {
-      if (err) return next(err)
-      res.html[name] = template
-      next()
-    })
-  }
-}
