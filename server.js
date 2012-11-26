@@ -23,7 +23,7 @@ http.createServer(stack(
   },
   rut.get('/', require('./routes/index')),
   rut.get('/**', function (req, res, next, pathname) {
-    send(req, pathname).from('static').pipe(res)
+    send(req, pathname).from('static').maxage(60000).pipe(res)
   })
 )).listen(port, function () {
   console.log('Listening on port '+port)
