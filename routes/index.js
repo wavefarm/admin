@@ -1,4 +1,4 @@
-//var db = require('./db')
+var api = require('../api')
 var load = require('../lib/load')
 var pile = require('pile')
 var swap = require('swap')
@@ -9,26 +9,19 @@ module.exports = pile(
   load('brief.html'),
   load('results.html'),
   function (req, res, last) {
-    //var query = url.parse(req.url, true).query
-    //var q = query && query.q
-    //db.search(q, function (err, results) {
-    //  if (err) return last(err)
-    //  res.results = results
-    //  last()
-    //})
-    res.results = [
-      {id: '123', name: 'Sue', type: 'western'},
-      {id: '124', name: 'JR', type: 'cool'},
-      {id: '126', name: 'Nan', type: 'western'}
-    ]
-    last()
+    var q = url.parse(req.url, true).query.q
+    api.search(q, function (err, results) {
+      if (err) return last(err)
+      res.results = results
+      last()
+    })
   },
   function (req, res) {
     var results = []
-    res.results.forEach(function (result) {
+    res.results.hits.hits.forEach(function (result) {
       results.push(swap(res.templates['brief.html'], result))
     })
     var main = swap(res.templates['results.html'], {results: results.join('')})
-    res.send(swap(res.templates['layout.html'], {main: main}))
+    res.send(swap(res.templates['layout.html'], {main: main, title: 'ADMIN'}))
   }
 );
