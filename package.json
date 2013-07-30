@@ -18,11 +18,12 @@
     "pile": "0.0.5",
     "rut": "0.0.1",
     "send": "0.1.0",
-    "snout": "0.1.0",
+    "snout": "~0.1.0",
     "stack": "git://github.com/gsf/stack.git",
     "swap": "0.0.2",
     "log-timestamp": "~0.1.0",
     "request": "~2.22.0",
-    "html-truncate": "~1.0.3"
+    "html-truncate": "~1.0.3",
+    "hyperglue": "~1.2.1"
   }
 }
