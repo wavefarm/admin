@@ -9,7 +9,7 @@ var stack = require('stack')
 // Timestamp all output
 require('log-timestamp')
 
-var port = process.argv[2] || process.env.PORT || 1039
+var port = process.argv[2] || process.env.PORT || 1040
 
 stack.errorHandler = function (req, res, err) {
   //console.error('Error:', err.message)
