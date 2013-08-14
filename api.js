@@ -9,11 +9,15 @@ exports.req = function (path, cb) {
   }, function (err, res, body) {
     if (err) return cb(err)
     if (res.statusCode == 500) return cb(new Error('[API] ' + body.message))
-    cb(null, body)
+    cb(null, res, body)
   })
 }
 
 exports.search = function (query, cb) {
   var searchString = query ? '?q='+encodeURIComponent(query) : ''
   exports.req('/search'+searchString, cb)
+}
+
+exports.get = function (id, cb) {
+  exports.req('/'+id, cb)
 }

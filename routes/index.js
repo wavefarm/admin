@@ -12,7 +12,7 @@ module.exports = pile(
   load('field.html'),
   function (req, res, last) {
     var q = url.parse(req.url, true).query.q
-    api.search(q, function (err, results) {
+    api.search(q, function (err, apiRes, results) {
       if (err) return last(err)
       res.results = results
       last()
