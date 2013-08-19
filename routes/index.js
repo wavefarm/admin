@@ -1,15 +1,15 @@
 var api = require('../api')
-var load = require('../lib/load')
 var pile = require('pile')
-var swap = require('swap')
-var truncate = require('html-truncate')
 var url = require('url')
 
+function truncate (text) {
+  if (text.length > 60) {
+    text = text.substr(0, 60) + '...'
+  }
+  return text
+}
+
 module.exports = pile(
-  load('layout.html'),
-  load('brief.html'),
-  load('results.html'),
-  load('field.html'),
   function (req, res, last) {
     var q = url.parse(req.url, true).query.q
     api.search(q, function (err, apiRes, results) {
@@ -19,30 +19,31 @@ module.exports = pile(
     })
   },
   function (req, res) {
-    res.send(swap(res.templates['layout.html'], {
-      main: swap(res.templates['results.html'], {
-        count: '1-10',
-        results: res.results.hits.map(function (hit) {
-          var fields = []
-          for (var field in hit) {
-            if (['id', 'main', 'type'].indexOf(field) != -1) continue
-            if (typeof hit[field] != 'string') continue
-            fields.push(swap(res.templates['field.html'], {
-              field: field, 
-              value: truncate(hit[field], 40)
-            }))
-          }
-          var brief = {
-            id: hit.id,
-            main: hit.main,
-            type: hit.type,
-            fields: fields.join('')
-          }
-          return swap(res.templates['brief.html'], brief)
-        }).join(''),
-        total: res.results.total
-      }),
-      title: 'ADMIN'
-    }))
+    res.render({
+      '#main': {
+        _html: res.glue('results.html', {
+          '.result': res.results.hits.map(function (hit) {
+            var data = {
+              '.main a': {
+                href: '/' + hit.id,
+                _text: hit.main + ' (' + hit.type + ')'
+              }
+            }
+            var fields = []
+            for (var field in hit) {
+              if (['id', 'main', 'type'].indexOf(field) != -1) continue
+              if (typeof hit[field] != 'string') continue
+              fields.push({
+                '.name': field, 
+                '.value': truncate(hit[field])
+              })
+            }
+            data['.field'] = fields
+            return data
+          }),
+          '#count': res.results.total + ' results'
+        })
+      }
+    })
   }
-);
+)

@@ -48,10 +48,16 @@ var resTemplates = function (req, res, next) {
   next()
 }
 
+var resGlue = function (req, res, next) {
+  res.glue = function (template, data) {
+    return hyperglue(res.templates[template], data).innerHTML
+  }
+  next()
+}
+
 var resRender = function (req, res, next) {
-  res.render = function (template, data) {
-    var out = hyperglue(res.templates[template], data).innerHTML
-    res.send(out)
+  res.render = function (data) {
+    res.send(res.glue('layout.html', data))
   }
   next()
 }
@@ -60,6 +66,7 @@ http.createServer(stack(
   reqLog,
   resSend,
   resTemplates,
+  resGlue,
   resRender,
   rut.get('/', require('./routes')),
   rut.get(/^\/(\w{6})$/, require('./routes/item')),

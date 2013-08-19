@@ -9,6 +9,11 @@ module.exports = function (req, res, next, id) {
       '.item-name': item.main,
       '.raw': JSON.stringify(item, null, 2)
     }
-    res.render('item.html', data)
+    res.render({
+      title: item.main,
+      '#main': {
+        _html: res.glue('item.html', data)
+      }
+    })
   })
 }
