@@ -2,11 +2,16 @@
 var request = require('request')
 var settings = require('./settings')
 
-exports.req = function (path, cb) {
-  request({
+exports.req = function (path, options, cb) {
+  if (!cb) {
+    cb = options
+    options = {}
+  }
+  var defaults = {
     json: true,
     url: settings.apiUrl + path 
-  }, function (err, res, body) {
+  }
+  request(merge(defaults, options), function (err, res, body) {
     if (err) return cb(err)
     if (res.statusCode == 500) return cb(new Error('[API] ' + body.message))
     cb(null, res, body)
@@ -20,4 +25,18 @@ exports.search = function (query, cb) {
 
 exports.get = function (id, cb) {
   exports.req('/'+id, cb)
+}
+
+exports.put = function (id, item, cb) {
+  exports.req('/'+id, {
+    method: 'put',
+    json: item
+  }, cb)
+}
+
+function merge (a, b) {
+  for (var k in b) {
+    a[k] = b[k]
+  }
+  return a
 }
