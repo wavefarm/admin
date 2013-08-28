@@ -11,8 +11,8 @@ function truncate (text) {
 
 module.exports = pile(
   function (req, res, last) {
-    var q = url.parse(req.url, true).query.q
-    api.search(q, function (err, apiRes, results) {
+    req.q = url.parse(req.url, true).query.q
+    api.search(req.q, function (err, apiRes, results) {
       if (err) return last(err)
       res.results = results
       last()
@@ -43,7 +43,8 @@ module.exports = pile(
           }),
           '#count': res.results.total + ' results'
         })
-      }
+      },
+      '#q': {value: req.q}
     })
   }
 )
