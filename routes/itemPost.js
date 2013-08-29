@@ -1,9 +1,9 @@
 var api = require('../api')
 var fs = require('fs')
 var scalpel = require('scalpel')
-var stack = require('stack')
+var pile = require('pile')
 
-module.exports = stack(
+module.exports = pile(
   scalpel,
   function (req, res, next) {
     var id = req.params[0]

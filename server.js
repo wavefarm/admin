@@ -1,4 +1,5 @@
 var ecstatic = require('ecstatic')
+var fs = require('fs')
 var hash = require('./lib/hash')
 var http = require('http')
 var hyperglue = require('hyperglue')
@@ -16,7 +17,7 @@ var reqLog = function (req, res, next) {
   next()
 }
 
-var resSend = function (req, res, next) {
+var resRender = function (req, res, next) {
   res.send = function (out) {
     var etag = hash(out)
     if (req.headers['if-none-match'] === etag) {
@@ -26,25 +27,19 @@ var resSend = function (req, res, next) {
     res.writeHead(200, {'Content-Type': 'text/html', 'ETag': etag})
     res.end(out)
   }
-  next()
-}
-
-var templates = snout(__dirname + '/static/templates')
-var resTemplates = function (req, res, next) {
-  res.templates = templates
-  next()
-}
-
-var resGlue = function (req, res, next) {
-  res.glue = function (template, data) {
-    return hyperglue(res.templates[template], data).innerHTML
+  res.glue = function (template, data, cb) {
+    fs.readFile(__dirname + '/templates/' + template, {encoding: 'utf8'}, function (err, tmplt) {
+      if (err) return next(err)
+      cb(hyperglue(tmplt, data).innerHTML)
+    })
   }
-  next()
-}
-
-var resRender = function (req, res, next) {
-  res.render = function (data) {
-    res.send(res.glue('layout.html', data))
+  res.render = function (template, data) {
+    res.glue(template, data, function (inner) {
+      data['#main'] = {_html: inner}
+      res.glue('layout.html', data, function (out) {
+        res.send(out)
+      })
+    })
   }
   next()
 }
@@ -52,9 +47,6 @@ var resRender = function (req, res, next) {
 http.createServer(stack(
   reqLog,
   ecstatic({root: __dirname + '/static', handleError: false}),
-  resSend,
-  resTemplates,
-  resGlue,
   resRender,
   rut.get('/', require('./routes')),
   rut.get(/^\/(\w{6})$/, require('./routes/itemGet')),
