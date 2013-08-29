@@ -1,8 +1,8 @@
+var ecstatic = require('ecstatic')
 var hash = require('./lib/hash')
 var http = require('http')
 var hyperglue = require('hyperglue')
 var rut = require('rut')
-var send = require('send')
 var snout = require('snout')
 var stack = require('stack')
 
@@ -51,18 +51,14 @@ var resRender = function (req, res, next) {
 
 http.createServer(stack(
   reqLog,
+  ecstatic({root: __dirname + '/static', handleError: false}),
   resSend,
   resTemplates,
   resGlue,
   resRender,
   rut.get('/', require('./routes')),
   rut.get(/^\/(\w{6})$/, require('./routes/itemGet')),
-  rut.post(/^\/(\w{6})$/, require('./routes/itemPost')),
-  rut.get('/**', function (req, res, next, pathname) {
-    var sender = send(req, pathname).from('static')
-    if (process.env.ENV === 'prod') sender.maxage(60000)
-    sender.pipe(res)
-  })
+  rut.post(/^\/(\w{6})$/, require('./routes/itemPost'))
 )).listen(port, function () {
   console.log('Listening on port', port)
 })

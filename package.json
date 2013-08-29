@@ -17,7 +17,6 @@
     "hedge": "0.0.5",
     "pile": "0.0.5",
     "rut": "0.0.6",
-    "send": "0.1.0",
     "snout": "~0.1.0",
     "stack": "git://github.com/gsf/stack.git",
     "swap": "0.0.2",
@@ -25,6 +24,7 @@
     "request": "~2.22.0",
     "html-truncate": "~1.0.3",
     "hyperglue": "~1.2.1",
-    "scalpel": "0.0.4"
+    "scalpel": "0.0.4",
+    "ecstatic": "~0.4.7"
   }
 }
