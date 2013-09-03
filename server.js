@@ -8,7 +8,7 @@ var snout = require('snout')
 var stack = require('stack')
 
 // Timestamp logs
-require('logstamp')
+require('logstamp')(console)
 
 var port = process.argv[2] || process.env.PORT || 1040
 
