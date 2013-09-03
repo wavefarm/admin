@@ -34,6 +34,10 @@ exports.put = function (id, item, cb) {
   }, cb)
 }
 
+exports.schemas = function (cb) {
+  exports.req('/schemas', cb)
+}
+
 function merge (a, b) {
   for (var k in b) {
     a[k] = b[k]

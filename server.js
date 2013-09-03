@@ -1,3 +1,4 @@
+var api = require('./api')
 var ecstatic = require('ecstatic')
 var fs = require('fs')
 var hash = require('./lib/hash')
@@ -45,11 +46,20 @@ var resRender = function (req, res, next) {
   next()
 }
 
+var getSchemas = function (req, res, next) {
+  api.schemas(function (err, apiRes, schemas) {
+    if (err) return next(err)
+    req.schemas = schemas
+    next()
+  })
+}
+
 http.createServer(stack(
   reqLog,
   ecstatic({root: __dirname + '/static', handleError: false}),
   resRender,
   scalpel,
+  getSchemas,
   rut.get('/', require('./routes')),
   rut.get(/^\/(\w{6})$/, require('./routes/itemGet')),
   rut.post(/^\/(\w{6})$/, require('./routes/itemPost'))

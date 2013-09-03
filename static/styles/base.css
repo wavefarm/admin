@@ -41,7 +41,6 @@ header div a:hover {
   float: left;
   padding: 3px 10px;
 }
-
 .count {
   font-size: smaller;
 }
@@ -50,3 +49,13 @@ header div a:hover {
 }
 .result {
   padding: 10px 0;
+}
+.input input[type=text] {
+  width: 100%;
+}
+.label {
+  padding: 10px 0 0 0;
+}
+.raw {
+  width: 100%;
+}
