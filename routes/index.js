@@ -1,14 +1,6 @@
 var api = require('../api')
-var glue = require('../glue')
 var pile = require('pile')
 var url = require('url')
-
-function truncate (text) {
-  if (text.length > 60) {
-    text = text.substr(0, 60) + '...'
-  }
-  return text
-}
 
 module.exports = pile(
   function (req, res, next) {
@@ -30,11 +22,13 @@ module.exports = pile(
         }
         var fields = []
         for (var field in hit) {
+          var value = hit[field]
           if (['id', 'main', 'type'].indexOf(field) != -1) continue
-          if (typeof hit[field] != 'string') continue
+          if (typeof value != 'string') continue
+          if (value.length > 60) value = value.substr(0, 60) + '...'
           fields.push({
             '.name': field, 
-            '.value': truncate(hit[field])
+            '.value': value
           })
         }
         data['.field'] = fields
