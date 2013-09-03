@@ -1,18 +1,12 @@
 var api = require('../api')
 var fs = require('fs')
-var scalpel = require('scalpel')
-var pile = require('pile')
 
-module.exports = pile(
-  scalpel,
-  function (req, res, next) {
-    var id = req.params[0]
-    var item = JSON.parse(req.parsedBody.raw)
-    api.put(id, item, function (err, apiRes, item) {
-      if (err) return next(err)
-      res.statusCode = 303
-      res.setHeader('location', '/' + id)
-      res.end()
-    })
-  }
-)
+module.exports = function (req, res, next, id) {
+  var item = JSON.parse(req.parsedBody.raw)
+  api.put(id, item, function (err, apiRes, item) {
+    if (err) return next(err)
+    res.statusCode = 303
+    res.setHeader('location', '/' + id)
+    res.end()
+  })
+}

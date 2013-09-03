@@ -4,6 +4,7 @@ var hash = require('./lib/hash')
 var http = require('http')
 var hyperglue = require('hyperglue')
 var rut = require('rut')
+var scalpel = require('scalpel')
 var snout = require('snout')
 var stack = require('stack')
 
@@ -48,6 +49,7 @@ http.createServer(stack(
   reqLog,
   ecstatic({root: __dirname + '/static', handleError: false}),
   resRender,
+  scalpel,
   rut.get('/', require('./routes')),
   rut.get(/^\/(\w{6})$/, require('./routes/itemGet')),
   rut.post(/^\/(\w{6})$/, require('./routes/itemPost'))
