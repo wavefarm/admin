@@ -35,12 +35,12 @@ module.exports = function (req, res, next, id) {
       title: item.main,
       '.item-name': item.main,
       '.raw': JSON.stringify(item, null, 2),
-      '.field': schema.fields.map(function (field) {
+      '.field': schema && schema.fields.map(function (field) {
         var renderInput = inputMap[field.type] || function (name, value) {
           return hyperglue('<input type="text">', {
             input: {
               id: name + 'Input',
-              value: value
+              value: String(value)
             }
           })
         }

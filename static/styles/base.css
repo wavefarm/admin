@@ -6,11 +6,6 @@ body {
   margin: 0 0 0 0;
   padding: 0 0 0 0;
 }
-form.search {
-}
-form.search input[type=text] {
-  width: 300px;
-}
 h1.logo {
   float: left;
   font-size: 32px;
@@ -22,9 +17,8 @@ h1.logo a {
   color: #000;
 }
 header {
-  min-width: 600px;
   overflow: hidden;
-  padding: 0 4px;
+  padding: 0 10px;
 }
 header div {
   margin: 0;
@@ -37,9 +31,20 @@ header div a {
 header div a:hover {
   background: #ddd;
 }
+input[type=text], textarea {
+  width: 100%;
+}
+input[type=text], input[type=date], textarea {
+  background: #eee;
+  border: 1px solid black;
+  padding: 0 2px;
+}
+textarea {
+  overflow: auto;
+  resize: none;
+}
 .controls {
-  float: left;
-  padding: 3px 10px;
+  padding: 10px;
 }
 .count {
   font-size: smaller;
@@ -50,12 +55,6 @@ header div a:hover {
 .result {
   padding: 10px 0;
 }
-.input input[type=text] {
-  width: 100%;
-}
 .label {
   padding: 10px 0 0 0;
-}
-.raw {
-  width: 100%;
 }
