@@ -31,13 +31,16 @@ header div a {
 header div a:hover {
   background: #ddd;
 }
-input[type=text], textarea {
+input[type=text], input[type=url], textarea {
   width: 100%;
 }
-input[type=text], input[type=date], textarea {
+input[type=date], input[type=text], input[type=url], textarea {
   background: #eee;
-  border: 1px solid black;
+  border: 1px solid #bbb;
   padding: 0 2px;
+}
+input[type=checkbox] {
+  vertical-align: middle;
 }
 textarea {
   overflow: auto;
@@ -49,12 +52,42 @@ textarea {
 .count {
   font-size: smaller;
 }
-#main {
+.item {
   padding: 10px;
+}
+.immutable {
+  padding: 10px 0 0 0;
+}
+.immutable span {
+  color: #777;
 }
 .result {
   padding: 10px 0;
 }
-.label {
+.form-field {
   padding: 10px 0 0 0;
+}
+#results {
+  padding: 10px;
+}
+#raw {
+  background: #111;
+  color: #eee;
+  display: none;
+  font-family: monospace;
+  padding: 40px 10px 20px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+#raw-toggle {
+  color: #777;
+  margin: 40px 0 0 0;
+  font-size: smaller;
+}
+#raw-toggle span:hover {
+  cursor: pointer;
+  color: #333;
+}
+#q {
+  background: #fff;
 }

@@ -1,11 +1,21 @@
 <div class="item">
-  <h2 class="item-name"></h2>
+  <div class="item-type immutable">type <span></span></div>
   <form method="post">
-    <textarea cols="60" rows="20" class="raw" name="raw"></textarea>
-    <div class="field">
-      <div class="label"><label></label></div>
-      <div class="input"></div>
-    </div>
+    <input type="hidden" name="raw">
+    <div class="form-field"></div>
     <p><input type="submit" value="save"></p>
   </form>
+  <div id="raw-toggle"><span>view raw</span></div>
 </div>
+<div id="raw"></div>
+<script>
+  var raw = document.getElementById('raw');
+  var rawToggle = document.getElementById('raw-toggle');
+  rawToggle.addEventListener('click', function () {
+    if (raw.style['display'] != 'block') {
+      raw.style['display'] = 'block';
+    } else {
+      raw.style['display'] = 'none';
+    }
+  });
+</script>
