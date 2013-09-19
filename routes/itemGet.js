@@ -48,10 +48,37 @@ var inputMap = {
   url: defaultRender('url')
 };
 
+function relRender (type) {
+  var rel = type.substr(type.indexOf(':') + 1);
+  return function (name, value) {
+    var ids = [], mains = [];
+    for (var i = 0; i < value.length; i++) {
+      ids.push(value[i].id);
+      mains.push(value[i].main);
+    }
+    
+    return hyperglue('<div class="label"><label></label></div><textarea></textarea>', {
+      label: {
+        'for': name + 'Input',
+        _text: name
+      },
+      'textarea': {
+        id: name + 'Input',
+        name: name,
+        'data-rel': rel,
+        'data-ids': ids.join(' '),
+        _text: mains.join('\n')
+      }
+    });
+  };
+}
+  
+
 function fieldWidget (item, schema) {
   return function (fieldName) {
     var field = schema.fields[fieldName];
     var renderInput = inputMap[field.type] || defaultRender();
+    if (field.type && field.type.indexOf('rel:') === 0) renderInput = relRender(field.type);
     return {div: {_html: renderInput(fieldName, item[fieldName]).innerHTML}};
   };
 }
