@@ -1,6 +1,6 @@
 {
-  "name": "admin.free103point9.org",
-  "description": "Admin site for free103point9",
+  "name": "admin.wavefarm.org",
+  "description": "Admin site for wavefarm",
   "version": "0.0.1",
   "author": "Gabriel Farrell <g@grrawr.com>",
   "engines": {
@@ -10,7 +10,7 @@
   "main": "server",
   "repository": {
     "type": "git",
-    "url": "http://github.com/free103point9/admin.free103point9.org.git"
+    "url": "http://github.com/wavefarm/admin.wavefarm.org.git"
   },
   "dependencies": {
     "es": "0.0.5",
