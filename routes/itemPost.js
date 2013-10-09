@@ -7,8 +7,12 @@ function defaultClean (value) {
 }
 
 function relClean (value) {
-  return value.split(/\s+/).map(function (id) {
-    return {id: id};
+  return value.split(/\n/).map(function (rel) {
+    var relArr = rel.match(/^(.+?)\s+(.+)\s*$/);
+    return {
+      id: relArr[1],
+      main: relArr[2]
+    };
   });
 }
 

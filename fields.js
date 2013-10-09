@@ -49,19 +49,19 @@ var inputMap = {
 function relRender (type) {
   var rel = type.substr(type.indexOf(':') + 1);
   return function (name, value) {
-    return hyperglue('<div class="label"><label></label></div><div class="input"><input type="text"></div>', {
+    return hyperglue('<div class="label"><label></label></div><textarea></textarea>', {
       label: {
         'for': name + '-input',
         _text: name
       },
-      '.input input': {
+      'textarea': {
         'data-rel': rel,
         id: name + '-input',
         name: name,
         'class': 'rel',
-        value: value.map(function (item) {
-          return item.id;
-        }).join(' '),
+        _text: value.map(function (item) {
+          return item.id + ' ' + item.main;
+        }).join('\n'),
       }
     });
   };

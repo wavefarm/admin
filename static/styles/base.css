@@ -37,6 +37,7 @@ input[type=text], input[type=url], textarea {
 input[type=date], input[type=text], input[type=url], textarea {
   background: #eee;
   border: 1px solid #bbb;
+  font-family: monospace;
   padding: 1px 2px;
 }
 input[type=checkbox] {
