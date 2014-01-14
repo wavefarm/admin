@@ -12,8 +12,12 @@ module.exports = pile(
     })
   },
   function (req, res) {
-    res.render('results.html', {
-      '.result': res.results.hits.map(function (hit) {
+    var result = [];
+    if (!res.results.hits) {
+      console.warn('Warning: No hits');
+      console.warn(res.results);
+    } else {
+      result = res.results.hits.map(function (hit) {
         var data = {
           '.main a': {
             href: '/' + hit.id,
@@ -33,7 +37,10 @@ module.exports = pile(
         }
         data['.field'] = fields
         return data
-      }),
+      });
+    }
+    res.render('results.html', {
+      '.result': result,
       '#count': res.results.total + ' results',
       '#q': {value: req.q}
     })
