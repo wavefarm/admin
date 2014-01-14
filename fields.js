@@ -78,5 +78,5 @@ function fieldWidget (item, schema) {
 }
 
 module.exports = function (item, schema) {
-  return schema && schema.item.map(fieldWidget(item, schema));
+  return schema && schema.item && schema.item.map(fieldWidget(item, schema));
 };
