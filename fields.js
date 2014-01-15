@@ -49,6 +49,7 @@ var inputMap = {
 function relRender (type) {
   var rel = type.substr(type.indexOf(':') + 1);
   return function (name, value) {
+    value = value || [];
     return hyperglue('<div class="label"><label></label></div><textarea></textarea>', {
       label: {
         'for': name + '-input',
