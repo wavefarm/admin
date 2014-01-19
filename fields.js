@@ -11,7 +11,7 @@ function defaultRender (type) {
         id: name + '-input',
         name: name,
         type: type || 'text',
-        value: String(value)
+        value: value ? String(value) : ''
       }
     });
   };
@@ -60,7 +60,7 @@ function relRender (type) {
         id: name + '-input',
         name: name,
         'class': 'rel',
-        _text: value.map(function (item) {
+        _text: value.filter(function (i) {return i}).map(function (item) {
           return item.id + ' ' + item.main;
         }).join('\n'),
       }
