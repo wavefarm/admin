@@ -31,10 +31,17 @@ header div a {
 header div a:hover {
   background: #ddd;
 }
-input[type=text], input[type=url], textarea {
+input[type=search],
+input[type=text],
+input[type=url],
+textarea {
   width: 100%;
 }
-input[type=date], input[type=text], input[type=url], textarea {
+input[type=date],
+input[type=search],
+input[type=text],
+input[type=url],
+textarea {
   background: #eee;
   border: 1px solid #bbb;
   font-family: monospace;
