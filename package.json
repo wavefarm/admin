@@ -26,5 +26,8 @@
     "hyperglue": "~1.2.1",
     "scalpel": "0.0.4",
     "ecstatic": "~0.4.7"
+  },
+  "devDependencies": {
+    "browserify": "^3.30.1"
   }
 }
