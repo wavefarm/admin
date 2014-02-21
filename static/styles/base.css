@@ -102,3 +102,6 @@ textarea {
 #q {
   background: #fff;
 }
+.rel-add input {
+  width: 20%;
+}
