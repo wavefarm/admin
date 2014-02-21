@@ -29,5 +29,8 @@
   },
   "devDependencies": {
     "browserify": "^3.30.1"
+  },
+  "scripts": {
+    "postinstall": "browserify browser/main.js -o static/scripts/bundle.js"
   }
 }
