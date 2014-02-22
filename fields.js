@@ -32,6 +32,7 @@ var inputMap = {
   date: defaultRender('date'),
   recurrence: function (name, value) {
     // TODO take recurrence value (should be an object) and render fieldset
+    return hyperglue('<div></div>', {});
   },
   text: function (name, value) {
     return hyperglue('<div class="label"><label></label></div><textarea></textarea>', {
