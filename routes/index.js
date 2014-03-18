@@ -1,23 +1,16 @@
 var api = require('../api')
-var pile = require('pile')
 var url = require('url')
 
-module.exports = pile(
-  function (req, res, next) {
-    req.q = url.parse(req.url, true).query.q
-    api.search(req.q, function (err, apiRes, results) {
-      if (err) return next(err)
-      res.results = results
-      next()
-    })
-  },
-  function (req, res) {
+module.exports = function (req, res) {
+  var q = url.parse(req.url, true).query.q
+  api.search(q, function (err, apiRes, results) {
+    if (err) return next(err)
     var result = [];
-    if (!res.results.hits) {
+    if (!results.hits) {
       console.warn('Warning: No hits');
-      console.warn(res.results);
+      console.warn(results);
     } else {
-      result = res.results.hits.map(function (hit) {
+      result = results.hits.map(function (hit) {
         var data = {
           '.main a': {
             href: '/' + hit.id,
@@ -41,8 +34,8 @@ module.exports = pile(
     }
     res.render('results.html', {
       '.result': result,
-      '#count': res.results.total + ' results',
-      '#q': {value: req.q}
+      '#count': results.total + ' results',
+      '#q': {value: q}
     })
-  }
-)
+  })
+}

@@ -1,13 +1,10 @@
 var api = require('./api')
-var ecstatic = require('ecstatic')
 var fs = require('fs')
 var hash = require('./lib/hash')
 var http = require('http')
 var hyperglue = require('hyperglue')
-var rut = require('rut')
-var scalpel = require('scalpel')
-var snout = require('snout')
-var stack = require('stack')
+var st = require('st')
+var url = require('url')
 
 // Timestamp logs
 require('logstamp')(function () {
@@ -16,12 +13,12 @@ require('logstamp')(function () {
 
 var port = process.argv[2] || process.env.PORT || 1040
 
-var reqLog = function (req, res, next) {
-  console.log(req.method, req.url)
-  next()
-}
-
-var resRender = function (req, res, next) {
+var decorate = function (req, res) {
+  res.error = function (err) {
+    console.error(err.stack)
+    res.statusCode = 500
+    return res.end('Server Error')
+  }
   res.send = function (out) {
     var etag = hash(out)
     if (req.headers['if-none-match'] === etag) {
@@ -33,7 +30,7 @@ var resRender = function (req, res, next) {
   }
   res.glue = function (template, data, cb) {
     fs.readFile(__dirname + '/templates/' + template, {encoding: 'utf8'}, function (err, tmplt) {
-      if (err) return next(err)
+      if (err) return res.error(err)
       cb(hyperglue(tmplt, data).innerHTML)
     })
   }
@@ -45,7 +42,6 @@ var resRender = function (req, res, next) {
       })
     })
   }
-  next()
 }
 
 var getSchemas = function (req, res, next) {
@@ -56,15 +52,27 @@ var getSchemas = function (req, res, next) {
   })
 }
 
-http.createServer(stack(
-  reqLog,
-  ecstatic({root: __dirname + '/static', handleError: false}),
-  resRender,
-  scalpel,
-  getSchemas,
-  rut.get('/', require('./routes')),
-  rut.get(/^\/(\w{6})$/, require('./routes/itemGet')),
-  rut.post(/^\/(\w{6})$/, require('./routes/itemPost'))
-)).listen(port, function () {
+var mount = st({cache: false, path: 'static'})
+
+var itemRe = /^\/(\w{6})$/
+
+http.createServer(function (req, res) {
+  console.log(req.method, req.url)
+  decorate(req, res)
+
+  req.parsedUrl = url.parse(req.url);
+  p = req.parsedUrl.pathname;
+
+  // Index
+  if (p == '/') return require('./routes')(req, res)
+
+  // Item
+  if (itemRe.test(p)) {
+    req.itemId = itemRe.exec(p)[1]
+    return require('./routes/item')(req, res)
+  }
+
+  mount(req, res)
+}).listen(port, function () {
   console.log('Listening on port', port)
 })
