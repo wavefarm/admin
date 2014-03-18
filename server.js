@@ -10,7 +10,9 @@ var snout = require('snout')
 var stack = require('stack')
 
 // Timestamp logs
-require('logstamp')(console)
+require('logstamp')(function () {
+  return new Date().toISOString() + ' [admin.wavefarm.org] ';
+});
 
 var port = process.argv[2] || process.env.PORT || 1040
 
