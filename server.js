@@ -14,6 +14,11 @@ require('logstamp')(function () {
 var port = process.argv[2] || process.env.PORT || 1040
 
 var decorate = function (req, res) {
+  res.notFound = function () {
+    console.warn('Warning: Not Found');
+    res.statusCode = 404;
+    return res.end('Not Found');
+  }
   res.error = function (err) {
     console.error(err.stack)
     res.statusCode = 500
