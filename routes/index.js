@@ -4,7 +4,7 @@ var url = require('url')
 module.exports = function (req, res) {
   var q = url.parse(req.url, true).query.q
   api.search(q, function (err, apiRes, results) {
-    if (err) return next(err)
+    if (err) return res.error(err)
     var result = [];
     if (!results.hits) {
       console.warn('Warning: No hits');
