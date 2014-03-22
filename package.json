@@ -18,7 +18,8 @@
     "html-truncate": "~1.0.3",
     "hyperglue": "~1.2.1",
     "wavefarm": "0.0.1",
-    "st": "^0.3.1"
+    "st": "^0.3.1",
+    "hyperstream": "^0.5.0"
   },
   "devDependencies": {
     "browserify": "^3.30.1"
