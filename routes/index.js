@@ -1,4 +1,6 @@
 var api = require('../api')
+var hs = require('hyperstream')
+var t = require('../templates')
 var url = require('url')
 
 module.exports = function (req, res) {
@@ -32,10 +34,12 @@ module.exports = function (req, res) {
         return data
       });
     }
-    res.render('results.html', {
-      '.result': result,
-      '#count': results.total + ' results',
+    t('layout.html').pipe(hs({
+      '#main': t('results.html').pipe(hs({
+        '.result': result,
+        '#count': results.total + ' results',
+      })),
       '#q': {value: q}
-    })
+    })).pipe(res)
   })
 }

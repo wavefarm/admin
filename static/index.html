@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>admin</title>
+    <link href="style.css" rel="stylesheet">
+    <link href="bigscreen.css" rel="stylesheet" media="screen and (min-width: 40.5em)">
+  </head>
+  <body>
+    <header>
+      <h1 class="logo"><a href="/">admin</a></h1>
+    </header>
+    <div class="controls">
+      <form class="search" action="/">
+        <input type="search" name="q" id="q" placeholder="search">
+      </form>
+    </div>
+    <div class="main"></div>
+    <script src="/scripts/jquery.js"></script>
+    <script src="/scripts/bundle.js"></script>
+    <script>
+      // Basic textarea resizing
+      // TODO replace textareas with contenteditable divs
+      var noOverflow = function (textarea) {
+        textarea.rows = textarea.value.split("\n").length;
+      };
+      var i, textareas = document.getElementsByTagName('textarea');
+      for (i = 0; i < textareas.length; i++) {
+        noOverflow(textareas[i]);
+      };
+    </script>
+  </body>
+</html>

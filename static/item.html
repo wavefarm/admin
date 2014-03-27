@@ -1,0 +1,22 @@
+<div class="item">
+  <div class="item-id immutable">id <span></span></div>
+  <div class="item-type immutable">type <span></span></div>
+  <form method="post">
+    <input type="hidden" name="raw">
+    <div class="form-field"></div>
+    <div class="submit"><input type="submit" value="save"></div>
+  </form>
+  <div id="raw-toggle"><span>view raw</span></div>
+</div>
+<div id="raw"></div>
+<script>
+  var raw = document.getElementById('raw');
+  var rawToggle = document.getElementById('raw-toggle');
+  rawToggle.addEventListener('click', function () {
+    if (raw.style['display'] != 'block') {
+      raw.style['display'] = 'block';
+    } else {
+      raw.style['display'] = 'none';
+    }
+  });
+</script>

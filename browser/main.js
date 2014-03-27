@@ -13,7 +13,7 @@ rels.each(function (i, rel) {
     }
   });
   relItems.forEach(function (item) {
-    formField.append('<div class="rel-item"><a href="/'+item.id+'" target="_blank">'+item.main+'</a> <a href="">remove</a></div>');
+    formField.append('<div class="rel-item"><a href="/'+item.id+'" target="_blank">'+item.main+'</a> <a href="" title="remove">x</a></div>');
   });
-  formField.append('<div class="rel-add"><input type="text"> <a href="">add</a></div>');
+  formField.append('<div class="rel-add"><input type="text"> <a href="" title="add">+</a></div>');
 });

@@ -5,6 +5,7 @@ var http = require('http')
 var hyperglue = require('hyperglue')
 var st = require('st')
 var url = require('url')
+var zlib = require('zlib')
 
 // Timestamp logs
 require('logstamp')(function () {
@@ -13,16 +14,14 @@ require('logstamp')(function () {
 
 var port = process.argv[2] || process.env.PORT || 1040
 
-var decorate = function (req, res) {
-  res.notFound = function () {
+function decorate (req, res) {
+  res.lost = function () {
     console.warn('Warning: Not Found');
-    res.statusCode = 404;
-    return res.end('Not Found');
+    return require('./routes/404')(req, res)
   }
   res.error = function (err) {
     console.error(err.stack)
-    res.statusCode = 500
-    return res.end('Server Error')
+    return require('./routes/500')(req, res)
   }
   res.send = function (out) {
     var etag = hash(out)
@@ -47,37 +46,45 @@ var decorate = function (req, res) {
       })
     })
   }
+  res.layout = function () {
+    res.statusCode = 200
+    res.setHeader('content-type', 'text/html')
+    res.setHeader('content-encoding', 'gzip')
+    return fs.createReadStream('templates/layout.html').pipe(zlib.Gzip()).pipe(res)
+  }
 }
 
-var getSchemas = function (req, res, next) {
-  api.schemas(function (err, apiRes, schemas) {
-    if (err) return next(err)
-    req.schemas = schemas
-    next()
-  })
-}
-
-var mount = st({cache: false, path: 'static'})
+var mount = st({
+  cache: false,
+  index: 'index.html',
+  passthrough: true,
+  path: 'static',
+})
 
 var itemRe = /^\/(\w{6})$/
 
 http.createServer(function (req, res) {
   console.log(req.method, req.url)
-  decorate(req, res)
 
-  req.parsedUrl = url.parse(req.url);
-  p = req.parsedUrl.pathname;
+  mount(req, res, function (err) {
+    decorate(req, res)
 
-  // Index
-  if (p == '/') return require('./routes')(req, res)
+    if (err) return res.error(err)
 
-  // Item
-  if (itemRe.test(p)) {
-    req.itemId = itemRe.exec(p)[1]
-    return require('./routes/item')(req, res)
-  }
+    req.parsedUrl = url.parse(req.url);
+    var p = req.parsedUrl.pathname;
 
-  mount(req, res)
+    // Local proxy for api.wavefarm.org
+    if (p.indexOf('/api') == 0) return require('./routes/api')(req, res);
+
+    // Serve the index for items, to be filled in by the client
+    if (itemRe.test(p)) {
+      req.itemId = itemRe.exec(p)[1]
+      return require('./routes/item')(req, res)
+    }
+
+    res.lost()
+  })
 }).listen(port, function () {
   console.log('Listening on port', port)
 })

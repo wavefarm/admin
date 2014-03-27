@@ -18,13 +18,15 @@
     "html-truncate": "~1.0.3",
     "hyperglue": "~1.2.1",
     "wavefarm": "0.0.1",
-    "st": "^0.3.1",
+    "st": "^0.4.0",
     "hyperstream": "^0.5.0"
   },
   "devDependencies": {
     "browserify": "^3.30.1"
   },
   "scripts": {
-    "postinstall": "browserify browser/main.js -o static/scripts/bundle.js"
+    "postinstall": "browserify browser/main.js -o static/scripts/bundle.js",
+    "watch-js": "watchify browser/main.js -o static/scripts/bundle.js -dv",
+    "dev": "npm run watch-js & ../deva/server.js"
   }
 }
