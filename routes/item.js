@@ -1,20 +1,23 @@
-var api = require('../api');
-var fields = require('../fields');
-var hs = require('hyperstream')
-var render = require('../render');
-var t = require('../templates')
+var fs = require('fs')
 
+
+var html = __dirname + '/../static/index.html'
 
 module.exports = function (req, res) {
-  api.get(req.itemId, function (err, apiRes, item) {
-    if (err) return res.error(err);
-    if (apiRes.statusCode == 404) return res.notFound();
-    var template = t(item.type + '.html')
-    t('layout.html').pipe(hs({
-      'title': item.main,
-      '.main': render(template, item),
-      '.raw': JSON.stringify(item, null, 2)
-    })).pipe(res)
+  fs.stat(html, function (err, stats) {
+    var tag = '"' + stats.dev + '-' + stats.ino + '-' + stats.mtime.getTime() + '"'
+    if (req.headers['if-none-match'] === tag) {
+      res.statusCode = 304
+      res.end()
+    }
+    else {
+      res.statusCode = 200
+      res.setHeader('content-type', 'text/html')
+      res.setHeader('etag', tag)
+      fs.createReadStream(html).pipe(res)
+    }
+  })
+}
 
     //res.render('item.html', {
     //  title: item.main,
@@ -25,5 +28,3 @@ module.exports = function (req, res) {
     //  'input[name=raw]': {value: raw},
     //  '.form-field': fields(item, schema)
     //})
-  })
-}
