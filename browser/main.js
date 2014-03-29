@@ -1,5 +1,8 @@
 var rels = $('.rel');
 
+// SSE reload
+require('deva');
+
 rels.each(function (i, rel) {
   rel = $(rel);
   rel.hide();

@@ -19,7 +19,8 @@
     "hyperglue": "~1.2.1",
     "wavefarm": "0.0.1",
     "st": "^0.4.0",
-    "hyperstream": "^0.5.0"
+    "hyperstream": "^0.5.0",
+    "deva": "0.0.6"
   },
   "devDependencies": {
     "browserify": "^3.30.1"
