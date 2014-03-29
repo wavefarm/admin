@@ -18,7 +18,7 @@
     "html-truncate": "~1.0.3",
     "hyperglue": "~1.2.1",
     "wavefarm": "0.0.1",
-    "st": "^0.4.0",
+    "send": "^0.2.0",
     "hyperstream": "^0.5.0",
     "deva": "0.0.6"
   },

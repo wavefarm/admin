@@ -3,7 +3,7 @@ var fs = require('fs')
 var hash = require('./lib/hash')
 var http = require('http')
 var hyperglue = require('hyperglue')
-var st = require('st')
+var send = require('send')
 var url = require('url')
 var zlib = require('zlib')
 
@@ -54,22 +54,18 @@ function decorate (req, res) {
   }
 }
 
-var mount = st({
-  cache: false,
-  index: 'index.html',
-  passthrough: true,
-  path: 'static',
-})
-
 var itemRe = /^\/(\w{6})$/
 
 http.createServer(function (req, res) {
   console.log(req.method, req.url)
 
-  mount(req, res, function (err) {
+  send(req, req.url).root('static').on('error', function (err) {
     decorate(req, res)
 
-    if (err) return res.error(err)
+    if (err.status != 404) {
+      console.error(err.stack)
+      return res.error(err)
+    }
 
     req.parsedUrl = url.parse(req.url);
     var p = req.parsedUrl.pathname;
@@ -84,7 +80,7 @@ http.createServer(function (req, res) {
     }
 
     res.lost()
-  })
+  }).pipe(res)
 }).listen(port, function () {
   console.log('Listening on port', port)
   if (process.send) process.send('online')
