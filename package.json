@@ -26,8 +26,8 @@
     "browserify": "^3.30.1"
   },
   "scripts": {
-    "postinstall": "browserify browser/main.js -o static/scripts/bundle.js",
-    "watch-js": "watchify browser/main.js -o static/scripts/bundle.js -dv",
-    "dev": "npm run watch-js & ../deva/server.js"
+    "postinstall": "browserify browser/main.js -o static/bundle.js",
+    "watch-js": "watchify browser/main.js -o static/bundle.js -dv",
+    "dev": "npm run watch-js & deva"
   }
 }

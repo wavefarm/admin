@@ -1,4 +1,4 @@
 node_modules
 npm-debug.log
-static/scripts/bundle.js
+static/bundle.js
 env.sh
