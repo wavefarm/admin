@@ -1,7 +1,20 @@
+var api = require('../api')
+var page = require('page')
 var rels = $('.rel');
 
 // SSE reload
 require('deva');
+
+page('/', function (ctx) {
+  console.log(ctx)
+  api.search(null, function (err, results) {
+    if (err) return console.log(err)
+    console.log(results)
+  })
+})
+
+page()
+
 
 rels.each(function (i, rel) {
   rel = $(rel);

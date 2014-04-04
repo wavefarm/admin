@@ -1,1 +1,2 @@
-exports.apiUrl = process.env.APIURL || 'http://localhost:1039'
+exports.apiHost = process.env.APIHOST || 'localhost'
+exports.apiPort = process.env.APIPORT || '1039'
