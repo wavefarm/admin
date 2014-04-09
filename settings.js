@@ -1,2 +1,2 @@
-exports.apiHost = process.env.APIHOST || 'localhost'
-exports.apiPort = process.env.APIPORT || '1039'
+exports.apiHost = process.env.APIHOST || 'api.wavefarm.org'
+exports.apiPort = process.env.APIPORT || '80'
