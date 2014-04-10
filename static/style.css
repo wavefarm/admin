@@ -120,10 +120,16 @@ textarea {
 }
 .result {
   padding: 5px 0;
+  transition: transform 2s ease;
+  -webkit-transition: -webkit-transform 2s ease;
 }
 .result a {
   background-color: #ddd;
   padding: 10px 5px;
+}
+.result.slide-out {
+  transform: translate(-3000px);
+  -webkit-transform: translate(-3000px);
 }
 .form-field {
   padding: 10px 0 0 0;

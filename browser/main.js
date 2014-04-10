@@ -14,7 +14,7 @@ var $main = $('.main')
 page('/', function (ctx) {
   console.log(ctx)
   if (ctx.querystring == $main.data('querystring')) {
-    return $('.result').show('slow')
+    return $('.result').removeClass('slide-out')
   }
   $main.data('querystring', ctx.querystring)
   var q = qs.parse(ctx.querystring).q
@@ -37,6 +37,8 @@ page('/', function (ctx) {
 
 page('/:id', function (ctx) {
   console.log(ctx)
+  var id = ctx.params.id
+  var item = $('#' + id)
   if (ctx.state.querystring) {
     // TODO Load results but keep them hidden
   } else {
@@ -44,10 +46,10 @@ page('/:id', function (ctx) {
     ctx.state.querystring = $main.data('querystring')
 
     // Hide other results
-    $('.result').not('#' + id).hide('slow')
+    $('.result').not('#' + id).addClass('slide-out')
+
+    // TODO transition result div to item div
   }
-  var id = ctx.params.id
-  var item = $('#' + id)
 })
 
 // Register popstate and click bindings
