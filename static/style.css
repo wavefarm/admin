@@ -35,7 +35,8 @@ a {
   text-decoration: none;
 }
 body {
-  font-family: sans-serif;
+  font-family: "Droid Sans", sans-serif;
+  font-size: 18px;
 	line-height: 1;
   padding: 10px;
 }
@@ -108,6 +109,7 @@ textarea {
 }
 .count {
   font-size: smaller;
+  padding: 0 0 20px;
 }
 .item {
   padding: 10px;
@@ -119,17 +121,17 @@ textarea {
   color: #777;
 }
 .result {
-  padding: 5px 0;
   transition: transform 2s ease;
   -webkit-transition: -webkit-transform 2s ease;
 }
-.result a {
-  background-color: #ddd;
-  padding: 10px 5px;
+.result.not-selected {
+  transform: translate(-1000px);
+  -webkit-transform: translate(-1000px);
 }
-.result.slide-out {
-  transform: translate(-3000px);
-  -webkit-transform: translate(-3000px);
+.result a {
+  background-color: #eee;
+  margin: 1px 0 0 0;
+  padding: 20px 10px 14px;
 }
 .form-field {
   padding: 10px 0 0 0;

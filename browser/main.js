@@ -13,8 +13,18 @@ var $main = $('.main')
 
 page('/', function (ctx) {
   console.log(ctx)
+  var $results, $item
+  // If we have a querystring already then we're returning to the list from an item
   if (ctx.querystring == $main.data('querystring')) {
-    return $('.result').removeClass('slide-out')
+    $results = $('.result')
+    $item = $results.not('.not-selected')
+    $results.show('slow')
+    // Don't wait for the end of show to scroll but give it a head start
+    setTimeout(function () {
+      $('body').animate({scrollTop: $item.offset().top}, 2000)
+    }, 500)
+    $results.removeClass('not-selected')
+    return
   }
   $main.data('querystring', ctx.querystring)
   var q = qs.parse(ctx.querystring).q
@@ -46,7 +56,9 @@ page('/:id', function (ctx) {
     ctx.state.querystring = $main.data('querystring')
 
     // Hide other results
-    $('.result').not('#' + id).addClass('slide-out')
+    $('.result').not('#' + id).addClass('not-selected').one('transitionend', function (e) {
+      $(this).hide('slow')
+    })
 
     // TODO transition result div to item div
   }
