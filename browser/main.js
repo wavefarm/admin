@@ -9,11 +9,16 @@ require('deva');
 
 var $pageTitle = $('title')
 var $q = $('#q')
+var $count = $('.count')
+var $total = $('.total')
 var $main = $('.main')
 
 page('/', function (ctx) {
   console.log(ctx)
   var $results, $item
+  var q = qs.parse(ctx.querystring).q
+  $q.val(q)
+  $count.show('slow')
   // If we have a querystring already then we're returning to the list from an item
   if (ctx.querystring == $main.data('querystring')) {
     $results = $('.result')
@@ -27,17 +32,12 @@ page('/', function (ctx) {
     return
   }
   $main.data('querystring', ctx.querystring)
-  var q = qs.parse(ctx.querystring).q
-  $q.val(q)
   api.search(q, function (err, results) {
     //console.log(results)
-    var count = $('.count')
     if (err) return console.error(err)
-    $main.html(h('.count',
-      h('span.total', results.total),
-      h('span', ' results')
-    ))
     var result
+    $total.html(results.total)
+    $main.html('')
     for (var i = 0; i < results.hits.length; i++) {
       result = results.hits[i]
       $main.append(require('../render/result')(result))
@@ -49,6 +49,8 @@ page('/:id', function (ctx) {
   console.log(ctx)
   var id = ctx.params.id
   var item = $('#' + id)
+  $q.val('')
+  $count.hide('slow')
   if (ctx.state.querystring) {
     // TODO Load results but keep them hidden
   } else {
