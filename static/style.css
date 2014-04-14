@@ -51,6 +51,9 @@ q:before, q:after {
 	content: '';
 	content: none;
 }
+label {
+  display: block;
+}
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
@@ -82,6 +85,7 @@ input[type=search],
 input[type=text],
 input[type=url],
 textarea {
+  display: block;
   width: 100%;
 }
 input[type=date],
@@ -89,7 +93,6 @@ input[type=search],
 input[type=text],
 input[type=url],
 textarea {
-  background: #eee;
   border: 1px solid #bbb;
   font-family: monospace;
   padding: 1px 2px;
@@ -121,6 +124,7 @@ textarea {
   color: #777;
 }
 .result {
+  background-color: #eee;
   transition: transform 2s ease;
   -webkit-transition: -webkit-transform 2s ease;
 }
@@ -129,7 +133,6 @@ textarea {
   -webkit-transform: translate(-1000px);
 }
 .result a {
-  background-color: #eee;
   margin: 1px 0 0 0;
   padding: 20px 10px 14px;
 }

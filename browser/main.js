@@ -46,9 +46,10 @@ page('/', function (ctx) {
 })
 
 page('/:id', function (ctx) {
-  console.log(ctx)
+  //console.log(ctx)
   var id = ctx.params.id
-  var item = $('#' + id)
+  var $item = $('#' + id)
+  var item = $item.data('item')
   $q.val('')
   $count.hide('slow')
   if (ctx.state.querystring) {
@@ -60,9 +61,10 @@ page('/:id', function (ctx) {
     // Hide other results
     $('.result').not('#' + id).addClass('not-selected').one('transitionend', function (e) {
       $(this).hide('slow')
+      // Note that dynamic requires need to be passed with -r to
+      // browserify, and are therefore . rather than ..
+      $item.html(require('./render/' + item.type)(item))
     })
-
-    // TODO transition result div to item div
   }
 })
 
