@@ -49,21 +49,33 @@ page('/:id', function (ctx) {
   //console.log(ctx)
   var id = ctx.params.id
   var $item = $('#' + id)
-  var item = $item.data('item')
-  $q.val('')
-  $count.hide('slow')
-  if (ctx.state.querystring) {
-    // TODO Load results but keep them hidden
-  } else {
-    // Results already loaded
-    ctx.state.querystring = $main.data('querystring')
 
-    // Hide other results
-    $('.result').not('#' + id).addClass('not-selected').one('transitionend', function (e) {
-      $(this).hide('slow')
-      // Note that dynamic requires need to be passed with -r to
-      // browserify, and are therefore . rather than ..
-      $item.html(require('./render/' + item.type)(item))
+  if ($item.length) {
+    // Item already in HTML from search
+    var item = $item.data('item')
+    $q.val('')
+    $count.hide('slow')
+    if (ctx.state.querystring) {
+      // TODO Load results but keep them hidden
+    } else {
+      // Results already loaded
+      ctx.state.querystring = $main.data('querystring')
+
+      // Hide other results
+      $('.result').not('#' + id).addClass('not-selected').one('transitionend', function (e) {
+        $(this).hide('slow')
+        // Note that dynamic requires need to be passed with -r to
+        // browserify, and are therefore . rather than ..
+        $item.html(require('./render/' + item.type)(item))
+      })
+    }
+  } else {
+    // No results loaded, need to get item
+    $count.hide()
+    api.get(id, function (err, item) {
+      $main.html(h('.result', {'id': id},
+        require('./render/' + item.type)(item)
+      ))
     })
   }
 })
