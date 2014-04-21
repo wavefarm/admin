@@ -136,6 +136,9 @@ textarea {
   margin: 1px 0 0 0;
   padding: 20px 10px 14px;
 }
+.result form {
+  padding: 20px 20px 20px 10px;
+}
 .form-field {
   padding: 10px 0 0 0;
 }
