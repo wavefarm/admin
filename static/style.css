@@ -125,6 +125,7 @@ textarea {
 }
 .result {
   background-color: #eee;
+  margin: 1px 0 0 0;
   transition: transform 2s ease;
   -webkit-transition: -webkit-transform 2s ease;
 }
@@ -133,7 +134,6 @@ textarea {
   -webkit-transform: translate(-1000px);
 }
 .result a {
-  margin: 1px 0 0 0;
   padding: 20px 10px 14px;
 }
 .result form {
