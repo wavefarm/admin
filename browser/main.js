@@ -22,8 +22,9 @@ page('/', function (ctx) {
   // If we have a querystring already then we're returning to the list from an item
   if (ctx.querystring == $main.data('querystring')) {
     $results = $('.result')
-    $item = $results.not('.not-selected')
     $results.show('slow')
+    $item = $results.not('.not-selected')
+    $item.html(require('../render/result')($item.data('item')))
     // Don't wait for the end of show to scroll but give it a head start
     setTimeout(function () {
       $('body').animate({scrollTop: $item.offset().top}, 2000)
