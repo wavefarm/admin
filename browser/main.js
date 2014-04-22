@@ -18,18 +18,18 @@ page('/', function (ctx) {
   var $results, $item
   var q = qs.parse(ctx.querystring).q
   $q.val(q)
-  $count.show('slow')
+  $count.slideDown('slow')
   // If we have a querystring already then we're returning to the list from an item
   if (ctx.querystring == $main.data('querystring')) {
     $results = $('.result')
-    $results.show('slow')
-    $item = $results.not('.not-selected')
+    $results.slideDown('slow')
+    $item = $('#' + $main.data('item-id'))
     $item.html(require('../render/result')($item.data('item')))
     // Don't wait for the end of show to scroll but give it a head start
     setTimeout(function () {
       $('body').animate({scrollTop: $item.offset().top}, 2000)
     }, 500)
-    $results.removeClass('not-selected')
+    //$results.removeClass('not-selected')
     return
   }
   $main.data('querystring', ctx.querystring)
@@ -50,29 +50,37 @@ page('/:id', function (ctx) {
   //console.log(ctx)
   var id = ctx.params.id
   var $item = $('#' + id)
+  $main.data('item-id', id)
 
   if ($item.length) {
     // Item already in HTML from search
     var item = $item.data('item')
     $q.val('')
-    $count.hide('slow')
+    $count.slideUp('slow')
     if (ctx.state.querystring) {
       // TODO Load results but keep them hidden
     } else {
       // Results already loaded
       ctx.state.querystring = $main.data('querystring')
 
+      //// Hide other results
+      //$('.result').not('#' + id).addClass('not-selected').one('transitionend', function (e) {
+      //  $(this).slideUp('slow')
+      //  // Note that dynamic requires need to be passed with -r to
+      //  // browserify, and are therefore . rather than ..
+      //  $item.html(require('./render/' + item.type)(item))
+      //})
+
       // Hide other results
-      $('.result').not('#' + id).addClass('not-selected').one('transitionend', function (e) {
-        $(this).hide('slow')
-        // Note that dynamic requires need to be passed with -r to
-        // browserify, and are therefore . rather than ..
-        $item.html(require('./render/' + item.type)(item))
-      })
+      $('.result').not('#' + id).slideUp('slow')
+
+      // Render item form. Note that dynamic requires need to be passed with -r to
+      // browserify, and are therefore . rather than ..
+      $item.html(require('./render/' + item.type)(item))
     }
   } else {
     // No results loaded, need to get item
-    $count.hide()
+    $count.slideUp()
     api.get(id, function (err, item) {
       $main.html(h('.result', {'id': id},
         require('./render/' + item.type)(item)
