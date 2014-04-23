@@ -71,12 +71,13 @@ page('/:id', function (ctx) {
       //  $item.html(require('./render/' + item.type)(item))
       //})
 
-      // Hide other results
-      $('.result').not('#' + id).slideUp('slow')
-
       // Render item form. Note that dynamic requires need to be passed with -r to
       // browserify, and are therefore . rather than ..
       $item.html(require('./render/' + item.type)(item))
+      $item.find('form').slideDown('fast')
+
+      // Hide other results
+      $('.result').not('#' + id).slideUp('slow')
     }
   } else {
     // No results loaded, need to get item
@@ -85,6 +86,7 @@ page('/:id', function (ctx) {
       $main.html(h('.result', {'id': id},
         require('./render/' + item.type)(item)
       ))
+      $('#' + id + ' form').show()
     })
   }
 })
