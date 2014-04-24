@@ -27,7 +27,7 @@ page('/', function (ctx) {
     $item.html(require('../render/result')($item.data('item')))
     // Don't wait for the end of show to scroll but give it a head start
     setTimeout(function () {
-      $('body').animate({scrollTop: $item.offset().top}, 2000)
+      $('body').animate({scrollTop: $item.offset().top}, 500)
     }, 500)
     //$results.removeClass('not-selected')
     return
