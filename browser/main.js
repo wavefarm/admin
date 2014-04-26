@@ -18,9 +18,9 @@ page('/', function (ctx) {
   var $results, $item
   var q = qs.parse(ctx.querystring).q
   $q.val(q)
-  $count.slideDown('slow')
   // If we have a querystring already then we're returning to the list from an item
   if (ctx.querystring == $main.data('querystring')) {
+    $count.slideDown('slow')
     $results = $('.result')
     $results.slideDown('slow')
     $item = $('#' + $main.data('item-id'))
@@ -32,6 +32,7 @@ page('/', function (ctx) {
     //$results.removeClass('not-selected')
     return
   }
+  $count.show()
   $main.data('querystring', ctx.querystring)
   api.search(q, function (err, results) {
     //console.log(results)
