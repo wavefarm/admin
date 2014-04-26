@@ -29,13 +29,11 @@ page('/', function (ctx) {
     setTimeout(function () {
       $('body').animate({scrollTop: $item.offset().top}, 500)
     }, 500)
-    //$results.removeClass('not-selected')
     return
   }
   $count.show()
   $main.data('querystring', ctx.querystring)
   api.search(q, function (err, results) {
-    //console.log(results)
     if (err) return console.error(err)
     var result
     $total.html(results.total)
@@ -48,7 +46,6 @@ page('/', function (ctx) {
 })
 
 page('/:id', function (ctx) {
-  //console.log(ctx)
   var id = ctx.params.id
   var $item = $('#' + id)
   $main.data('item-id', id)
@@ -63,14 +60,6 @@ page('/:id', function (ctx) {
     } else {
       // Results already loaded
       ctx.state.querystring = $main.data('querystring')
-
-      //// Hide other results
-      //$('.result').not('#' + id).addClass('not-selected').one('transitionend', function (e) {
-      //  $(this).slideUp('slow')
-      //  // Note that dynamic requires need to be passed with -r to
-      //  // browserify, and are therefore . rather than ..
-      //  $item.html(require('./render/' + item.type)(item))
-      //})
 
       // Render item form. Note that dynamic requires need to be passed with -r to
       // browserify, and are therefore . rather than ..
