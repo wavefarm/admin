@@ -126,7 +126,7 @@ textarea {
 }
 .result {
   background-color: #eee;
-  margin: 1px 0 0 0;
+  margin: 2px 0 0 0;
   transition: transform 2s ease;
   -webkit-transition: -webkit-transform 2s ease;
 }
