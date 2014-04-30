@@ -7,7 +7,6 @@
     "node": "0.8.x",
     "npm": "1.1.x"
   },
-  "main": "server",
   "repository": {
     "type": "git",
     "url": "http://github.com/wavefarm/admin.wavefarm.org.git"

@@ -14,7 +14,6 @@ var $total = $('.total')
 var $main = $('.main')
 
 page('/', function (ctx) {
-  console.log(ctx)
   var $results, $item
   var q = qs.parse(ctx.querystring).q
   $q.val(q)
