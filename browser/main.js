@@ -21,12 +21,15 @@ page('/', function (ctx) {
   if (ctx.querystring == $main.data('querystring')) {
     $count.slideDown('slow')
     $results = $('.result')
-    $results.slideDown('slow')
     $item = $('#' + $main.data('item-id'))
-    $item.html(require('../render/result')($item.data('item')))
+    $results.slideDown('fast').removeClass('not-selected').one('transitionend', function (e) {
+      console.log($item)
+      $item.find('form').slideUp('fast', function () {$(this).remove()})
+    })
     // Don't wait for the end of show to scroll but give it a head start
     setTimeout(function () {
-      $('body').animate({scrollTop: $item.offset().top}, 500)
+      // TODO Save previous scroll position and return to that
+      //$('body').animate({scrollTop: $item.offset().top}, 500)
     }, 500)
     return
   }
@@ -44,6 +47,11 @@ page('/', function (ctx) {
   })
 })
 
+// Need map because browserify can't handle dynamic requires
+var renderMap = {
+  text: require('../render/text'),
+}
+
 page('/:id', function (ctx) {
   var id = ctx.params.id
   var $item = $('#' + id)
@@ -52,6 +60,7 @@ page('/:id', function (ctx) {
   if ($item.length) {
     // Item already in HTML from search
     var item = $item.data('item')
+    $('title').text(item.main)
     $q.val('')
     $count.slideUp('slow')
     if (ctx.state.querystring) {
@@ -60,20 +69,21 @@ page('/:id', function (ctx) {
       // Results already loaded
       ctx.state.querystring = $main.data('querystring')
 
-      // Render item form. Note that dynamic requires need to be passed with -r to
-      // browserify, and are therefore . rather than ..
-      $item.html(require('./render/' + item.type)(item))
+      $item.append(renderMap[item.type](item))
       $item.find('form').slideDown('fast')
 
-      // Hide other results
-      $('.result').not('#' + id).slideUp('slow')
+      // Hide results
+      $('.result').not('#'+id).addClass('not-selected').one('transitionend', function (e) {
+        $(this).hide('fast')
+      })
     }
   } else {
     // No results loaded, need to get item
     $count.slideUp()
     api.get(id, function (err, item) {
+      //$('title').text(item.main)
       $main.html(h('.result', {'id': id},
-        require('./render/' + item.type)(item)
+        renderMap[item.type](item)
       ))
       $('#' + id + ' form').show()
     })

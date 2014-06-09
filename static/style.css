@@ -127,12 +127,11 @@ textarea {
 .result {
   background-color: #eee;
   margin: 2px 0 0 0;
-  transition: transform 2s ease;
-  -webkit-transition: -webkit-transform 2s ease;
+  transition: opacity .5s ease;
+  -webkit-transition: opacity .5s ease;
 }
 .result.not-selected {
-  transform: translate(-1000px);
-  -webkit-transform: translate(-1000px);
+  opacity: 0;
 }
 .result a {
   padding: 20px 10px 14px;
