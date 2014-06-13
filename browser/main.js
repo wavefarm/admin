@@ -118,9 +118,3 @@ rels.each(function (i, rel) {
   });
   formField.append('<div class="rel-add"><input type="text"> <a href="" title="add">+</a></div>');
 });
-
-// Web components
-//var rt = document.getElementById('resultTemplate');
-//var proto = Object.create(HTMLElement.prototype);
-//proto.createdCallback = function() { console.log('bob') };
-//document.registerElement('x-result', {prototype: proto});
