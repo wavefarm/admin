@@ -1,0 +1,30 @@
+<template id="x-result-template">
+  <style>
+    :host {
+      display: block;
+    }
+    a {
+      color: inherit;
+      text-decoration: inherit;
+    }
+  </style>
+  <a><span class="item-main"></span> <span class="item-type"></span></a>
+</template>
+<script>
+  (function () {
+    var t = document._currentScript.ownerDocument.querySelector('#x-result-template');
+    var c = t.content;
+    var XResultProto = Object.create(HTMLElement.prototype);
+    XResultProto.createdCallback = function () {
+      this._root = this.createShadowRoot();
+      c.querySelector('a').setAttribute('href', this.id);
+      var item = JSON.parse(this.dataset.item);
+      c.querySelector('.item-main').textContent = item.main;
+      c.querySelector('.item-type').textContent = '('+item.type+')';
+      this._root.appendChild(c.cloneNode(true));
+    };
+    var XResult = document.registerElement('x-result', {
+      prototype: XResultProto
+    });
+  })()
+</script>

@@ -31,7 +31,6 @@ footer, header, hgroup, menu, nav, section {
 }
 a {
   color: #000;
-  display: block;
   text-decoration: none;
 }
 body {
@@ -104,6 +103,17 @@ textarea {
   overflow: auto;
   resize: none;
 }
+x-result {
+  background-color: #eee;
+  margin: 2px 0 0 0;
+  transition: opacity .5s ease;
+  -webkit-transition: opacity .5s ease;
+}
+/*
+x-result:unresolved {
+  opacity: 0;
+}
+*/
 .container {
   padding: 10px;
 }
