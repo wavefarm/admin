@@ -82,7 +82,7 @@ page('/:id', function (ctx) {
     $count.slideUp()
     api.get(id, function (err, item) {
       //$('title').text(item.main)
-      $main.html(h('.result', {'id': id},
+      $main.html($(require('../render/result')(item)).append(
         renderMap[item.type](item)
       ))
       $('#' + id + ' form').show()
