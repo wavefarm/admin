@@ -7,6 +7,7 @@ module.exports = function (item) {
     h('label', {'for': 'mimetype'}, 'mimetype'),
     h('input#mimetype', {name: 'mimetype', type: 'text', value: item.mimetype}),
     h('label', {'for': 'url'}, 'url'),
-    h('input#url', {name: 'url', type: 'url', value: item.url})
+    h('input#url', {name: 'url', type: 'url', value: item.url}),
+    h('input', {type: 'submit', value: 'save'})
   )
 }
