@@ -4,6 +4,7 @@ var page = require('page')
 var qs = require('querystring')
 var rels = $('.rel');
 
+
 // SSE reload
 require('deva');
 
@@ -14,17 +15,20 @@ var $total = $('.total')
 var $main = $('.main')
 
 page('/', function (ctx) {
-  var $results, $item
+  var $items, $item, item
   var q = qs.parse(ctx.querystring).q
   $q.val(q)
   // If we have a querystring already then we're returning to the list from an item
   if (ctx.querystring == $main.data('querystring')) {
     $count.slideDown('slow')
-    $results = $('.result')
+    $items = $('.item')
     $item = $('#' + $main.data('item-id'))
-    $results.slideDown('fast').removeClass('not-selected').one('transitionend', function (e) {
-      console.log($item)
-      $item.find('form').slideUp('fast', function () {$(this).remove()})
+    $items.slideDown('fast').removeClass('not-selected').one('transitionend', function (e) {
+      item = $item.data('item')
+      //console.log($item)
+      $item.find('form').slideUp('fast', function () {
+        $item.html(require('../render/item/link')(item))
+      })
     })
     // Don't wait for the end of show to scroll but give it a head start
     setTimeout(function () {
@@ -37,20 +41,16 @@ page('/', function (ctx) {
   $main.data('querystring', ctx.querystring)
   api.search(q, function (err, results) {
     if (err) return console.error(err)
-    var result
     $total.html(results.total)
     $main.html('')
     for (var i = 0; i < results.hits.length; i++) {
       result = results.hits[i]
-      $main.append(require('../render/result')(result))
+      $item = require('../render/item/wrap')(result)
+      $item.appendChild(require('../render/item/link')(result))
+      $main.append($item)
     }
   })
 })
-
-// Need map because browserify can't handle dynamic requires
-var renderMap = {
-  text: require('../render/text'),
-}
 
 page('/:id', function (ctx) {
   var id = ctx.params.id
@@ -69,11 +69,11 @@ page('/:id', function (ctx) {
       // Results already loaded
       ctx.state.querystring = $main.data('querystring')
 
-      $item.append(renderMap[item.type](item))
+      $item.html(require('../render/item/form')(item))
       $item.find('form').slideDown('fast')
 
-      // Hide results
-      $('.result').not('#'+id).addClass('not-selected').one('transitionend', function (e) {
+      // Hide other items
+      $('.item').not('#'+id).addClass('not-selected').one('transitionend', function (e) {
         $(this).hide('fast')
       })
     }
@@ -81,10 +81,10 @@ page('/:id', function (ctx) {
     // No results loaded, need to get item
     $count.slideUp()
     api.get(id, function (err, item) {
-      //$('title').text(item.main)
-      $main.html($(require('../render/result')(item)).append(
-        renderMap[item.type](item)
-      ))
+      $('title').text(item.main)
+      $item = $(require('../render/item/wrap')(item))
+      $item.append(require('../render/item/form')(item))
+      $main.append($item)
       $('#' + id + ' form').show()
     })
   }
@@ -101,6 +101,7 @@ $('.search').on('submit', function (e) {
 
 // XXX Idea: Modify limit param in URL as infinite scroll grows
 
+// Below are old ideas about handling related items
 rels.each(function (i, rel) {
   rel = $(rel);
   rel.hide();

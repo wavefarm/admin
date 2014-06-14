@@ -101,9 +101,10 @@ input[type=checkbox] {
   vertical-align: middle;
 }
 input[type=submit] {
-  background-color: #ccc;
+  background-color: #777;
   border: none;
-  color: #333;
+  color: #fff;
+  cursor: pointer;
   float: right;
   font-size: 16px;
   margin: 10px 0;
@@ -124,31 +125,26 @@ textarea {
   font-size: smaller;
   padding: 5px 0 10px;
 }
-.item {
-  padding: 10px;
-}
 .immutable {
   padding: 10px 0 0 0;
 }
 .immutable span {
   color: #777;
 }
-.result {
+.item {
   background-color: #eee;
   margin: 2px 0 0 0;
   overflow: auto;
+  padding: 20px;
   transition: opacity .5s ease;
   -webkit-transition: opacity .5s ease;
 }
-.result.not-selected {
+.item.not-selected {
   opacity: 0;
 }
-.result a {
-  padding: 20px 10px 14px;
-}
-.result form {
+.item form {
   display: none;
-  padding: 20px 20px 20px 10px;
+  padding: 20px 0;
 }
 .form-field {
   padding: 10px 0 0 0;
