@@ -9,8 +9,8 @@ var renderMap = {
 module.exports = function (item) {
   return [
     h('ul.links',
-      h('li',
-        h('a', {href: 'http://wavefarm.org/archive/'+item.id, target: '_blank'},
+      h('a.action', {href: 'http://wavefarm.org/archive/'+item.id, target: '_blank'},
+        h('li',
           h('i.fa.fa-external-link'),
           ' wavefarm.org/archive/'+item.id
         )
@@ -25,7 +25,7 @@ module.exports = function (item) {
     ),
     h('form',
       renderMap[item.type](item),
-      h('input', {type: 'submit', value: 'save'})
+      h('input.action', {type: 'submit', value: 'save'})
     ),
   ]
 }

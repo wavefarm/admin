@@ -101,18 +101,20 @@ input[type=checkbox] {
   vertical-align: middle;
 }
 input[type=submit] {
-  background-color: #777;
   border: none;
-  color: #fff;
   cursor: pointer;
   float: right;
-  font-size: 16px;
+  font-size: 14px;
   margin: 10px 0;
   padding: 3px 7px;
 }
 textarea {
   overflow: auto;
   resize: none;
+}
+.action {
+  background-color: #999;
+  color: #fff;
 }
 .container {
   padding: 10px;
@@ -153,11 +155,11 @@ textarea {
   float: right;
   font-size: 14px;
 }
+.links li {
+  padding: 5px 7px;
+}
 .search input {
   font-size: 24px;
-}
-.submit {
-  padding: 10px 0 0 0;
 }
 #results {
   padding: 10px;
