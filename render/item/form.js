@@ -8,6 +8,16 @@ var renderMap = {
 
 module.exports = function (item) {
   return [
+    h('ul.links',
+      h('li',
+        h('a', {href: 'http://wavefarm.org/archive/'+item.id, target: '_blank'},
+          h('i.fa.fa-external-link'),
+          ' wavefarm.org/archive/'+item.id
+        )
+      )
+      //item.sites.map(function (site) {
+      //})
+    ),
     h('h3',
       h('span.item-main', item.main),
       ' ',
@@ -16,6 +26,6 @@ module.exports = function (item) {
     h('form',
       renderMap[item.type](item),
       h('input', {type: 'submit', value: 'save'})
-    )
+    ),
   ]
 }
