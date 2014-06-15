@@ -149,6 +149,10 @@ textarea {
 .form-field {
   padding: 10px 0 0 0;
 }
+.links {
+  float: right;
+  font-size: 14px;
+}
 .search input {
   font-size: 24px;
 }
