@@ -1,3 +1,5 @@
+"use strict";
+
 var api = require('../api')
 var h = require('hyperscript')
 var page = require('page')
@@ -44,9 +46,9 @@ page('/', function (ctx) {
     $total.html(results.total)
     $main.html('')
     for (var i = 0; i < results.hits.length; i++) {
-      result = results.hits[i]
-      $item = require('../render/item/wrap')(result)
-      $item.appendChild(require('../render/item/link')(result))
+      item = results.hits[i]
+      $item = $(require('../render/item/wrap')(item))
+      $item.append(require('../render/item/link')(item))
       $main.append($item)
     }
   })
