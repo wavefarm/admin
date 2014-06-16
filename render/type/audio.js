@@ -23,6 +23,5 @@ module.exports = function (item) {
     rels(item.shows),
     h('label', {'htmlFor': 'events'}, 'events'),
     rels(item.events),
-    h('.raw', JSON.stringify(item)),
   ]
 }
