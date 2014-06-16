@@ -172,13 +172,14 @@ textarea {
   display: block;
   font-family: monospace;
   font-size: 13px;
+  margin: 2px 0;
   padding: 2px 2px;
   width: 100%;
 }
 .rels button {
   background: transparent;
   border: none;
-  margin: -17px 0 0 0;
+  margin: -18px 0 0 0;
   position: absolute;
   right: -6px;
 }

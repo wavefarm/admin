@@ -2,6 +2,7 @@
 var h = require('hyperscript')
 
 module.exports = function (rels) {
+  rels = rels || []
   return h('.rels',
     h('ul',
       rels.map(function (rel) {

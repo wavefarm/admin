@@ -19,9 +19,13 @@ module.exports = function (item) {
     h('textarea#description', {name: 'description'}, item.description),
     h('label', {'htmlFor': 'sites'}, 'sites'),
     h('input#sites', {name: 'sites', type: 'text', value: item.sites}),
-    h('label', {'htmlFor': 'shows'}, 'shows'),
-    rels(item.shows),
+    h('label', {'htmlFor': 'artists'}, 'artists'),
+    rels(item.artists),
+    h('label', {'htmlFor': 'works'}, 'works'),
+    rels(item.works),
     h('label', {'htmlFor': 'events'}, 'events'),
     rels(item.events),
+    h('label', {'htmlFor': 'shows'}, 'shows'),
+    rels(item.shows),
   ]
 }
