@@ -53,6 +53,7 @@ q:before, q:after {
 }
 label {
   display: block;
+  margin: 10px 0 0 0;
 }
 table {
 	border-collapse: collapse;
@@ -100,21 +101,20 @@ textarea {
 input[type=checkbox] {
   vertical-align: middle;
 }
-input[type=submit] {
-  border: none;
-  cursor: pointer;
-  float: right;
+input[type=submit], input[type=button] {
+  font-family: inherit;
   font-size: 14px;
-  margin: 10px 0;
-  padding: 3px 7px;
 }
 textarea {
   overflow: auto;
   resize: none;
 }
 .action {
-  background-color: #999;
-  color: #fff;
+  background-color: #eee;
+  border: 1px solid #bbb;
+  color: #000;
+  cursor: pointer;
+  padding: 5px 7px;
 }
 .container {
   padding: 10px;
@@ -127,11 +127,18 @@ textarea {
   font-size: smaller;
   padding: 5px 0 10px;
 }
+.crud {
+  float: right;
+  margin: 10px 0;
+}
 .immutable {
   padding: 10px 0 0 0;
 }
 .immutable span {
   color: #777;
+}
+.for-check {
+  display: inline;
 }
 .item {
   background-color: #eee;
@@ -155,8 +162,19 @@ textarea {
   float: right;
   font-size: 14px;
 }
-.links li {
-  padding: 5px 7px;
+.rels {
+  font-size: 14px;
+}
+.rels button {
+  font-size: 12px;
+  margin: 0 0 0 8px;
+}
+.rels input {
+  display: inline;
+  width: 80%;
+}
+.rels ul {
+  margin: 0 0 6px 0;
 }
 .search input {
   font-size: 24px;
