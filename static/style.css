@@ -108,8 +108,6 @@ input[type=submit], input[type=button] {
   font-size: 14px;
 }
 textarea {
-  overflow: auto;
-  resize: none;
 }
 .action {
   background-color: #eee;
