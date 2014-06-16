@@ -1,4 +1,8 @@
-body {
-  margin: auto;
-  width: 960px;
+header {
+}
+.controls {
+  width: 40.5em;
+}
+.main {
+  width: 40.5em;
 }
