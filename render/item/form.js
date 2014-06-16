@@ -10,13 +10,15 @@ var renderMap = {
 }
 
 module.exports = function (item) {
+  var url, elems = []
+  url = 'wavefarm.org/archive/'+item.id
+  if (item.type == 'broadcast' && item.categories.indexOf(18) != -1) {
+    url = 'wavefarm.org/wgxc/schedule/'+item.id
+  }
   return [
-    h('ul.links',
-      h('a.action', {href: 'http://wavefarm.org/archive/'+item.id, target: '_blank'},
-        h('li.fa.fa-external-link', ' wavefarm.org/archive/'+item.id)
-      )
-      //item.sites.map(function (site) {
-      //})
+    h('a.action.public',
+      {href: '//'+url, target: '_blank', title: 'public location'},
+      url
     ),
     h('h3',
       h('span.item-main', item.main),

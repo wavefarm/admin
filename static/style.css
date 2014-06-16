@@ -158,7 +158,8 @@ textarea {
 .form-field {
   padding: 10px 0 0 0;
 }
-.links {
+.public {
+  display: block;
   float: right;
   font-size: 14px;
 }
