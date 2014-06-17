@@ -8,6 +8,7 @@ var renderMap = {
   broadcast: require('../type/broadcast'),
   show: require('../type/show'),
   text: require('../type/text'),
+  work: require('../type/work'),
 }
 
 module.exports = function (item) {
