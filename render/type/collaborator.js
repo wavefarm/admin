@@ -19,6 +19,8 @@ module.exports = function (item) {
     h('input#email', {name: 'email', type: 'email', value: item.email || ''}),
     h('label', {'htmlFor': 'sites'}, 'sites'),
     h('input#sites', {name: 'sites', type: 'text', value: item.sites || ''}),
+    h('label', {'htmlFor': 'types'}, 'types'),
+    h('input#types', {name: 'types', type: 'text', value: item.types || ''}),
     h('label', {'htmlFor': 'artists'}, 'artists'),
     rels(item.artists),
     h('label', {'htmlFor': 'collaborators'}, 'collaborators'),
