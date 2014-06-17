@@ -3,8 +3,8 @@ var rels = require('../widget/rels')
 
 module.exports = function (item) {
   return [
-    h('input#public', {name: 'public', type: 'checkbox', checked: item.public}),
-    h('label.for-check', {htmlFor: 'public'}, 'public'),
+    h('input#active', {name: 'active', type: 'checkbox', checked: item.active}),
+    h('label.for-check', {htmlFor: 'active'}, 'public'),
     h('label', {'htmlFor': 'title'}, 'title'),
     h('input#title', {name: 'title', type: 'text', value: item.title || ''}),
     h('label', {'htmlFor': 'subtitle'}, 'subtitle'),
