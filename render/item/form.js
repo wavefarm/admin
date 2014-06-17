@@ -3,6 +3,7 @@ var h = require('hyperscript')
 
 // Need map because browserify can't handle dynamic requires
 var renderMap = {
+  artist: require('../type/artist'),
   audio: require('../type/audio'),
   broadcast: require('../type/broadcast'),
   show: require('../type/show'),
