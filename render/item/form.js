@@ -7,6 +7,7 @@ var renderMap = {
   audio: require('../type/audio'),
   broadcast: require('../type/broadcast'),
   collaborator: require('../type/collaborator'),
+  event: require('../type/event'),
   show: require('../type/show'),
   text: require('../type/text'),
   work: require('../type/work'),

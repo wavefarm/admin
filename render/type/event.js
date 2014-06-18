@@ -1,0 +1,47 @@
+var h = require('hyperscript')
+var rels = require('../widget/rels')
+
+module.exports = function (item) {
+  return [
+    h('input#public', {name: 'active', type: 'checkbox', checked: item.active}),
+    h('label.for-check', {htmlFor: 'active'}, 'public'),
+    h('label', {'htmlFor': 'name'}, 'name'),
+    h('input#name', {name: 'name', type: 'text', value: item.name || ''}),
+    h('label', {'htmlFor': 'credit'}, 'credit'),
+    h('input#credit', {name: 'credit', type: 'text', value: item.credit || ''}),
+    h('label', {'htmlFor': 'briefDescription'}, 'briefDescription'),
+    h('textarea#briefDescription', {name: 'briefDescription', rows: 8}, item.briefDescription),
+    h('label', {'htmlFor': 'longDescription'}, 'longDescription'),
+    h('textarea#longDescription', {name: 'longDescription', rows: 8}, item.longDescription),
+    h('label', {'htmlFor': 'start'}, 'start'),
+    h('input#start', {name: 'start', type: 'datetime', value: item.start}),
+    h('label', {'htmlFor': 'end'}, 'end'),
+    h('input#end', {name: 'end', type: 'datetime', value: item.end}),
+    h('.checkbox',
+      h('input#public', {name: 'allDay', type: 'checkbox', checked: item.allDay}),
+      h('label.for-check', {htmlFor: 'allDay'}, 'all day')
+    ),
+    h('label', {'htmlFor': 'categories'}, 'categories'),
+    h('input#categories', {name: 'categories', type: 'text', value: item.categories || ''}),
+    h('label', {'htmlFor': 'artists'}, 'artists'),
+    rels(item.artists),
+    h('label', {'htmlFor': 'collaborators'}, 'collaborators'),
+    rels(item.collaborators),
+    h('label', {'htmlFor': 'works'}, 'works'),
+    rels(item.works),
+    h('label', {'htmlFor': 'events'}, 'events'),
+    rels(item.events),
+    h('label', {'htmlFor': 'shows'}, 'shows'),
+    rels(item.shows),
+    h('label', {'htmlFor': 'locations'}, 'locations'),
+    rels(item.locations),
+    h('label', {'htmlFor': 'audio'}, 'audio'),
+    rels(item.audio),
+    h('label', {'htmlFor': 'video'}, 'video'),
+    rels(item.video),
+    h('label', {'htmlFor': 'image'}, 'image'),
+    rels(item.image),
+    h('label', {'htmlFor': 'text'}, 'text'),
+    rels(item.text),
+  ]
+}
