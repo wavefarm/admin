@@ -10,6 +10,7 @@ var renderMap = {
   event: require('../type/event'),
   show: require('../type/show'),
   text: require('../type/text'),
+  video: require('../type/video'),
   work: require('../type/work'),
 }
 
