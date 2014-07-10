@@ -29,6 +29,6 @@
   },
   "scripts": {
     "build": "browserify browser/main.js -t envify > static/bundle.js",
-    "watch-js": "watchify browser/main.js -t envify -o static/bundle.js -dv"
+    "watch": "watchify browser/main.js -t envify -o static/bundle.js -dv"
   }
 }
