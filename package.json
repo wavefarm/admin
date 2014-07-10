@@ -28,7 +28,7 @@
     "envify": "^1.2.1"
   },
   "scripts": {
-    "postinstall": "browserify browser/main.js -t envify > static/bundle.js",
+    "build": "browserify browser/main.js -t envify > static/bundle.js",
     "watch-js": "watchify browser/main.js -t envify -o static/bundle.js -dv"
   }
 }
