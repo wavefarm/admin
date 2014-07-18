@@ -7,10 +7,6 @@ var send = require('send')
 var url = require('url')
 var zlib = require('zlib')
 
-// Timestamp logs
-require('logstamp')(function () {
-  return new Date().toISOString() + ' [admin.wavefarm.org] ';
-});
 
 var port = process.argv[2] || process.env.PORT || 1040
 
