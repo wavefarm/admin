@@ -6,7 +6,7 @@ var rels = $('.rel');
 
 
 // SSE reload
-require('deva');
+if (process.env.NODE_ENV === 'dev') require('deva');
 
 var $pageTitle = $('title')
 var $q = $('#q')
