@@ -1,6 +1,4 @@
-"use strict";
-
-var api = require('../api')
+var api = require('./api')
 var h = require('hyperscript')
 var page = require('page')
 var qs = require('querystring')
@@ -29,7 +27,7 @@ page('/', function (ctx) {
       item = $item.data('item')
       //console.log($item)
       $item.find('form').slideUp('fast', function () {
-        $item.html(require('../render/item/link')(item))
+        $item.html(require('./render/item/link')(item))
       })
     })
     // Don't wait for the end of show to scroll but give it a head start
@@ -47,8 +45,8 @@ page('/', function (ctx) {
     $main.html('')
     for (var i = 0; i < results.hits.length; i++) {
       item = results.hits[i]
-      $item = $(require('../render/item/wrap')(item))
-      $item.append(require('../render/item/link')(item))
+      $item = $(require('./render/item/wrap')(item))
+      $item.append(require('./render/item/link')(item))
       $main.append($item)
     }
   })
@@ -71,7 +69,7 @@ page('/:id', function (ctx) {
       // Results already loaded
       ctx.state.querystring = $main.data('querystring')
 
-      $item.html(require('../render/item/form')(item))
+      $item.html(require('./render/item/form')(item))
       $item.find('form').slideDown('fast')
 
       // Hide other items
@@ -84,8 +82,8 @@ page('/:id', function (ctx) {
     $count.slideUp()
     api.get(id, function (err, item) {
       $('title').text(item.main)
-      $item = $(require('../render/item/wrap')(item))
-      $item.append(require('../render/item/form')(item))
+      $item = $(require('./render/item/wrap')(item))
+      $item.append(require('./render/item/form')(item))
       $main.append($item)
       $('#' + id + ' form').show()
     })
