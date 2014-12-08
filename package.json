@@ -22,10 +22,6 @@
     "send": "^0.2.0",
     "wavefarm": "0.0.4"
   },
-  "devDependencies": {
-    "browserify": "^3.30.1",
-    "envify": "^1.2.1"
-  },
   "scripts": {
     "install": "browserify browser.js -t envify > static/bundle.js",
     "watch": "watchify browser.js -t envify -o static/bundle.js -dv"
