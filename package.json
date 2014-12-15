@@ -2,7 +2,7 @@
   "name": "admin.wavefarm.org",
   "description": "Admin site for wavefarm",
   "version": "0.0.1",
-  "author": "Gabriel Farrell <g@grrawr.com>",
+  "author": "Gabriel Farrell <g@gsf.io>",
   "engines": {
     "node": "0.8.x",
     "npm": "1.1.x"
