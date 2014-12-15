@@ -5,9 +5,6 @@ var qs = require('querystring')
 var rels = $('.rel');
 
 
-// SSE reload
-if (process.env.NODE_ENV === 'dev') require('deva');
-
 var $pageTitle = $('title')
 var $q = $('#q')
 var $count = $('.count')

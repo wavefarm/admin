@@ -12,7 +12,6 @@
     "url": "http://github.com/wavefarm/admin.wavefarm.org.git"
   },
   "dependencies": {
-    "deva": "0.0.7",
     "es": "0.0.5",
     "html-truncate": "~1.0.3",
     "hyperglue": "~1.2.1",
