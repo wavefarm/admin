@@ -134,6 +134,12 @@ textarea {
   float: right;
   margin: 10px 0;
 }
+.hit {
+  margin: 20px 0;
+}
+.hit div {
+  font-size: 16px;
+}
 .immutable {
   padding: 10px 0 0 0;
 }
