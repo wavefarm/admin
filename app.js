@@ -6,6 +6,9 @@ var os = require('observ-struct')
 var virtualize = require('vdom-virtualize')
 
 
+// Start the delegator
+require('dom-delegator')()
+
 // THE STATE
 var state = window.state = os({
   item: o(),

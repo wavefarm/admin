@@ -13,6 +13,7 @@
   },
   "main": "app.js",
   "dependencies": {
+    "dom-delegator": "^12.0.0",
     "html-truncate": "~1.0.3",
     "hyperscript": "^1.4.0",
     "hyperstream": "^0.5.0",
@@ -20,10 +21,10 @@
     "observ": "^0.2.0",
     "observ-struct": "^6.0.0",
     "page": "^1.3.7",
-    "value-event": "^4.2.0",
+    "value-event": "^2.2.0",
     "vdom-virtualize": "0.0.5",
     "virtual-dom": "0.0.23",
-    "wavefarm": "0.0.4"
+    "wavefarm": "0.1.0"
   },
   "devDependencies": {
     "envify": "^1.2.1"
