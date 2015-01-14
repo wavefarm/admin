@@ -1,8 +1,15 @@
 var fs = require('fs')
 var http = require('http')
 var mime = require('mime')
+var inject = require('script-injector')
 var url = require('url')
 
+
+function reload () {
+  (new EventSource('/_reload')).onmessage = function (e) {
+    window.location.reload(true)
+  }
+}
 
 http.createServer(function (req, res) {
   console.log(req.method, req.url)
@@ -12,8 +19,8 @@ http.createServer(function (req, res) {
 
   // Assume paths without extension will be handled by index
   if (mimetype == 'application/octet-stream') {
-    mimetype = 'text/html'
-    path = '/index.html'
+    res.setHeader('Content-Type', 'text/html; charset=utf-8')
+    return fs.createReadStream('static/index.html').pipe(inject(reload)).pipe(res)
   }
 
   var file = 'static' + path
