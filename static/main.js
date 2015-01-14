@@ -2,6 +2,9 @@ function getParams () {
   return window.location.search.substr(1)
 }
 
+var initialParams = getParams()
+var initialParamsParsed = queryString.parse(initialParams)
+
 function search (params, cb) {
   if (!cb) {
     cb = params
@@ -15,12 +18,15 @@ function search (params, cb) {
   $.ajax(settings)
 }
 
+var q = $('#q')
 var main = $('#main')
 var total = $('#total')
 var hits = $('#hits')
 var item = $('#item')
 
-search(getParams(), function (data) {
+// Run search on initial page load
+q.val(initialParamsParsed.q)
+search(initialParams, function (data) {
   console.log(data)
 
   total.text(data.total)
