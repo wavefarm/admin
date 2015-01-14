@@ -1,3 +1,7 @@
+function getParams () {
+  return window.location.search.substr(1)
+}
+
 function search (params, cb) {
   if (!cb) {
     cb = params
@@ -16,7 +20,7 @@ var total = $('#total')
 var hits = $('#hits')
 var item = $('#item')
 
-search(function (data) {
+search(getParams(), function (data) {
   console.log(data)
 
   total.text(data.total)
@@ -29,8 +33,8 @@ search(function (data) {
 
   for (i=0; i < hitLen; i++) {
     hit = data.hits[i]
-
     desc = hit.description || hit.briefDescription || hit.longDescription || ''
+
     // Strip HTML tags from description for excerpt display
     desc = desc.replace(/<[^>]*>/g, '')
 
