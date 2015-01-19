@@ -1,3 +1,5 @@
+'use strict'
+
 function getParams () {
   return window.location.search.substr(1)
 }
@@ -29,6 +31,9 @@ var total = document.getElementById('total')
 var hits = document.getElementById('hits')
 var item = document.getElementById('item')
 
+function populateHits () {
+}
+
 function initialize () {
   q.value = initialParamsParsed.q || ''
 
@@ -36,35 +41,63 @@ function initialize () {
   search(initialParams, function (data) {
     console.log(data)
 
-    total.innerHTML = data.total
+    total.textContent = total.innerText = data.total
 
-    var i
-    var hit
-    var hitLen = data.hits.length
-    var hitsInner = ''
+    main.removeChild(hits)
+
     var desc
+    var hit
+    var hitCredit
+    var hitDesc
+    var hitEl
+    var hitHeader
+    var hitMain
+    var hitType
+    var hitLen = data.hits.length
+    var i
+    var wrapperLink
 
     for (i=0; i < hitLen; i++) {
       hit = data.hits[i]
       desc = hit.description || hit.briefDescription || hit.longDescription || ''
 
-      // Strip HTML tags from description for excerpt display
+      // Strip HTML tags from description and truncate for excerpt
       desc = desc.replace(/<[^>]*>/g, '')
+      desc = desc.length > 60 ? desc.substr(0, 60) + '...' : desc
 
-      hitsInner = hitsInner
-        + '<div class="hit" id="' + hit.id + '">'
-        +   '<a href="/' + hit.id + '">'
-        +     '<h3><span class="hit-main">' + hit.main + '</span> '
-        +       '<span class="hit-type">' + hit.type + '</span>'
-        +     '</h3>'
-        +     '<div class="credit">' + hit.credit + '</div>'
-        +     '<div class="description">'
-        +       (desc.length > 60 ? desc.substr(0, 60) + '...' : desc)
-        +     '</div>'
-        +   '</a>'
-        + '</div>'
+      hitEl = document.createElement('div')
+      hitEl.className = 'hit'
+      hitEl.id = hit.id
+
+      wrapperLink = document.createElement('a')
+      wrapperLink.href = '/' + hit.id
+
+      hitHeader = document.createElement('h3')
+      hitMain = document.createElement('span')
+      hitMain.className = 'hit-main'
+      hitMain.appendChild(document.createTextNode(hit.main))
+      hitHeader.appendChild(hitMain)
+      hitHeader.appendChild(document.createTextNode(' '))
+      hitType = document.createElement('span')
+      hitType.className = 'hit-type'
+      hitType.appendChild(document.createTextNode(hit.type))
+      hitHeader.appendChild(hitType)
+      wrapperLink.appendChild(hitHeader)
+
+      hitCredit = document.createElement('div')
+      hitCredit.className = 'credit'
+      hitCredit.appendChild(document.createTextNode(hit.credit || ''))
+      wrapperLink.appendChild(hitCredit)
+
+      hitDesc = document.createElement('div')
+      hitDesc.className = 'description'
+      hitDesc.appendChild(document.createTextNode(desc))
+      wrapperLink.appendChild(hitDesc)
+
+      hitEl.appendChild(wrapperLink)
+      hits.appendChild(hitEl)
     }
-    hits.innerHTML = hitsInner
+    main.appendChild(hits)
   })
 }
 
