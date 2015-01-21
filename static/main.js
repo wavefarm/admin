@@ -37,10 +37,13 @@ function search (params, cb) {
 
 function renderFullItem (item) {
   var itemEl
+  var itemDelete
+  var itemForm
   var itemHeader
   var itemMain
   var itemType
-  var itemForm
+  var itemSave
+  var itemSaveDelete
   var publicLink
   var publicUrl
 
@@ -68,6 +71,22 @@ function renderFullItem (item) {
   itemHeader.appendChild(itemType)
   itemType.className = 'item-type'
   itemType.appendChild(document.createTextNode(item.type))
+
+  itemForm = document.createElement('form')
+  itemEl.appendChild(itemForm)
+  itemSaveDelete = document.createElement('div')
+  itemForm.appendChild(itemSaveDelete)
+  itemSaveDelete.className = 'save-delete'
+  itemSave = document.createElement('input')
+  itemSaveDelete.appendChild(itemSave)
+  itemSave.className = 'action'
+  itemSave.type = 'submit'
+  itemSave.value = 'save'
+  itemDelete = document.createElement('input')
+  itemSaveDelete.appendChild(itemDelete)
+  itemDelete.type = 'button'
+  itemDelete.className = 'action'
+  itemDelete.value = 'delete'
 }
 
 function renderItems (items) {

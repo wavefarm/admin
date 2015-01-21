@@ -105,6 +105,7 @@ input[type=checkbox] {
   vertical-align: middle;
 }
 input[type=submit], input[type=button] {
+  cursor: pointer;
   font-family: inherit;
   font-size: 14px;
 }
@@ -114,6 +115,7 @@ textarea {
   background-color: #eee;
   border: 1px solid #bbb;
   color: #000;
+  margin: 0 0 0 5px;
   padding: 5px 7px;
 }
 .checkbox {
@@ -129,7 +131,7 @@ textarea {
   font-size: smaller;
   padding: 5px 0 10px;
 }
-.crud {
+.save-delete {
   float: right;
   margin: 10px 0;
 }
@@ -164,7 +166,6 @@ textarea {
   opacity: 0;
 }
 .item form {
-  display: none;
   padding: 20px 0;
   position: relative;
 }
