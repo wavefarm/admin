@@ -36,23 +36,12 @@ function search (params, cb) {
 }
 
 function renderFullItem (item) {
-  var itemEl
-  var itemDelete
-  var itemForm
-  var itemHeader
-  var itemMain
-  var itemType
-  var itemSave
-  var itemSaveDelete
-  var publicLink
-  var publicUrl
-
-  itemEl = document.createElement('a')
+  var itemEl = document.createElement('a')
   mainEl.appendChild(itemEl)
   itemEl.className = 'item'
 
-  publicUrl = 'wavefarm.org/archive/' + item.id
-  publicLink = document.createElement('a')
+  var publicUrl = 'wavefarm.org/archive/' + item.id
+  var publicLink = document.createElement('a')
   itemEl.appendChild(publicLink)
   if (!item.public) publicLink.style.display = 'none'
   publicLink.className = 'action public'
@@ -61,29 +50,40 @@ function renderFullItem (item) {
   publicLink.title = 'public location'
   publicLink.appendChild(document.createTextNode(publicUrl))
 
-  itemHeader = document.createElement('h3')
+  var itemHeader = document.createElement('h3')
   itemEl.appendChild(itemHeader)
-  itemMain = document.createElement('span')
+  var itemMain = document.createElement('span')
   itemHeader.appendChild(itemMain)
   itemMain.className = 'item-main'
   itemMain.appendChild(document.createTextNode(item.main))
   itemHeader.appendChild(document.createTextNode(' '))
-  itemType = document.createElement('span')
+  var itemType = document.createElement('span')
   itemHeader.appendChild(itemType)
   itemType.className = 'item-type'
   itemType.appendChild(document.createTextNode(item.type))
 
-  itemForm = document.createElement('form')
+  var itemForm = document.createElement('form')
   itemEl.appendChild(itemForm)
-  itemSaveDelete = document.createElement('div')
+  var itemPublic = document.createElement('input')
+  itemForm.appendChild(itemPublic)
+  itemPublic.id = 'public'
+  itemPublic.name = 'public'
+  itemPublic.type = 'checkbox'
+  itemPublic.checked = item.public
+  var itemPublicLabel = document.createElement('label')
+  itemForm.appendChild(itemPublicLabel)
+  itemPublicLabel.className = 'for-check'
+  itemPublicLabel.htmlFor = 'active'
+  itemPublicLabel.appendChild(document.createTextNode('public'))
+  var itemSaveDelete = document.createElement('div')
   itemForm.appendChild(itemSaveDelete)
   itemSaveDelete.className = 'save-delete'
-  itemSave = document.createElement('input')
+  var itemSave = document.createElement('input')
   itemSaveDelete.appendChild(itemSave)
   itemSave.className = 'action'
   itemSave.type = 'submit'
   itemSave.value = 'save'
-  itemDelete = document.createElement('input')
+  var itemDelete = document.createElement('input')
   itemSaveDelete.appendChild(itemDelete)
   itemDelete.type = 'button'
   itemDelete.className = 'action'
