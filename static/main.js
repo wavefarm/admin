@@ -54,6 +54,7 @@ function renderFullItem (item) {
   publicUrl = 'wavefarm.org/archive/' + item.id
   publicLink = document.createElement('a')
   itemEl.appendChild(publicLink)
+  if (!item.public) publicLink.style.display = 'none'
   publicLink.className = 'action public'
   publicLink.href = '//' + publicUrl
   publicLink.target = '_blank'
