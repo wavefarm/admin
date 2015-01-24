@@ -1,12 +1,11 @@
 'use strict'
 
 var qEl = document.getElementById('q')
-var mainEl = document.getElementById('main')
 var totalEl = document.getElementById('total')
-var itemEl = document.getElementById('item')
+var mainEl = document.getElementById('main')
 
-function getItem (itemId, cb) {
-  var url = 'http://api.wavefarm.org/' + itemId
+function getItem (id, cb) {
+  var url = 'http://api.wavefarm.org/' + id
 
   var xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
@@ -36,13 +35,13 @@ function search (params, cb) {
 }
 
 function renderFullItem (item) {
-  var itemEl = document.createElement('a')
-  mainEl.appendChild(itemEl)
-  itemEl.className = 'item'
+  var el = document.createElement('a')
+  mainEl.appendChild(el)
+  el.className = 'item'
 
   var publicUrl = 'wavefarm.org/archive/' + item.id
   var publicLink = document.createElement('a')
-  itemEl.appendChild(publicLink)
+  el.appendChild(publicLink)
   if (!item.public) publicLink.style.display = 'none'
   publicLink.className = 'action public'
   publicLink.href = '//' + publicUrl
@@ -50,33 +49,64 @@ function renderFullItem (item) {
   publicLink.title = 'public location'
   publicLink.appendChild(document.createTextNode(publicUrl))
 
-  var itemHeader = document.createElement('h3')
-  itemEl.appendChild(itemHeader)
-  var itemMain = document.createElement('span')
-  itemHeader.appendChild(itemMain)
-  itemMain.className = 'item-main'
-  itemMain.appendChild(document.createTextNode(item.main))
-  itemHeader.appendChild(document.createTextNode(' '))
-  var itemType = document.createElement('span')
-  itemHeader.appendChild(itemType)
-  itemType.className = 'item-type'
-  itemType.appendChild(document.createTextNode(item.type))
+  var header = document.createElement('h3')
+  el.appendChild(header)
+  var main = document.createElement('span')
+  header.appendChild(main)
+  main.className = 'item-main'
+  main.appendChild(document.createTextNode(item.main))
+  header.appendChild(document.createTextNode(' '))
+  var type = document.createElement('span')
+  header.appendChild(type)
+  type.className = 'item-type'
+  type.appendChild(document.createTextNode(item.type))
 
-  var itemForm = document.createElement('form')
-  itemEl.appendChild(itemForm)
-  var itemPublic = document.createElement('input')
-  itemForm.appendChild(itemPublic)
-  itemPublic.id = 'public'
-  itemPublic.name = 'public'
-  itemPublic.type = 'checkbox'
-  itemPublic.checked = item.public
-  var itemPublicLabel = document.createElement('label')
-  itemForm.appendChild(itemPublicLabel)
-  itemPublicLabel.className = 'for-check'
-  itemPublicLabel.htmlFor = 'active'
-  itemPublicLabel.appendChild(document.createTextNode('public'))
+  var form = document.createElement('form')
+  el.appendChild(form)
+
+  function renderInput (name, type) {
+    var label = document.createElement('label')
+    form.appendChild(label)
+    label.htmlFor = name
+    label.appendChild(document.createTextNode(name))
+  
+    var input = document.createElement('input')
+    form.appendChild(input)
+    input.id = name
+    input.name = name
+    input.type = type || name
+    input.value = item[name] || ''
+  }
+
+  var publicInput = document.createElement('input')
+  form.appendChild(publicInput)
+  publicInput.id = 'public'
+  publicInput.name = 'public'
+  publicInput.type = 'checkbox'
+  publicInput.checked = item.public
+  var publicLabel = document.createElement('label')
+  form.appendChild(publicLabel)
+  publicLabel.className = 'for-check'
+  publicLabel.htmlFor = 'active'
+  publicLabel.appendChild(document.createTextNode('public'))
+
+  if (item.type == 'show') {
+    renderInput('title', 'text')
+    renderInput('url')
+    renderInput('mimetype', 'text')
+    renderInput('date')
+    renderInput('caption', 'text')
+    renderInput('description', 'textarea')
+    renderInput('sites')
+    renderInput('artists', 'rels')
+    renderInput('collaborators', 'rels')
+    renderInput('works', 'rels')
+    renderInput('events', 'rels')
+    renderInput('shows', 'rels')
+  }
+
   var itemSaveDelete = document.createElement('div')
-  itemForm.appendChild(itemSaveDelete)
+  form.appendChild(itemSaveDelete)
   itemSaveDelete.className = 'save-delete'
   var itemSave = document.createElement('input')
   itemSaveDelete.appendChild(itemSave)
@@ -95,10 +125,10 @@ function renderItems (items) {
   var item
   var itemCredit
   var itemDesc
-  var itemEl
-  var itemHeader
-  var itemMain
-  var itemType
+  var el
+  var header
+  var main
+  var type
   var itemLen
   var i
 
@@ -112,35 +142,35 @@ function renderItems (items) {
     desc = desc.replace(/<[^>]*>/g, '')
     desc = desc.length > 60 ? desc.substr(0, 60) + '...' : desc
 
-    itemEl = document.createElement('a')
-    itemEl.className = 'item'
-    itemEl.id = item.id
-    itemEl.href = '/' + item.id
+    el = document.createElement('a')
+    el.className = 'item'
+    el.id = item.id
+    el.href = '/' + item.id
 
 
-    itemHeader = document.createElement('h3')
-    itemMain = document.createElement('span')
-    itemMain.className = 'item-main'
-    itemMain.appendChild(document.createTextNode(item.main))
-    itemHeader.appendChild(itemMain)
-    itemHeader.appendChild(document.createTextNode(' '))
-    itemType = document.createElement('span')
-    itemType.className = 'item-type'
-    itemType.appendChild(document.createTextNode(item.type))
-    itemHeader.appendChild(itemType)
-    itemEl.appendChild(itemHeader)
+    header = document.createElement('h3')
+    main = document.createElement('span')
+    main.className = 'item-main'
+    main.appendChild(document.createTextNode(item.main))
+    header.appendChild(main)
+    header.appendChild(document.createTextNode(' '))
+    type = document.createElement('span')
+    type.className = 'item-type'
+    type.appendChild(document.createTextNode(item.type))
+    header.appendChild(type)
+    el.appendChild(header)
 
     itemCredit = document.createElement('div')
     itemCredit.className = 'credit'
     itemCredit.appendChild(document.createTextNode(item.credit || ''))
-    itemEl.appendChild(itemCredit)
+    el.appendChild(itemCredit)
 
     itemDesc = document.createElement('div')
     itemDesc.className = 'description'
     itemDesc.appendChild(document.createTextNode(desc))
-    itemEl.appendChild(itemDesc)
+    el.appendChild(itemDesc)
 
-    mainEl.appendChild(itemEl)
+    mainEl.appendChild(el)
   }
 }
 
