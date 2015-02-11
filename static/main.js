@@ -5,7 +5,7 @@ var totalEl = document.getElementById('total')
 var mainEl = document.getElementById('main')
 
 function getItem (id, cb) {
-  var url = 'http://api.wavefarm.org/' + id
+  var url = '/api/' + id
 
   var xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
@@ -22,7 +22,7 @@ function search (params, cb) {
     params = null
   }
 
-  var url = 'http://api.wavefarm.org/search'
+  var url = '/api/search'
   if (params) url += '?' + params
 
   var xhr = new XMLHttpRequest()
