@@ -1,9 +1,10 @@
 var fs = require('fs')
 var http = require('http')
-var mime = require('mime')
+var https = require('https')
 var inject = require('script-injector')
+var mime = require('mime')
+var proxy = require('http-proxy').createProxyServer()
 var url = require('url')
-
 
 function reload () {
   (new EventSource('/_reload')).onmessage = function (e) {
@@ -11,10 +12,22 @@ function reload () {
   }
 }
 
+var apiurl = url.parse(process.env.APIURL || 'https://wavefarm.org/api/')
+
 http.createServer(function (req, res) {
   console.log(req.method, req.url)
 
   var path = url.parse(req.url).pathname
+
+  if (path.indexOf('/api/') === 0) {
+    return proxy.web(req, res, {
+      target: apiurl,
+      agent: https.globalAgent,
+      headers: {host: apiurl.hostname},
+      prependPath: false
+    })
+  }
+
   var mimetype = mime.lookup(path)
 
   // Assume paths without extension will be handled by index
