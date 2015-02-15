@@ -28,6 +28,14 @@ http.createServer(function (req, res) {
     })
   }
 
+  // Serve everything else from /admin/
+  if (path.indexOf('/admin/') !== 0) {
+    console.warn(404)
+    res.statusCode = 404
+    return res.end('Not Found')
+  }
+  path = path.replace('/admin', '')
+
   var mimetype = mime.lookup(path)
 
   // Assume paths without extension will be handled by index

@@ -124,7 +124,7 @@ function renderItems (items) {
     el = document.createElement('a')
     el.className = 'item'
     el.id = item.id
-    el.href = '/' + item.id
+    el.href = item.id
 
     header = document.createElement('h3')
     main = document.createElement('span')
@@ -158,7 +158,7 @@ function renderTypes (data) {
 
   for (var t in data) {
     typeEl = document.createElement('a')
-    typeEl.href = '/?q=type:' + t
+    typeEl.href = '?q=type:' + t
     typeEl.appendChild(document.createTextNode(t))
     typesEl.appendChild(typeEl)
     typesEl.appendChild(document.createTextNode(' '))
