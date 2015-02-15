@@ -1,3 +1,4 @@
+/* global queryString */
 'use strict'
 
 var qEl = document.getElementById('q')
