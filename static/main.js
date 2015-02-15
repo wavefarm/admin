@@ -3,17 +3,19 @@
 var qEl = document.getElementById('q')
 var totalEl = document.getElementById('total')
 var mainEl = document.getElementById('main')
-
-function getItem (id, cb) {
-  var url = '/api/' + id
-
+  
+function api (method, path, cb) {
   var xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
     if (xhr.readyState != 4 || xhr.status != 200) return
     cb(JSON.parse(xhr.responseText))
   }
-  xhr.open('GET', url)
+  xhr.open(method, '/api/' + path)
   xhr.send()
+}
+
+function getItem (id, cb) {
+  api('GET', id, cb)
 }
 
 function search (params, cb) {
@@ -22,16 +24,7 @@ function search (params, cb) {
     params = null
   }
 
-  var url = '/api/search'
-  if (params) url += '?' + params
-
-  var xhr = new XMLHttpRequest()
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState != 4 || xhr.status != 200) return
-    cb(JSON.parse(xhr.responseText))
-  }
-  xhr.open('GET', url)
-  xhr.send()
+  api('GET', 'search' + (params ? '?' + params : ''), cb)
 }
 
 function renderFullItem (item) {
