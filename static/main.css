@@ -202,6 +202,9 @@ textarea {
 .search input {
   font-size: 24px;
 }
+.types {
+  margin: 10px 0;
+}
 #results {
   padding: 10px;
 }

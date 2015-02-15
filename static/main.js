@@ -14,19 +14,6 @@ function api (method, path, cb) {
   xhr.send()
 }
 
-function getItem (id, cb) {
-  api('GET', id, cb)
-}
-
-function search (params, cb) {
-  if (!cb) {
-    cb = params
-    params = null
-  }
-
-  api('GET', 'search' + (params ? '?' + params : ''), cb)
-}
-
 function renderFullItem (item) {
   var el = document.createElement('a')
   mainEl.appendChild(el)
@@ -57,6 +44,18 @@ function renderFullItem (item) {
   var form = document.createElement('form')
   el.appendChild(form)
 
+  var publicInput = document.createElement('input')
+  form.appendChild(publicInput)
+  publicInput.id = 'public'
+  publicInput.name = 'public'
+  publicInput.type = 'checkbox'
+  publicInput.checked = item.public
+  var publicLabel = document.createElement('label')
+  form.appendChild(publicLabel)
+  publicLabel.className = 'for-check'
+  publicLabel.htmlFor = 'active'
+  publicLabel.appendChild(document.createTextNode('public'))
+
   function renderInput (name, type) {
     var label = document.createElement('label')
     form.appendChild(label)
@@ -70,18 +69,6 @@ function renderFullItem (item) {
     input.type = type || name
     input.value = item[name] || ''
   }
-
-  var publicInput = document.createElement('input')
-  form.appendChild(publicInput)
-  publicInput.id = 'public'
-  publicInput.name = 'public'
-  publicInput.type = 'checkbox'
-  publicInput.checked = item.public
-  var publicLabel = document.createElement('label')
-  form.appendChild(publicLabel)
-  publicLabel.className = 'for-check'
-  publicLabel.htmlFor = 'active'
-  publicLabel.appendChild(document.createTextNode('public'))
 
   if (item.type == 'show') {
     renderInput('title', 'text')
@@ -125,7 +112,6 @@ function renderItems (items) {
   var itemLen
   var i
 
-
   itemLen = items.length
   for (i=0; i < itemLen; i++) {
     item = items[i]
@@ -139,7 +125,6 @@ function renderItems (items) {
     el.className = 'item'
     el.id = item.id
     el.href = '/' + item.id
-
 
     header = document.createElement('h3')
     main = document.createElement('span')
@@ -167,20 +152,33 @@ function renderItems (items) {
   }
 }
 
+function renderTypes (data) {
+  var typeEl
+  var typesEl = document.getElementById('types')
+
+  for (var t in data) {
+    typeEl = document.createElement('a')
+    typeEl.href = '/?q=type:' + t
+    typeEl.appendChild(document.createTextNode(t))
+    typesEl.appendChild(typeEl)
+    typesEl.appendChild(document.createTextNode(' '))
+  }
+}
+
 function initialize () {
   var initialParams
   var initialParamsParsed
   var itemId = /\w{6}/.exec(window.location.pathname)
   if (itemId) {
-    getItem(itemId, function (item) {
-      renderFullItem(item)
-    })
+    api('GET', itemId, function (item) {renderFullItem(item)})
   } else {
     initialParams = window.location.search.substr(1)
     initialParamsParsed = queryString.parse(initialParams)
 
+    api('GET', 'schemas', function (data) {renderTypes(data)})
+
     qEl.value = initialParamsParsed.q || ''
-    search(initialParams, function (data) {
+    api('GET', 'search?' + initialParams, function (data) {
       totalEl.textContent = totalEl.innerText = data.total
       renderItems(data.hits)
     })
