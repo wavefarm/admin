@@ -167,19 +167,15 @@ function renderTypes (data) {
 }
 
 function initialize () {
-  var initialParams
-  var initialParamsParsed
   var itemId = /\w{6}/.exec(window.location.pathname)
+  var params = window.location.search.substr(1)
   if (itemId) {
     api('GET', itemId, function (item) {renderFullItem(item)})
   } else {
-    initialParams = window.location.search.substr(1)
-    initialParamsParsed = queryString.parse(initialParams)
-
     api('GET', 'schemas', function (data) {renderTypes(data)})
 
-    qEl.value = initialParamsParsed.q || ''
-    api('GET', 'search?' + initialParams, function (data) {
+    qEl.value = queryString.parse(params).q || ''
+    api('GET', 'search?' + params, function (data) {
       totalEl.textContent = totalEl.innerText = data.total
       renderItems(data.hits)
     })
