@@ -221,12 +221,9 @@ function populate () {
 }
 
 function initialize () {
-  var token = getCookie('token')
-  if (!token) return renderLogin()
-  api('POST', 'login', {token: token}, function (data) {
-    if (!data.ok) return renderLogin()
-    populate()
-  })
+  // If no token cookie short circuit to login
+  if (!getCookie('token')) return renderLogin()
+  populate()
 }
 
 initialize()
