@@ -11,8 +11,12 @@ function api (method, path, data, cb) {
 
   var xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
-    if (xhr.readyState != 4 || xhr.status != 200) return
-    cb(JSON.parse(xhr.responseText))
+    if (xhr.readyState != 4) return
+    var data = JSON.parse(xhr.responseText)
+    if (xhr.status != 200) {
+      return cb({status: xhr.status, message: data.message})
+    }
+    cb(null, data)
   }
   xhr.open(method, '/api/' + path)
   xhr.setRequestHeader('Content-Type', 'application/json')
@@ -31,6 +35,8 @@ function renderInput (form, name, value, type) {
   input.name = name
   input.value = value || ''
   input.type = type || name
+
+  return input
 }
 
 function renderItem (item) {
@@ -170,17 +176,37 @@ function renderTypes (data) {
   }
 }
 
+var errDiv
 function renderLogin () {
   var loginForm = document.getElementById('login')
 
-  renderInput(loginForm, 'username', '', 'text')
-  renderInput(loginForm, 'password')
+  var userInput = renderInput(loginForm, 'username', '', 'text')
+  var passInput = renderInput(loginForm, 'password')
 
   var loginSubmit = document.createElement('input')
   loginSubmit.className = 'submit'
   loginSubmit.type = 'submit'
   loginSubmit.value = 'login'
   loginForm.appendChild(loginSubmit)
+
+  loginForm.addEventListener('submit', function (e) {
+    e.preventDefault()
+    loginSubmit.disabled = true
+    if (errDiv && errDiv.parentNode) loginForm.removeChild(errDiv)
+    api('POST', 'login', {username: userInput.value, password: passInput.value}, function (err, data) {
+      loginSubmit.disabled = false
+      if (err) {
+        if (!errDiv) {
+          errDiv = document.createElement('div')
+          errDiv.className = 'alert'
+          errDiv.appendChild(document.createTextNode('No user found with those credentials.'))
+        }
+        return loginForm.appendChild(errDiv)
+      }
+      if (errDiv && errDiv.parentNode) loginForm.removeChild(errDiv)
+      console.log(data.user)
+    })
+  })
 }
 
 function renderSearch (params) {

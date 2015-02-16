@@ -118,6 +118,10 @@ textarea {
   margin: 0 0 0 5px;
   padding: 5px 7px;
 }
+.alert {
+  color: red;
+  margin: 10px 0 0 0;
+}
 .checkbox {
   margin: 10px 0 0 0;
 }
