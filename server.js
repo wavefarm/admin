@@ -21,11 +21,11 @@ http.createServer(function (req, res) {
   var path = url.parse(req.url).pathname
 
   if (path.indexOf('/api/') === 0) {
+    req.url = req.url.replace('/api', '')
     return proxy.web(req, res, {
       target: apiurl,
       agent: https.globalAgent,
-      headers: {host: apiurl.hostname},
-      prependPath: false
+      headers: {host: apiurl.hostname}
     })
   }
 
