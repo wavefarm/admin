@@ -3,14 +3,20 @@
 
 var mainEl = document.getElementById('main')
   
-function api (method, path, cb) {
+function api (method, path, data, cb) {
+  if (!cb) {
+    cb = data
+    data = {}
+  }
+
   var xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
     if (xhr.readyState != 4 || xhr.status != 200) return
     cb(JSON.parse(xhr.responseText))
   }
   xhr.open(method, '/api/' + path)
-  xhr.send()
+  xhr.setRequestHeader('Content-Type', 'application/json')
+  xhr.send(JSON.stringify(data))
 }
 
 function renderInput (form, name, value, type) {
@@ -217,7 +223,10 @@ function populate () {
 function initialize () {
   var token = getCookie('token')
   if (!token) return renderLogin()
-  populate()
+  api('POST', 'login', {token: token}, function (data) {
+    if (!data.ok) return renderLogin()
+    populate()
+  })
 }
 
 initialize()
