@@ -12,14 +12,14 @@
     <header>
       <h1 class="logo"><a href="/admin/">admin</a></h1>
     </header>
+    <form id="login" class="login" method="post"></form>
     <div class="controls">
       <div id="types" class="types"></div>
-      <form class="search">
-        <input type="search" name="q" id="q" placeholder="search">
-      </form>
-      <div class="count"><span id="total"></span><span> results</span></div>
+      <form id="search" class="search"></form>
     </div>
+    <div id="count" class="count"></div>
     <div id="main"></div>
+    <script src="cookies.js"></script>
     <script src="query-string.js"></script>
     <script src="main.js"></script>
   </body>

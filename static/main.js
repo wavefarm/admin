@@ -1,8 +1,6 @@
-/* global queryString */
+/* global getCookie,queryString */
 'use strict'
 
-var qEl = document.getElementById('q')
-var totalEl = document.getElementById('total')
 var mainEl = document.getElementById('main')
   
 function api (method, path, cb) {
@@ -15,7 +13,21 @@ function api (method, path, cb) {
   xhr.send()
 }
 
-function renderFullItem (item) {
+function renderInput (form, name, value, type) {
+  var label = document.createElement('label')
+  form.appendChild(label)
+  label.htmlFor = name
+  label.appendChild(document.createTextNode(name))
+
+  var input = document.createElement('input')
+  form.appendChild(input)
+  input.id = name
+  input.name = name
+  input.value = value || ''
+  input.type = type || name
+}
+
+function renderItem (item) {
   var el = document.createElement('a')
   mainEl.appendChild(el)
   el.className = 'item'
@@ -57,33 +69,19 @@ function renderFullItem (item) {
   publicLabel.htmlFor = 'active'
   publicLabel.appendChild(document.createTextNode('public'))
 
-  function renderInput (name, type) {
-    var label = document.createElement('label')
-    form.appendChild(label)
-    label.htmlFor = name
-    label.appendChild(document.createTextNode(name))
-  
-    var input = document.createElement('input')
-    form.appendChild(input)
-    input.id = name
-    input.name = name
-    input.type = type || name
-    input.value = item[name] || ''
-  }
-
   if (item.type == 'show') {
-    renderInput('title', 'text')
-    renderInput('url')
-    renderInput('mimetype', 'text')
-    renderInput('date')
-    renderInput('caption', 'text')
-    renderInput('description', 'textarea')
-    renderInput('sites')
-    renderInput('artists', 'rels')
-    renderInput('collaborators', 'rels')
-    renderInput('works', 'rels')
-    renderInput('events', 'rels')
-    renderInput('shows', 'rels')
+    renderInput(form, 'title', item.title, 'text')
+    renderInput(form, 'url', item.url)
+    renderInput(form, 'mimetype', item.mimetype, 'text')
+    renderInput(form, 'date', item.date)
+    renderInput(form, 'caption', item.caption, 'text')
+    renderInput(form, 'description', item.description, 'textarea')
+    renderInput(form, 'sites', item.sites)
+    renderInput(form, 'artists', item.artists, 'rels')
+    renderInput(form, 'collaborators', item.collaborators, 'rels')
+    renderInput(form, 'works', item.works, 'rels')
+    renderInput(form, 'events', item.events, 'rels')
+    renderInput(form, 'shows', item.shows, 'rels')
   }
 
   var itemSaveDelete = document.createElement('div')
@@ -101,7 +99,7 @@ function renderFullItem (item) {
   itemDelete.value = 'delete'
 }
 
-function renderItems (items) {
+function renderResults (items) {
   var desc
   var item
   var itemCredit
@@ -166,20 +164,60 @@ function renderTypes (data) {
   }
 }
 
-function initialize () {
+function renderLogin () {
+  var loginForm = document.getElementById('login')
+
+  renderInput(loginForm, 'username', '', 'text')
+  renderInput(loginForm, 'password')
+
+  var loginSubmit = document.createElement('input')
+  loginSubmit.className = 'submit'
+  loginSubmit.type = 'submit'
+  loginSubmit.value = 'login'
+  loginForm.appendChild(loginSubmit)
+}
+
+function renderSearch (params) {
+  var searchForm = document.getElementById('search')
+  var searchInput = document.createElement('input')
+  searchInput.id = 'q'
+  searchInput.name = 'q'
+  searchInput.type = 'search'
+  searchInput.placeholder = 'search'
+  searchInput.value = queryString.parse(params).q || ''
+  searchForm.appendChild(searchInput)
+}
+
+function renderCount (total) {
+  var countDiv = document.getElementById('count')
+  var totalSpan = document.createElement('span')
+  totalSpan.id = 'total'
+  totalSpan.appendChild(document.createTextNode(total))
+  countDiv.appendChild(totalSpan)
+  countDiv.appendChild(document.createTextNode(' results'))
+}
+
+function populate () {
   var itemId = /\w{6}/.exec(window.location.pathname)
   var params = window.location.search.substr(1)
-  if (itemId) {
-    api('GET', itemId, function (item) {renderFullItem(item)})
-  } else {
-    api('GET', 'schemas', function (data) {renderTypes(data)})
 
-    qEl.value = queryString.parse(params).q || ''
+  api('GET', 'schemas', function (data) {renderTypes(data)})
+  renderSearch(params)
+
+  if (itemId) {
+    api('GET', itemId, function (item) {renderItem(item)})
+  } else {
     api('GET', 'search?' + params, function (data) {
-      totalEl.textContent = totalEl.innerText = data.total
-      renderItems(data.hits)
+      renderCount(data.total)
+      renderResults(data.hits)
     })
   }
+}
+
+function initialize () {
+  var token = getCookie('token')
+  if (!token) return renderLogin()
+  populate()
 }
 
 initialize()
