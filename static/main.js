@@ -1,9 +1,13 @@
-/* global getCookie,queryString */
+/* global setCookie,getCookie,dropCookie,queryString */
 'use strict'
 
-var cache = {}
-cache.mainDiv = document.getElementById('main')
-  
+var cache = {el: {}}
+
+cache.el.main = document.getElementById('main')
+cache.el.user = document.getElementById('user')
+
+cache.token = getCookie('token')
+
 function api (method, path, data, cb) {
   if (!cb) {
     cb = data
@@ -42,7 +46,7 @@ function renderInput (form, name, value, type) {
 
 function renderItem (item) {
   var el = document.createElement('a')
-  cache.mainDiv.appendChild(el)
+  cache.el.main.appendChild(el)
   el.className = 'item'
 
   var publicUrl = 'wavefarm.org/archive/' + item.id
@@ -160,40 +164,49 @@ function renderResults (items) {
     itemDesc.appendChild(document.createTextNode(desc))
     el.appendChild(itemDesc)
 
-    cache.mainDiv.appendChild(el)
+    cache.el.main.appendChild(el)
   }
 }
 
 function renderTypes (data) {
   var typeDiv
-  cache.typesDiv = document.getElementById('types')
+  cache.el.types = document.getElementById('types')
 
   for (var t in data) {
     typeDiv = document.createElement('a')
     typeDiv.href = '?q=type:' + t
     typeDiv.appendChild(document.createTextNode(t))
-    cache.typesDiv.appendChild(typeDiv)
-    cache.typesDiv.appendChild(document.createTextNode(' '))
+    cache.el.types.appendChild(typeDiv)
+    cache.el.types.appendChild(document.createTextNode(' '))
   }
 }
 
 function renderLogin () {
-  cache.loginForm = document.getElementById('login')
+  var elem
+  for (var e in cache.el) {
+    elem = cache.el[e]
+    if (elem && elem.parentNode) {
+      elem.parentNode.removeChild(elem)
+    }
+  }
 
-  var userInput = renderInput(cache.loginForm, 'username', '', 'text')
-  var passInput = renderInput(cache.loginForm, 'password')
+  cache.el.login = cache.el.login || document.getElementById('login')
+  if (!cache.el.login.parentNode) {document.body.appendChild(cache.el.login)}
+
+  var userInput = renderInput(cache.el.login, 'username', '', 'text')
+  var passInput = renderInput(cache.el.login, 'password')
 
   var loginSubmit = document.createElement('input')
   loginSubmit.className = 'submit'
   loginSubmit.type = 'submit'
   loginSubmit.value = 'login'
-  cache.loginForm.appendChild(loginSubmit)
+  cache.el.login.appendChild(loginSubmit)
 
-  cache.loginForm.addEventListener('submit', function (e) {
+  cache.el.login.addEventListener('submit', function (e) {
     e.preventDefault()
     loginSubmit.disabled = true
-    if (cache.errDiv && cache.errDiv.parentNode) cache.loginForm.removeChild(cache.errDiv)
-    api('POST', 'login', {username: userInput.value, password: passInput.value}, function (err, data) {
+    if (cache.errDiv && cache.errDiv.parentNode) cache.el.login.removeChild(cache.errDiv)
+    api('POST', 'login', {username: userInput.value, password: passInput.value}, function (err, user) {
       loginSubmit.disabled = false
       if (err) {
         if (!cache.errDiv) {
@@ -201,45 +214,74 @@ function renderLogin () {
           cache.errDiv.className = 'alert'
           cache.errDiv.appendChild(document.createTextNode('No user found with those credentials.'))
         }
-        return cache.loginForm.appendChild(cache.errDiv)
+        return cache.el.login.appendChild(cache.errDiv)
       }
-      if (cache.errDiv && cache.errDiv.parentNode) cache.loginForm.removeChild(cache.errDiv)
-      console.log(data.user)
+      if (cache.errDiv && cache.errDiv.parentNode) cache.el.login.removeChild(cache.errDiv)
+      setCookie('token', user.token, 100)
+      setCookie('username', user.name, 100)
+      setCookie('userid', user.id, 100)
+      cache.el.login.parentNode.removeChild(cache.el.login)
+      populate()
     })
   })
 }
 
 function renderSearch (params) {
-  cache.searchForm = document.getElementById('search')
+  cache.el.search = document.getElementById('search')
   var searchInput = document.createElement('input')
   searchInput.id = 'q'
   searchInput.name = 'q'
   searchInput.type = 'search'
   searchInput.placeholder = 'search'
   searchInput.value = queryString.parse(params).q || ''
-  cache.searchForm.appendChild(searchInput)
+  cache.el.search.appendChild(searchInput)
 }
 
 function renderCount (total) {
-  cache.countDiv = document.getElementById('count')
+  cache.el.count = document.getElementById('count')
   var totalSpan = document.createElement('span')
   totalSpan.id = 'total'
   totalSpan.appendChild(document.createTextNode(total))
-  cache.countDiv.appendChild(totalSpan)
-  cache.countDiv.appendChild(document.createTextNode(' results'))
+  cache.el.count.appendChild(totalSpan)
+  cache.el.count.appendChild(document.createTextNode(' results'))
+}
+
+function renderUser () {
+  if (!cache.el.user.parentNode) {}
+  var nameLink = document.createElement('a')
+  nameLink.className = 'username'
+  nameLink.href = getCookie('userid')
+  nameLink.appendChild(document.createTextNode(getCookie('username')))
+  cache.el.user.appendChild(nameLink)
+
+  cache.el.user.appendChild(document.createTextNode(' '))
+
+  var logoutLink = document.createElement('a')
+  logoutLink.className = 'logout'
+  logoutLink.href = ''
+  logoutLink.appendChild(document.createTextNode('logout'))
+  cache.el.user.appendChild(logoutLink)
+
+  logoutLink.addEventListener('click', function (e) {
+    e.preventDefault()
+    dropCookie('token')
+    renderLogin()
+  })
 }
 
 function populate () {
   var itemId = /\w{6}/.exec(window.location.pathname)
   var params = window.location.search.substr(1)
 
-  api('GET', 'schemas', function (data) {renderTypes(data)})
+  renderUser()
+
+  api('GET', 'schemas', function (err, data) {renderTypes(data)})
   renderSearch(params)
 
   if (itemId) {
-    api('GET', itemId, function (item) {renderItem(item)})
+    api('GET', itemId, function (err, item) {renderItem(item)})
   } else {
-    api('GET', 'search?' + params, function (data) {
+    api('GET', 'search?' + params, function (err, data) {
       renderCount(data.total)
       renderResults(data.hits)
     })
@@ -247,7 +289,7 @@ function populate () {
 }
 
 function initialize () {
-  if (!getCookie('token')) return renderLogin()
+  if (!cache.token) return renderLogin()
   populate()
 }
 

@@ -77,13 +77,6 @@ header div {
   margin: 0;
   padding: 0;
 }
-header div a {
-  color: #333;
-  font-weight: bold;
-}
-header div a:hover {
-  background: #ddd;
-}
 input[type=datetime],
 input[type=search],
 input[type=text],
@@ -211,6 +204,16 @@ textarea {
 }
 .types {
   margin: 10px 0;
+}
+.user {
+  float: right;
+  margin: 6px 0 0 0;
+}
+.username {
+  font-size: 20px;
+}
+.logout {
+  font-size: 14px;
 }
 #results {
   padding: 10px;
