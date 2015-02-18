@@ -1,7 +1,8 @@
 /* global getCookie,queryString */
 'use strict'
 
-var mainEl = document.getElementById('main')
+var cache = {}
+cache.mainDiv = document.getElementById('main')
   
 function api (method, path, data, cb) {
   if (!cb) {
@@ -41,7 +42,7 @@ function renderInput (form, name, value, type) {
 
 function renderItem (item) {
   var el = document.createElement('a')
-  mainEl.appendChild(el)
+  cache.mainDiv.appendChild(el)
   el.className = 'item'
 
   var publicUrl = 'wavefarm.org/archive/' + item.id
@@ -159,74 +160,73 @@ function renderResults (items) {
     itemDesc.appendChild(document.createTextNode(desc))
     el.appendChild(itemDesc)
 
-    mainEl.appendChild(el)
+    cache.mainDiv.appendChild(el)
   }
 }
 
 function renderTypes (data) {
-  var typeEl
-  var typesEl = document.getElementById('types')
+  var typeDiv
+  cache.typesDiv = document.getElementById('types')
 
   for (var t in data) {
-    typeEl = document.createElement('a')
-    typeEl.href = '?q=type:' + t
-    typeEl.appendChild(document.createTextNode(t))
-    typesEl.appendChild(typeEl)
-    typesEl.appendChild(document.createTextNode(' '))
+    typeDiv = document.createElement('a')
+    typeDiv.href = '?q=type:' + t
+    typeDiv.appendChild(document.createTextNode(t))
+    cache.typesDiv.appendChild(typeDiv)
+    cache.typesDiv.appendChild(document.createTextNode(' '))
   }
 }
 
-var errDiv
 function renderLogin () {
-  var loginForm = document.getElementById('login')
+  cache.loginForm = document.getElementById('login')
 
-  var userInput = renderInput(loginForm, 'username', '', 'text')
-  var passInput = renderInput(loginForm, 'password')
+  var userInput = renderInput(cache.loginForm, 'username', '', 'text')
+  var passInput = renderInput(cache.loginForm, 'password')
 
   var loginSubmit = document.createElement('input')
   loginSubmit.className = 'submit'
   loginSubmit.type = 'submit'
   loginSubmit.value = 'login'
-  loginForm.appendChild(loginSubmit)
+  cache.loginForm.appendChild(loginSubmit)
 
-  loginForm.addEventListener('submit', function (e) {
+  cache.loginForm.addEventListener('submit', function (e) {
     e.preventDefault()
     loginSubmit.disabled = true
-    if (errDiv && errDiv.parentNode) loginForm.removeChild(errDiv)
+    if (cache.errDiv && cache.errDiv.parentNode) cache.loginForm.removeChild(cache.errDiv)
     api('POST', 'login', {username: userInput.value, password: passInput.value}, function (err, data) {
       loginSubmit.disabled = false
       if (err) {
-        if (!errDiv) {
-          errDiv = document.createElement('div')
-          errDiv.className = 'alert'
-          errDiv.appendChild(document.createTextNode('No user found with those credentials.'))
+        if (!cache.errDiv) {
+          cache.errDiv = document.createElement('div')
+          cache.errDiv.className = 'alert'
+          cache.errDiv.appendChild(document.createTextNode('No user found with those credentials.'))
         }
-        return loginForm.appendChild(errDiv)
+        return cache.loginForm.appendChild(cache.errDiv)
       }
-      if (errDiv && errDiv.parentNode) loginForm.removeChild(errDiv)
+      if (cache.errDiv && cache.errDiv.parentNode) cache.loginForm.removeChild(cache.errDiv)
       console.log(data.user)
     })
   })
 }
 
 function renderSearch (params) {
-  var searchForm = document.getElementById('search')
+  cache.searchForm = document.getElementById('search')
   var searchInput = document.createElement('input')
   searchInput.id = 'q'
   searchInput.name = 'q'
   searchInput.type = 'search'
   searchInput.placeholder = 'search'
   searchInput.value = queryString.parse(params).q || ''
-  searchForm.appendChild(searchInput)
+  cache.searchForm.appendChild(searchInput)
 }
 
 function renderCount (total) {
-  var countDiv = document.getElementById('count')
+  cache.countDiv = document.getElementById('count')
   var totalSpan = document.createElement('span')
   totalSpan.id = 'total'
   totalSpan.appendChild(document.createTextNode(total))
-  countDiv.appendChild(totalSpan)
-  countDiv.appendChild(document.createTextNode(' results'))
+  cache.countDiv.appendChild(totalSpan)
+  cache.countDiv.appendChild(document.createTextNode(' results'))
 }
 
 function populate () {
@@ -247,7 +247,6 @@ function populate () {
 }
 
 function initialize () {
-  // If no token cookie short circuit to login
   if (!getCookie('token')) return renderLogin()
   populate()
 }
