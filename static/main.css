@@ -126,7 +126,7 @@ textarea {
 }
 .count {
   font-size: smaller;
-  padding: 5px 0 10px;
+  margin: 5px 0 20px;
 }
 .save-delete {
   float: right;
@@ -148,11 +148,10 @@ textarea {
   display: inline;
 }
 .item {
-  background-color: #eee;
   display: block;
   margin: 2px 0 0 0;
   overflow: auto;
-  padding: 20px;
+  padding: 0 0 20px;
   transition: opacity .5s ease;
   -webkit-transition: opacity .5s ease;
 }
@@ -162,9 +161,17 @@ textarea {
 .item.not-selected {
   opacity: 0;
 }
+.item div {
+  font-size: 17px;
+  line-height: 20px;
+}
 .item form {
   padding: 20px 0;
   position: relative;
+}
+.item h3 {
+  font-size: 20px;
+  line-height: 26px;
 }
 .form-field {
   padding: 10px 0 0 0;
