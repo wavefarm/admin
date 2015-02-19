@@ -214,13 +214,11 @@ textarea {
 }
 .user {
   float: right;
+  font-size: 20px;
   margin: 6px 0 0 0;
 }
-.username {
-  font-size: 20px;
-}
 .logout {
-  font-size: 14px;
+  color: #777;
 }
 #results {
   padding: 10px;
