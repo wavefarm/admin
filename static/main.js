@@ -2,17 +2,15 @@
 'use strict'
 
 var cache = {
-  el: {
-    count: document.getElementById('count'),
-    login: document.getElementById('login'),
-    main: document.getElementById('main'),
-    user: document.getElementById('user'),
-    search: document.getElementById('search'),
-    types: document.getElementById('types')
-  }
+  count: document.getElementById('count'),
+  login: document.getElementById('login'),
+  main: document.getElementById('main'),
+  user: document.getElementById('user'),
+  search: document.getElementById('search'),
+  token: getCookie('token'),
+  types: document.getElementById('types')
 }
 
-cache.token = getCookie('token')
 
 function api (method, path, data, cb) {
   if (!cb) {
@@ -52,7 +50,7 @@ function renderInput (form, name, value, type) {
 
 function renderItem (item) {
   var el = document.createElement('a')
-  cache.el.main.appendChild(el)
+  cache.main.appendChild(el)
   el.className = 'item'
 
   var publicUrl = 'wavefarm.org/archive/' + item.id
@@ -170,7 +168,7 @@ function renderResults (items) {
     itemDesc.appendChild(document.createTextNode(desc))
     el.appendChild(itemDesc)
 
-    cache.el.main.appendChild(el)
+    cache.main.appendChild(el)
   }
 }
 
@@ -180,45 +178,52 @@ function renderTypes (data) {
     typeDiv = document.createElement('a')
     typeDiv.href = '?q=type:' + t
     typeDiv.appendChild(document.createTextNode(t))
-    cache.el.types.appendChild(typeDiv)
-    cache.el.types.appendChild(document.createTextNode(' '))
+    cache.types.appendChild(typeDiv)
+    cache.types.appendChild(document.createTextNode(' '))
   }
 }
 
-function removeAll () {
-  var elem
-  for (var e in cache.el) {
-    elem = cache.el[e]
+function logout () {
+  var elems = [
+    cache.count,
+    cache.search,
+    cache.main,
+    cache.types,
+    cache.user
+  ]
+  elems.forEach(function (elem) {
     if (elem && elem.parentNode) {
       elem.parentNode.removeChild(elem)
     }
-  }
+  })
+  dropCookie('token')
+  renderLogin()
 }
 
 function renderLogin () {
-  if (!cache.el.login.firstChild) {
+  if (!cache.login.firstChild) {
     populateLogin()
   }
 
-  if (!cache.el.login.parentNode) {
-    document.body.appendChild(cache.el.login)
+  if (!cache.login.parentNode) {
+    document.body.appendChild(cache.login)
   }
 }
 
 function populateLogin () {
-  var userInput = renderInput(cache.el.login, 'username', '', 'text')
-  var passInput = renderInput(cache.el.login, 'password')
+  var userInput = renderInput(cache.login, 'username', '', 'text')
+  var passInput = renderInput(cache.login, 'password')
 
   var loginSubmit = document.createElement('input')
   loginSubmit.className = 'submit'
   loginSubmit.type = 'submit'
   loginSubmit.value = 'login'
-  cache.el.login.appendChild(loginSubmit)
+  cache.login.appendChild(loginSubmit)
 
-  cache.el.login.addEventListener('submit', function (e) {
+  cache.login.addEventListener('submit', function (e) {
     e.preventDefault()
     loginSubmit.disabled = true
-    if (cache.errDiv && cache.errDiv.parentNode) cache.el.login.removeChild(cache.errDiv)
+    if (cache.errDiv && cache.errDiv.parentNode) cache.login.removeChild(cache.errDiv)
     api('POST', 'login', {username: userInput.value, password: passInput.value}, function (err, user) {
       loginSubmit.disabled = false
       if (err) {
@@ -227,13 +232,13 @@ function populateLogin () {
           cache.errDiv.className = 'alert'
           cache.errDiv.appendChild(document.createTextNode('No user found with those credentials.'))
         }
-        return cache.el.login.appendChild(cache.errDiv)
+        return cache.login.appendChild(cache.errDiv)
       }
-      if (cache.errDiv && cache.errDiv.parentNode) cache.el.login.removeChild(cache.errDiv)
+      if (cache.errDiv && cache.errDiv.parentNode) cache.login.removeChild(cache.errDiv)
       setCookie('token', user.token, 100)
       setCookie('username', user.name, 100)
       setCookie('userid', user.id, 100)
-      cache.el.login.parentNode.removeChild(cache.el.login)
+      cache.login.parentNode.removeChild(cache.login)
       userInput.value = ''
       passInput.value = ''
       renderAll()
@@ -248,23 +253,23 @@ function renderSearch (params) {
   searchInput.type = 'search'
   searchInput.placeholder = 'search'
   searchInput.value = queryString.parse(params).q || ''
-  cache.el.search.appendChild(searchInput)
+  cache.search.appendChild(searchInput)
 }
 
 function renderCount (total) {
   var totalSpan = document.createElement('span')
   totalSpan.id = 'total'
   totalSpan.appendChild(document.createTextNode(total))
-  cache.el.count.appendChild(totalSpan)
-  cache.el.count.appendChild(document.createTextNode(' results'))
+  cache.count.appendChild(totalSpan)
+  cache.count.appendChild(document.createTextNode(' results'))
 }
 
 function renderUser () {
-  if (!cache.el.user.parentNode) {
-    cache.el.user.firstChild.textContent = getCookie('username')
-    cache.el.user.firstChild.href = getCookie('userid')
+  if (!cache.user.parentNode) {
+    cache.user.firstChild.textContent = getCookie('username')
+    cache.user.firstChild.href = getCookie('userid')
     var header = document.getElementsByTagName('header')[0]
-    header.insertBefore(cache.el.user, header.firstChild)
+    header.insertBefore(cache.user, header.firstChild)
     return
   }
 
@@ -272,21 +277,19 @@ function renderUser () {
   nameLink.className = 'username'
   nameLink.href = getCookie('userid')
   nameLink.appendChild(document.createTextNode(getCookie('username')))
-  cache.el.user.appendChild(nameLink)
+  cache.user.appendChild(nameLink)
 
-  cache.el.user.appendChild(document.createTextNode(' '))
+  cache.user.appendChild(document.createTextNode(' '))
 
   var logoutLink = document.createElement('a')
   logoutLink.className = 'logout'
   logoutLink.href = ''
   logoutLink.appendChild(document.createTextNode('logout'))
-  cache.el.user.appendChild(logoutLink)
+  cache.user.appendChild(logoutLink)
 
   logoutLink.addEventListener('click', function (e) {
     e.preventDefault()
-    dropCookie('token')
-    removeAll()
-    renderLogin()
+    logout()
   })
 }
 
