@@ -185,7 +185,7 @@ function renderTypes (data) {
   var typeDiv
   for (var t in data) {
     typeDiv = document.createElement('a')
-    typeDiv.href = '?q=type:' + t
+    typeDiv.href = '/admin/?q=type:' + t
     typeDiv.appendChild(document.createTextNode(t))
     cache.types.appendChild(typeDiv)
     cache.types.appendChild(document.createTextNode(' '))
