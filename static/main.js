@@ -32,19 +32,26 @@ function api (method, path, data, cb) {
   xhr.send(JSON.stringify(data))
 }
 
-function renderInput (form, name, value, type) {
+function fieldFactory (form) {
+  return function (name, value, type) {
+    form.appendChild(renderLabel(name))
+    form.appendChild(renderInput(name, value, type))
+  }
+}
+
+function renderLabel (name) {
   var label = document.createElement('label')
-  form.appendChild(label)
   label.htmlFor = name
   label.appendChild(document.createTextNode(name))
+  return label
+}
 
+function renderInput (name, value, type) {
   var input = document.createElement('input')
-  form.appendChild(input)
   input.id = name
   input.name = name
   input.value = value || ''
   input.type = type || name
-
   return input
 }
 
@@ -90,19 +97,21 @@ function renderItem (item) {
   publicLabel.htmlFor = 'active'
   publicLabel.appendChild(document.createTextNode('public'))
 
+  var field = fieldFactory(form)
+
   if (item.type == 'show') {
-    renderInput(form, 'title', item.title, 'text')
-    renderInput(form, 'url', item.url)
-    renderInput(form, 'mimetype', item.mimetype, 'text')
-    renderInput(form, 'date', item.date)
-    renderInput(form, 'caption', item.caption, 'text')
-    renderInput(form, 'description', item.description, 'textarea')
-    renderInput(form, 'sites', item.sites)
-    renderInput(form, 'artists', item.artists, 'rels')
-    renderInput(form, 'collaborators', item.collaborators, 'rels')
-    renderInput(form, 'works', item.works, 'rels')
-    renderInput(form, 'events', item.events, 'rels')
-    renderInput(form, 'shows', item.shows, 'rels')
+    field('title', item.title, 'text')
+    field('url', item.url)
+    field('mimetype', item.mimetype, 'text')
+    field('date', item.date)
+    field('caption', item.caption, 'text')
+    field('description', item.description, 'textarea')
+    field('sites', item.sites)
+    field('artists', item.artists, 'rels')
+    field('collaborators', item.collaborators, 'rels')
+    field('works', item.works, 'rels')
+    field('events', item.events, 'rels')
+    field('shows', item.shows, 'rels')
   }
 
   var itemSaveDelete = document.createElement('div')
@@ -211,8 +220,13 @@ function renderLogin () {
 }
 
 function populateLogin () {
-  var userInput = renderInput(cache.login, 'username', '', 'text')
-  var passInput = renderInput(cache.login, 'password')
+  cache.login.appendChild(renderLabel('username'))
+  var userInput = renderInput('username', '', 'text')
+  cache.login.appendChild(userInput)
+
+  cache.login.appendChild(renderLabel('password'))
+  var passInput = renderInput('password')
+  cache.login.appendChild(passInput)
 
   var loginSubmit = document.createElement('input')
   loginSubmit.className = 'submit'
