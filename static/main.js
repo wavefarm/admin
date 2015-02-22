@@ -32,6 +32,14 @@ function api (method, path, data, cb) {
 
 function fieldFactory (form) {
   return function (name, value, type) {
+    if (type === 'checkbox') {
+      var input = renderInput(name, null, type)
+      input.checked = value
+      form.appendChild(input)
+      var label = renderLabel(name)
+      label.className = 'for-check'
+      return form.appendChild(label)
+    }
     form.appendChild(renderLabel(name))
     form.appendChild(renderInput(name, value, type))
   }
@@ -48,7 +56,7 @@ function renderInput (name, value, type) {
   var input = document.createElement('input')
   input.id = name
   input.name = name
-  input.value = value || ''
+  if (value) input.value = value
   input.type = type || name
   return input
 }
@@ -76,31 +84,20 @@ function prepItem () {
   var form = document.createElement('form')
   el.appendChild(form)
 
-  var publicInput = document.createElement('input')
-  form.appendChild(publicInput)
-  publicInput.id = 'public'
-  publicInput.name = 'public'
-  publicInput.type = 'checkbox'
-  var publicLabel = document.createElement('label')
-  form.appendChild(publicLabel)
-  publicLabel.className = 'for-check'
-  publicLabel.htmlFor = 'active'
-  publicLabel.appendChild(document.createTextNode('public'))
-
   var fields = document.createElement('div')
   fields.id = 'fields'
   form.appendChild(fields)
 
-  var itemSaveDelete = document.createElement('div')
-  form.appendChild(itemSaveDelete)
-  itemSaveDelete.className = 'save-delete'
+  var itemActions = document.createElement('div')
+  form.appendChild(itemActions)
+  itemActions.className = 'actions'
   var itemSave = document.createElement('input')
-  itemSaveDelete.appendChild(itemSave)
+  itemActions.appendChild(itemSave)
   itemSave.className = 'action'
   itemSave.type = 'submit'
   itemSave.value = 'save'
   var itemDelete = document.createElement('input')
-  itemSaveDelete.appendChild(itemDelete)
+  itemActions.appendChild(itemDelete)
   itemDelete.type = 'button'
   itemDelete.className = 'action'
   itemDelete.value = 'delete'
@@ -120,14 +117,13 @@ function showItem (item) {
   el.querySelector('.item-main').textContent = item.main
   el.querySelector('.item-type').textContent = item.type
 
-  el.querySelector('#public').checked = item.public
-
   var fields = el.querySelector('#fields')
   while (fields.firstChild) fields.removeChild(fields.firstChild)
 
   var field = fieldFactory(fields)
 
   if (item.type == 'show') {
+    field('public', item.public, 'checkbox')
     field('title', item.title, 'text')
     field('url', item.url)
     field('mimetype', item.mimetype, 'text')
