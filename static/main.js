@@ -2,13 +2,11 @@
 'use strict'
 
 var cache = {
-  count: document.getElementById('count'),
-  login: document.getElementById('login'),
+  head: document.getElementById('head'),
+  controls: document.getElementById('controls'),
   main: document.getElementById('main'),
-  user: document.getElementById('user'),
-  search: document.getElementById('search'),
   token: getCookie('token'),
-  types: document.getElementById('types')
+  hits: []
 }
 
 
@@ -55,32 +53,25 @@ function renderInput (name, value, type) {
   return input
 }
 
-function renderItem (item) {
-  var el = document.createElement('a')
-  cache.main.appendChild(el)
+function prepItem () {
+  var el = cache.item = document.createElement('a')
   el.className = 'item'
 
-  var publicUrl = 'wavefarm.org/archive/' + item.id
   var publicLink = document.createElement('a')
   el.appendChild(publicLink)
-  if (!item.public) publicLink.style.display = 'none'
   publicLink.className = 'action public'
-  publicLink.href = '//' + publicUrl
   publicLink.target = '_blank'
   publicLink.title = 'public location'
-  publicLink.appendChild(document.createTextNode(publicUrl))
 
   var header = document.createElement('h3')
   el.appendChild(header)
   var main = document.createElement('span')
   header.appendChild(main)
   main.className = 'item-main'
-  main.appendChild(document.createTextNode(item.main))
   header.appendChild(document.createTextNode(' '))
   var type = document.createElement('span')
   header.appendChild(type)
   type.className = 'item-type'
-  type.appendChild(document.createTextNode(item.type))
 
   var form = document.createElement('form')
   el.appendChild(form)
@@ -90,29 +81,15 @@ function renderItem (item) {
   publicInput.id = 'public'
   publicInput.name = 'public'
   publicInput.type = 'checkbox'
-  publicInput.checked = item.public
   var publicLabel = document.createElement('label')
   form.appendChild(publicLabel)
   publicLabel.className = 'for-check'
   publicLabel.htmlFor = 'active'
   publicLabel.appendChild(document.createTextNode('public'))
 
-  var field = fieldFactory(form)
-
-  if (item.type == 'show') {
-    field('title', item.title, 'text')
-    field('url', item.url)
-    field('mimetype', item.mimetype, 'text')
-    field('date', item.date)
-    field('caption', item.caption, 'text')
-    field('description', item.description, 'textarea')
-    field('sites', item.sites)
-    field('artists', item.artists, 'rels')
-    field('collaborators', item.collaborators, 'rels')
-    field('works', item.works, 'rels')
-    field('events', item.events, 'rels')
-    field('shows', item.shows, 'rels')
-  }
+  var fields = document.createElement('div')
+  fields.id = 'fields'
+  form.appendChild(fields)
 
   var itemSaveDelete = document.createElement('div')
   form.appendChild(itemSaveDelete)
@@ -129,7 +106,44 @@ function renderItem (item) {
   itemDelete.value = 'delete'
 }
 
-function renderResults (items) {
+function showItem (item) {
+  if (!cache.item) prepItem()
+  var el = cache.item
+  cache.main.appendChild(el)
+
+  var publicLink = el.firstChild
+  publicLink.style.display = item.public ? 'block' : 'none'
+  var publicUrl = 'wavefarm.org/archive/' + item.id
+  publicLink.href = '//' + publicUrl
+  publicLink.textContent = publicUrl
+
+  el.querySelector('.item-main').textContent = item.main
+  el.querySelector('.item-type').textContent = item.type
+
+  el.querySelector('#public').checked = item.public
+
+  var fields = el.querySelector('#fields')
+  while (fields.firstChild) fields.removeChild(fields.firstChild)
+
+  var field = fieldFactory(fields)
+
+  if (item.type == 'show') {
+    field('title', item.title, 'text')
+    field('url', item.url)
+    field('mimetype', item.mimetype, 'text')
+    field('date', item.date)
+    field('caption', item.caption, 'text')
+    field('description', item.description, 'textarea')
+    field('sites', item.sites)
+    field('artists', item.artists, 'rels')
+    field('collaborators', item.collaborators, 'rels')
+    field('works', item.works, 'rels')
+    field('events', item.events, 'rels')
+    field('shows', item.shows, 'rels')
+  }
+}
+
+function showHits (items) {
   var desc
   var item
   var itemCredit
@@ -178,10 +192,16 @@ function renderResults (items) {
     el.appendChild(itemDesc)
 
     cache.main.appendChild(el)
+    cache.hits.push(el)
   }
 }
 
-function renderTypes (data) {
+function showTypes (data) {
+  if (!cache.types) {
+    cache.types = document.createElement('div')
+    cache.types.className = 'types'
+  }
+  while (cache.types.firstChild) cache.types.removeChild(cache.types.firstChild)
   var typeDiv
   for (var t in data) {
     typeDiv = document.createElement('a')
@@ -190,36 +210,36 @@ function renderTypes (data) {
     cache.types.appendChild(typeDiv)
     cache.types.appendChild(document.createTextNode(' '))
   }
+  if (!cache.types.parentNode) cache.controls.appendChild(cache.types)
 }
 
 function logout () {
   var elems = [
     cache.count,
     cache.search,
-    cache.main,
     cache.types,
-    cache.user
+    cache.user,
+    cache.item
   ]
+  elems = elems.concat(cache.hits)
   elems.forEach(function (elem) {
     if (elem && elem.parentNode) {
       elem.parentNode.removeChild(elem)
     }
   })
   dropCookie('token')
-  renderLogin()
+  showLogin()
 }
 
-function renderLogin () {
-  if (!cache.login.firstChild) {
-    populateLogin()
-  }
-
-  if (!cache.login.parentNode) {
-    document.body.appendChild(cache.login)
-  }
+function showLogin () {
+  if (!cache.login) prepLogin()
+  if (!cache.login.parentNode) document.body.appendChild(cache.login)
 }
 
-function populateLogin () {
+function prepLogin () {
+  cache.login = document.createElement('form')
+  cache.login.className = 'login'
+
   cache.login.appendChild(renderLabel('username'))
   var userInput = renderInput('username', '', 'text')
   cache.login.appendChild(userInput)
@@ -255,42 +275,53 @@ function populateLogin () {
       cache.login.parentNode.removeChild(cache.login)
       userInput.value = ''
       passInput.value = ''
-      renderAll()
+      login()
     })
   })
 }
 
-function renderSearch (params) {
+function prepSearch () {
+  cache.search = document.createElement('form')
+  cache.search.className = 'search'
+  cache.search.action = '/admin/'
+
   var searchInput = document.createElement('input')
   searchInput.id = 'q'
   searchInput.name = 'q'
   searchInput.type = 'search'
   searchInput.placeholder = 'search'
-  searchInput.value = queryString.parse(params).q || ''
   cache.search.appendChild(searchInput)
 }
 
-function renderCount (total) {
+function showSearch (params) {
+  if (!cache.search) prepSearch()
+  cache.search.elements.q.value = queryString.parse(params).q || ''
+  if (!cache.search.parentNode) {
+    cache.controls.appendChild(cache.search)
+  }
+}
+
+function prepCount () {
+  cache.count = document.createElement('div')
+  cache.count.className = 'count'
+
   var totalSpan = document.createElement('span')
-  totalSpan.id = 'total'
-  totalSpan.appendChild(document.createTextNode(total))
   cache.count.appendChild(totalSpan)
   cache.count.appendChild(document.createTextNode(' results'))
 }
 
-function renderUser () {
-  if (!cache.user.parentNode) {
-    cache.user.firstChild.textContent = getCookie('username')
-    cache.user.firstChild.href = getCookie('userid')
-    var header = document.getElementsByTagName('header')[0]
-    header.insertBefore(cache.user, header.firstChild)
-    return
-  }
+function showCount (total) {
+  if (!cache.count) prepCount()
+  cache.count.firstChild.textContent = total
+  if (!cache.count.parentNode) cache.main.appendChild(cache.count)
+}
+
+function prepUser () {
+  cache.user = document.createElement('div')
+  cache.user.className = 'user'
 
   var nameLink = document.createElement('a')
   nameLink.className = 'username'
-  nameLink.href = getCookie('userid')
-  nameLink.appendChild(document.createTextNode(getCookie('username')))
   cache.user.appendChild(nameLink)
 
   cache.user.appendChild(document.createTextNode(' '))
@@ -307,29 +338,37 @@ function renderUser () {
   })
 }
 
-function renderAll () {
+function showUser () {
+  if (!cache.user) prepUser()
+  cache.user.firstChild.textContent = getCookie('username')
+  cache.user.firstChild.href = getCookie('userid')
+  if (!cache.user.parentNode) {
+    cache.head.insertBefore(cache.user, cache.head.firstChild)
+  }
+}
+
+function login () {
   var itemId = /\w{6}/.exec(window.location.pathname)
   var params = window.location.search.substr(1)
 
-  renderUser()
-
-  api('GET', 'schemas', function (err, data) {renderTypes(data)})
-  renderSearch(params)
+  showUser()
+  showSearch(params)
+  api('GET', 'schemas', function (err, data) {showTypes(data)})
 
   if (itemId) {
-    api('GET', itemId, function (err, item) {renderItem(item)})
+    api('GET', itemId, function (err, item) {showItem(item)})
   } else {
     api('GET', 'search?' + params, function (err, data) {
       if (err) console.error(err)
-      renderCount(data.total)
-      renderResults(data.hits)
+      showCount(data.total)
+      showHits(data.hits)
     })
   }
 }
 
 function initialize () {
-  if (!cache.token) return renderLogin()
-  renderAll()
+  if (!cache.token) return showLogin()
+  login()
 }
 
 initialize()
