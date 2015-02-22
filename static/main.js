@@ -1,10 +1,15 @@
 /* global setCookie,getCookie,dropCookie,queryString */
 'use strict'
 
-var cache = {el: {}}
-
-cache.el.main = document.getElementById('main')
-cache.el.user = document.getElementById('user')
+var cache = {
+  el: {
+    count: document.getElementById('count'),
+    main: document.getElementById('main'),
+    user: document.getElementById('user'),
+    search: document.getElementById('search'),
+    types: document.getElementById('types')
+  }
+}
 
 cache.token = getCookie('token')
 
@@ -170,8 +175,6 @@ function renderResults (items) {
 
 function renderTypes (data) {
   var typeDiv
-  cache.el.types = document.getElementById('types')
-
   for (var t in data) {
     typeDiv = document.createElement('a')
     typeDiv.href = '?q=type:' + t
@@ -227,7 +230,6 @@ function renderLogin () {
 }
 
 function renderSearch (params) {
-  cache.el.search = document.getElementById('search')
   var searchInput = document.createElement('input')
   searchInput.id = 'q'
   searchInput.name = 'q'
@@ -238,7 +240,6 @@ function renderSearch (params) {
 }
 
 function renderCount (total) {
-  cache.el.count = document.getElementById('count')
   var totalSpan = document.createElement('span')
   totalSpan.id = 'total'
   totalSpan.appendChild(document.createTextNode(total))
@@ -247,7 +248,14 @@ function renderCount (total) {
 }
 
 function renderUser () {
-  if (!cache.el.user.parentNode) {}
+  if (!cache.el.user.parentNode) {
+    cache.el.user.firstChild.textContent = getCookie('username')
+    cache.el.user.firstChild.href = getCookie('userid')
+    var header = document.getElementsByTagName('header')[0]
+    header.insertBefore(cache.el.user, header.firstChild)
+    return
+  }
+
   var nameLink = document.createElement('a')
   nameLink.className = 'username'
   nameLink.href = getCookie('userid')
@@ -282,6 +290,7 @@ function populate () {
     api('GET', itemId, function (err, item) {renderItem(item)})
   } else {
     api('GET', 'search?' + params, function (err, data) {
+      if (err) console.error(err)
       renderCount(data.total)
       renderResults(data.hits)
     })
