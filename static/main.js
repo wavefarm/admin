@@ -4,6 +4,7 @@
 var cache = {
   el: {
     count: document.getElementById('count'),
+    login: document.getElementById('login'),
     main: document.getElementById('main'),
     user: document.getElementById('user'),
     search: document.getElementById('search'),
@@ -184,7 +185,7 @@ function renderTypes (data) {
   }
 }
 
-function renderLogin () {
+function removeAll () {
   var elem
   for (var e in cache.el) {
     elem = cache.el[e]
@@ -192,10 +193,19 @@ function renderLogin () {
       elem.parentNode.removeChild(elem)
     }
   }
+}
 
-  cache.el.login = cache.el.login || document.getElementById('login')
-  if (!cache.el.login.parentNode) {document.body.appendChild(cache.el.login)}
+function renderLogin () {
+  if (!cache.el.login.firstChild) {
+    populateLogin()
+  }
 
+  if (!cache.el.login.parentNode) {
+    document.body.appendChild(cache.el.login)
+  }
+}
+
+function populateLogin () {
   var userInput = renderInput(cache.el.login, 'username', '', 'text')
   var passInput = renderInput(cache.el.login, 'password')
 
@@ -224,7 +234,9 @@ function renderLogin () {
       setCookie('username', user.name, 100)
       setCookie('userid', user.id, 100)
       cache.el.login.parentNode.removeChild(cache.el.login)
-      populate()
+      userInput.value = ''
+      passInput.value = ''
+      renderAll()
     })
   })
 }
@@ -273,11 +285,12 @@ function renderUser () {
   logoutLink.addEventListener('click', function (e) {
     e.preventDefault()
     dropCookie('token')
+    removeAll()
     renderLogin()
   })
 }
 
-function populate () {
+function renderAll () {
   var itemId = /\w{6}/.exec(window.location.pathname)
   var params = window.location.search.substr(1)
 
@@ -299,7 +312,7 @@ function populate () {
 
 function initialize () {
   if (!cache.token) return renderLogin()
-  populate()
+  renderAll()
 }
 
 initialize()
