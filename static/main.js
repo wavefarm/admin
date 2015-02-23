@@ -139,56 +139,51 @@ function showItem (item) {
   }
 }
 
-function showHits (items) {
-  var desc
-  var item
-  var itemCredit
-  var itemDesc
-  var el
-  var header
-  var main
-  var type
-  var itemLen
-  var i
+function prepHit () {
+  var el = document.createElement('a')
+  el.className = 'item'
 
-  itemLen = items.length
-  for (i=0; i < itemLen; i++) {
-    item = items[i]
-    desc = item.description || item.briefDescription || item.longDescription || ''
+  var header = document.createElement('h3')
+  var main = document.createElement('span')
+  main.className = 'item-main'
+  header.appendChild(main)
+  header.appendChild(document.createTextNode(' '))
+  var type = document.createElement('span')
+  type.className = 'item-type'
+  header.appendChild(type)
+  el.appendChild(header)
+
+  var itemCredit = document.createElement('div')
+  itemCredit.className = 'credit'
+  el.appendChild(itemCredit)
+
+  var itemDesc = document.createElement('div')
+  itemDesc.className = 'description'
+  el.appendChild(itemDesc)
+
+  return el
+}
+
+function showHits (items) {
+  for (var i=0; i < items.length; i++) {
+    var item = items[i]
+    var desc = item.description || item.briefDescription || item.longDescription || ''
 
     // Strip HTML tags from description and truncate for excerpt
     desc = desc.replace(/<[^>]*>/g, '')
     desc = desc.length > 60 ? desc.substr(0, 60) + '...' : desc
 
-    el = document.createElement('a')
-    el.className = 'item'
+    var el = cache.hits[i] = cache.hits[i] || prepHit()
+
     el.id = item.id
     el.href = item.id
 
-    header = document.createElement('h3')
-    main = document.createElement('span')
-    main.className = 'item-main'
-    main.appendChild(document.createTextNode(item.main))
-    header.appendChild(main)
-    header.appendChild(document.createTextNode(' '))
-    type = document.createElement('span')
-    type.className = 'item-type'
-    type.appendChild(document.createTextNode(item.type))
-    header.appendChild(type)
-    el.appendChild(header)
-
-    itemCredit = document.createElement('div')
-    itemCredit.className = 'credit'
-    itemCredit.appendChild(document.createTextNode(item.credit || ''))
-    el.appendChild(itemCredit)
-
-    itemDesc = document.createElement('div')
-    itemDesc.className = 'description'
-    itemDesc.appendChild(document.createTextNode(desc))
-    el.appendChild(itemDesc)
+    el.querySelector('.item-main').textContent = item.main
+    el.querySelector('.item-type').textContent = item.type
+    el.querySelector('.credit').textContent = item.credit || ''
+    el.querySelector('.description').textContent = desc
 
     cache.main.appendChild(el)
-    cache.hits.push(el)
   }
 }
 
