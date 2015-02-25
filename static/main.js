@@ -30,21 +30,6 @@ function api (method, path, data, cb) {
   xhr.send(JSON.stringify(data))
 }
 
-function fieldFactory (form) {
-  return function (name, value, type) {
-    if (type === 'checkbox') {
-      var input = renderInput(name, null, type)
-      input.checked = value
-      form.appendChild(input)
-      var label = renderLabel(name)
-      label.className = 'for-check'
-      return form.appendChild(label)
-    }
-    form.appendChild(renderLabel(name))
-    form.appendChild(renderInput(name, value, type))
-  }
-}
-
 function renderLabel (name) {
   var label = document.createElement('label')
   label.htmlFor = name
@@ -59,6 +44,31 @@ function renderInput (name, value, type) {
   if (value) input.value = value
   input.type = type || name
   return input
+}
+
+function fieldFactory (form, item) {
+  return function (name, value, type) {
+    if (item) {
+      value = value || item[name]
+      var schemaField = cache.schemas[item.type].fields[name]
+      if (schemaField) {
+        if (schemaField.type === 'boolean') type = 'checkbox'
+        else if (schemaField.type === 'text') type = 'textarea'
+        else if (schemaField.type) type = schemaField.type
+        else type = 'text'
+      }
+    }
+    if (type === 'checkbox') {
+      var input = renderInput(name, null, type)
+      input.checked = value
+      form.appendChild(input)
+      var label = renderLabel(name)
+      label.className = 'for-check'
+      return form.appendChild(label)
+    }
+    form.appendChild(renderLabel(name))
+    form.appendChild(renderInput(name, value, type))
+  }
 }
 
 function prepItem () {
@@ -130,22 +140,38 @@ function showItem (item) {
   var fields = el.querySelector('#fields')
   while (fields.firstChild) fields.removeChild(fields.firstChild)
 
-  var field = fieldFactory(fields)
+  var field = fieldFactory(fields, item)
 
   if (item.type == 'show') {
-    field('public', item.public, 'checkbox')
-    field('title', item.title, 'text')
-    field('url', item.url)
-    field('mimetype', item.mimetype, 'text')
-    field('date', item.date)
-    field('caption', item.caption, 'text')
-    field('description', item.description, 'textarea')
-    field('sites', item.sites)
-    field('artists', item.artists, 'rels')
-    field('collaborators', item.collaborators, 'rels')
-    field('works', item.works, 'rels')
-    field('events', item.events, 'rels')
-    field('shows', item.shows, 'rels')
+    field('public')
+    field('nonsort')
+    field('title')
+    field('subtitle')
+    field('credit')
+    field('airtime')
+    field('description')
+    field('start')
+    field('end')
+    field('hosts')
+    field('works')
+    field('events')
+    field('shows')
+  }
+
+  if (item.type == 'text') {
+    field('active')
+    field('title')
+    field('url')
+    field('mimetype')
+    field('date')
+    field('caption')
+    field('description')
+    field('sites')
+    field('artists')
+    field('collaborators')
+    field('works')
+    field('events')
+    field('shows')
   }
 }
 
