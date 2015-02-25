@@ -67,7 +67,7 @@ function prepItem () {
 
   var publicLink = document.createElement('a')
   el.appendChild(publicLink)
-  publicLink.className = 'action public'
+  publicLink.className = 'public'
   publicLink.target = '_blank'
   publicLink.title = 'public location'
 
