@@ -64,6 +64,15 @@ function fieldFactory (form, item) {
       labelEl.className = 'for-check'
       return form.appendChild(labelEl)
     }
+    if (type === 'textarea') {
+      form.appendChild(renderLabel(name, label))
+      var textarea = document.createElement('textarea')
+      textarea.id = name
+      textarea.name = name
+      textarea.textContent = value
+      textarea.rows = 10
+      return form.appendChild(textarea)
+    }
     form.appendChild(renderLabel(name, label))
     form.appendChild(renderInput(name, value, type))
   }
