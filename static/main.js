@@ -99,7 +99,7 @@ function prepItem () {
   var itemDelete = document.createElement('input')
   itemActions.appendChild(itemDelete)
   itemDelete.type = 'button'
-  itemDelete.className = 'action'
+  itemDelete.className = 'action delete'
   itemDelete.value = 'delete'
 }
 
@@ -114,8 +114,18 @@ function showItem (item) {
   publicLink.href = '//' + publicUrl
   publicLink.textContent = publicUrl
 
-  el.querySelector('.item-main').textContent = item.main
-  el.querySelector('.item-type').textContent = item.type
+  // If no item.main assume we're adding a new item
+  var header = el.querySelector('h3')
+  var deleteButton = el.querySelector('.delete')
+  if (item.main) {
+    el.querySelector('.item-main').textContent = item.main
+    el.querySelector('.item-type').textContent = item.type
+    header.style.display = 'block'
+    deleteButton.style.display = 'inline'
+  } else {
+    header.style.display = 'none'
+    deleteButton.style.display = 'none'
+  }
 
   var fields = el.querySelector('#fields')
   while (fields.firstChild) fields.removeChild(fields.firstChild)
@@ -381,33 +391,42 @@ function showNewButton () {
   cache.main.appendChild(cache.newButton)
 }
 
-function login () {
-  var itemId = /\w{6}/.exec(window.location.pathname)
+function renderPage () {
+  var newItemRe = new RegExp('/admin/\(' + Object.keys(cache.schemas).join('|') + '\)')
+  var newItem = newItemRe.exec(window.location.pathname)
+  var item = /^\/admin\/(\w{6})/.exec(window.location.pathname)
   var params = window.location.search.substr(1)
 
-  showUser()
-  showSearch(params)
-
-  if (cache.schemas) showTypes()
-  else api('GET', 'schemas', function (err, data) {
-    if (err) console.error(err)
-    cache.schemas = data
-    showTypes()
-  })
-
-  if (itemId) {
-    api('GET', itemId, function (err, item) {
+  console.log(newItem)
+  if (newItem) {
+    return showItem({type: newItem[1]})
+  }
+  if (item) {
+    return api('GET', item[1], function (err, item) {
       if (err) console.error(err)
       showItem(item)
     })
-  } else {
-    api('GET', 'search?' + params, function (err, data) {
-      if (err) console.error(err)
-      showNewButton()
-      showCount(data.total)
-      showHits(data.hits)
-    })
   }
+  api('GET', 'search?' + params, function (err, data) {
+    if (err) console.error(err)
+    showSearch(params)
+    showTypes()
+    showNewButton()
+    showCount(data.total)
+    showHits(data.hits)
+  })
+}
+
+function login () {
+  showUser()
+
+  if (!cache.schemas) return api('GET', 'schemas', function (err, data) {
+    if (err) console.error(err)
+    cache.schemas = data
+    renderPage()
+  })
+  
+  renderPage()
 }
 
 function initialize () {
