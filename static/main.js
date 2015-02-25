@@ -30,11 +30,11 @@ function api (method, path, data, cb) {
   xhr.send(JSON.stringify(data))
 }
 
-function renderLabel (name, displayName) {
-  var label = document.createElement('label')
-  label.htmlFor = name
-  label.appendChild(document.createTextNode(displayName || name))
-  return label
+function renderLabel (name, label) {
+  var labelEl = document.createElement('label')
+  labelEl.htmlFor = name
+  labelEl.appendChild(document.createTextNode(label || name))
+  return labelEl
 }
 
 function renderInput (name, value, type) {
@@ -47,7 +47,7 @@ function renderInput (name, value, type) {
 }
 
 function fieldFactory (form, item) {
-  return function (name, displayName) {
+  return function (name, label) {
     var type = 'text'
     var value = item[name]
     var schemaField = cache.schemas[item.type].fields[name]
@@ -60,11 +60,11 @@ function fieldFactory (form, item) {
       var input = renderInput(name, null, type)
       input.checked = value
       form.appendChild(input)
-      var label = renderLabel(name, displayName)
-      label.className = 'for-check'
-      return form.appendChild(label)
+      var labelEl = renderLabel(name, label)
+      labelEl.className = 'for-check'
+      return form.appendChild(labelEl)
     }
-    form.appendChild(renderLabel(name, displayName))
+    form.appendChild(renderLabel(name, label))
     form.appendChild(renderInput(name, value, type))
   }
 }
@@ -147,7 +147,7 @@ function showItem (item) {
     field('bio')
     field('url')
     field('email')
-    field('publicEmail', 'public?')
+    field('publicEmail', 'public')
     field('portrait')
     field('portraitCaption')
     field('longDescription')
@@ -160,6 +160,80 @@ function showItem (item) {
     field('video')
     field('image')
     field('text')
+  } else if (item.type === 'audio') {
+    field('active')
+    field('url')
+    field('title')
+    field('caption')
+    field('description')
+    field('mimetype')
+    field('categories')
+    field('date')
+    field('sites')
+    field('artists')
+    field('works')
+    field('events')
+    field('shows')
+  } else if (item.type === 'broadcast') {
+    field('public')
+    field('title')
+    field('start')
+    field('end')
+    field('genStart')
+    field('genEnd')
+    field('description')
+    field('hosts')
+    field('guests')
+    field('works')
+    field('shows')
+    field('locations')
+    field('events')
+    field('image')
+    field('categories')
+  } else if (item.type === 'event') {
+    field('active')
+    field('name')
+    field('startDate')
+    field('startTime')
+    field('endDate')
+    field('endTime')
+    field('categories')
+    field('url')
+    field('briefDescription')
+    field('longDescription')
+    field('artists')
+    field('works')
+    field('shows')
+    field('locations')
+    field('events')
+    field('image')
+    field('broadcastCategories')
+    field('hosts')
+  } else if (item.type === 'image') {
+    field('active')
+    field('url')
+    field('title')
+    field('caption')
+    field('description')
+    field('mimetype')
+    field('categories')
+    field('date')
+    field('sites')
+    field('artists')
+    field('works')
+    field('events')
+    field('shows')
+  } else if (item.type === 'location') {
+    field('active')
+    field('name')
+    field('address')
+    field('address2')
+    field('city')
+    field('state')
+    field('country')
+    field('postalCode')
+    field('phone')
+    field('url')
   } else if (item.type === 'show') {
     field('public')
     field('nonsort')
@@ -176,18 +250,56 @@ function showItem (item) {
     field('shows')
   } else if (item.type === 'text') {
     field('active')
-    field('title')
     field('url')
-    field('mimetype')
-    field('date')
+    field('title')
     field('caption')
     field('description')
+    field('mimetype')
+    field('categories')
+    field('date')
     field('sites')
     field('artists')
-    field('collaborators')
     field('works')
     field('events')
     field('shows')
+  } else if (item.type === 'user') {
+    field('name')
+    field('password')
+    field('email')
+    // TODO Show role only if admin?
+    field('role')
+  } else if (item.type === 'video') {
+    field('active')
+    field('url')
+    field('title')
+    field('caption')
+    field('description')
+    field('mimetype')
+    field('categories')
+    field('date')
+    field('sites')
+    field('artists')
+    field('works')
+    field('events')
+    field('shows')
+  } else if (item.type === 'work') {
+    field('public')
+    field('nonsort')
+    field('title')
+    field('subtitle')
+    field('date')
+    field('description')
+    field('url')
+    field('categories')
+    field('email')
+    field('publicEmail', 'public')
+    field('image')
+    field('imageCaption', 'image caption')
+    field('audio')
+    field('artists')
+    field('events')
+    field('shows')
+    field('works')
   }
 }
 
@@ -465,7 +577,7 @@ function login () {
     cache.schemas = data
     renderPage()
   })
-  
+
   renderPage()
 }
 
