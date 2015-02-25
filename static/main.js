@@ -187,18 +187,18 @@ function showHits (items) {
   }
 }
 
-function showTypes (data) {
+function showTypes () {
   if (!cache.types) {
     cache.types = document.createElement('div')
     cache.types.className = 'types'
   }
   while (cache.types.firstChild) cache.types.removeChild(cache.types.firstChild)
-  var typeDiv
-  for (var t in data) {
-    typeDiv = document.createElement('a')
-    typeDiv.href = '/admin/?q=type:' + t
-    typeDiv.appendChild(document.createTextNode(t))
-    cache.types.appendChild(typeDiv)
+  var typeA
+  for (var t in cache.schemas) {
+    typeA = document.createElement('a')
+    typeA.href = '/admin/?q=type:' + t
+    typeA.appendChild(document.createTextNode(t))
+    cache.types.appendChild(typeA)
     cache.types.appendChild(document.createTextNode(' '))
   }
   if (!cache.types.parentNode) cache.controls.appendChild(cache.types)
@@ -338,19 +338,72 @@ function showUser () {
   }
 }
 
+function prepNewList () {
+  cache.newList = document.createElement('ul')
+  var a, li
+  // console.log(cache.schemas)
+  for (var t in cache.schemas) {
+    li = document.createElement('li')
+    a = document.createElement('a')
+    a.href = '/admin/' + t
+    a.textContent = t
+    li.appendChild(a)
+    cache.newList.appendChild(li)
+  }
+}
+
+function showNewList () {
+  if (!cache.newList) prepNewList()
+  cache.newButton.appendChild(cache.newList)
+}
+
+function prepNewButton () {
+  cache.newButton = document.createElement('div')
+  cache.newButton.className = 'actions'
+  var newB = document.createElement('a')
+  newB.className = 'action'
+  newB.href = ''
+  newB.textContent = 'new'
+  cache.newButton.appendChild(newB)
+
+  newB.addEventListener('click', function (e) {
+    e.preventDefault()
+    if (cache.newList && cache.newList.parentNode) {
+      cache.newButton.removeChild(cache.newList)
+    } else {
+      showNewList()
+    }
+  })
+}
+
+function showNewButton () {
+  if (!cache.newButton) prepNewButton()
+  cache.main.appendChild(cache.newButton)
+}
+
 function login () {
   var itemId = /\w{6}/.exec(window.location.pathname)
   var params = window.location.search.substr(1)
 
   showUser()
   showSearch(params)
-  api('GET', 'schemas', function (err, data) {showTypes(data)})
+
+  if (cache.schemas) showTypes()
+  else api('GET', 'schemas', function (err, data) {
+    if (err) console.error(err)
+    cache.schemas = data
+    showTypes()
+  })
 
   if (itemId) {
-    api('GET', itemId, function (err, item) {showItem(item)})
+    api('GET', itemId, function (err, item) {
+      if (err) console.error(err)
+      showItem(item)
+    })
   } else {
     api('GET', 'search?' + params, function (err, data) {
       if (err) console.error(err)
+      showNewButton()
       showCount(data.total)
       showHits(data.hits)
     })
