@@ -27,7 +27,7 @@ time, mark, audio, video {
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
-	display: block;
+  display: block;
 }
 a {
   color: #000;
@@ -36,19 +36,18 @@ a {
 body {
   font-family: "Droid Sans", sans-serif;
   font-size: 18px;
-	line-height: 1;
-  padding: 10px;
+  line-height: 1;
 }
 ol, ul {
-	list-style: none;
+  list-style: none;
 }
 blockquote, q {
-	quotes: none;
+  quotes: none;
 }
 blockquote:before, blockquote:after,
 q:before, q:after {
-	content: '';
-	content: none;
+  content: '';
+  content: none;
 }
 button, input[type=button] {
   cursor: pointer;
@@ -58,14 +57,12 @@ label {
   margin: 10px 0 0 0;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
-h1.logo {
+.logo {
   font-size: 32px;
   line-height: 32px;
-  margin: 0;
-  padding: 0;
 }
 header {
   overflow: hidden;
@@ -73,26 +70,22 @@ header {
 header a {
   color: #000;
 }
-header div {
-  margin: 0;
-  padding: 0;
-}
 input[type=datetime],
+input[type=email],
 input[type=search],
 input[type=text],
 input[type=url],
 textarea {
   display: block;
-  width: 100%;
+  width: 95%;
 }
 input[type=date],
+input[type=email],
 input[type=search],
 input[type=text],
 input[type=url],
 textarea {
-  border: 1px solid #bbb;
   font-family: monospace;
-  padding: 1px 2px;
 }
 input[type=checkbox] {
   vertical-align: middle;
@@ -116,12 +109,6 @@ textarea {
 }
 .checkbox {
   margin: 10px 0 0 0;
-}
-.container {
-  padding: 10px;
-}
-.controls {
-  padding: 10px 0;
 }
 .count {
   font-size: smaller;
@@ -169,8 +156,6 @@ textarea {
   line-height: 20px;
 }
 .item form {
-  padding: 20px 0;
-  position: relative;
 }
 .item h3 {
   font-size: 20px;
@@ -222,9 +207,6 @@ textarea {
 }
 .logout {
   color: #777;
-}
-#results {
-  padding: 10px;
 }
 #raw {
   background: #111;

@@ -1,8 +1,3 @@
-header {
-}
-.controls {
-  width: 40.5em;
-}
-.main {
-  width: 40.5em;
+.container {
+  padding: 10px;
 }

@@ -30,10 +30,10 @@ function api (method, path, data, cb) {
   xhr.send(JSON.stringify(data))
 }
 
-function renderLabel (name) {
+function renderLabel (name, displayName) {
   var label = document.createElement('label')
   label.htmlFor = name
-  label.appendChild(document.createTextNode(name))
+  label.appendChild(document.createTextNode(displayName || name))
   return label
 }
 
@@ -47,26 +47,24 @@ function renderInput (name, value, type) {
 }
 
 function fieldFactory (form, item) {
-  return function (name, value, type) {
-    if (item) {
-      value = value || item[name]
-      var schemaField = cache.schemas[item.type].fields[name]
-      if (schemaField) {
-        if (schemaField.type === 'boolean') type = 'checkbox'
-        else if (schemaField.type === 'text') type = 'textarea'
-        else if (schemaField.type) type = schemaField.type
-        else type = 'text'
-      }
+  return function (name, displayName) {
+    var type = 'text'
+    var value = item[name]
+    var schemaField = cache.schemas[item.type].fields[name]
+    if (schemaField) {
+      if (schemaField.type === 'boolean') type = 'checkbox'
+      else if (schemaField.type === 'text') type = 'textarea'
+      else if (schemaField.type) type = schemaField.type
     }
     if (type === 'checkbox') {
       var input = renderInput(name, null, type)
       input.checked = value
       form.appendChild(input)
-      var label = renderLabel(name)
+      var label = renderLabel(name, displayName)
       label.className = 'for-check'
       return form.appendChild(label)
     }
-    form.appendChild(renderLabel(name))
+    form.appendChild(renderLabel(name, displayName))
     form.appendChild(renderInput(name, value, type))
   }
 }
@@ -142,7 +140,27 @@ function showItem (item) {
 
   var field = fieldFactory(fields, item)
 
-  if (item.type == 'show') {
+  if (item.type === 'artist') {
+    field('active')
+    field('name')
+    field('sortName')
+    field('bio')
+    field('url')
+    field('email')
+    field('publicEmail', 'public?')
+    field('portrait')
+    field('portraitCaption')
+    field('longDescription')
+    field('artists')
+    field('works')
+    field('shows')
+    field('locations')
+    field('events')
+    field('audio')
+    field('video')
+    field('image')
+    field('text')
+  } else if (item.type === 'show') {
     field('public')
     field('nonsort')
     field('title')
@@ -156,9 +174,7 @@ function showItem (item) {
     field('works')
     field('events')
     field('shows')
-  }
-
-  if (item.type == 'text') {
+  } else if (item.type === 'text') {
     field('active')
     field('title')
     field('url')
@@ -377,7 +393,6 @@ function showUser () {
 function prepNewList () {
   cache.newList = document.createElement('ul')
   var a, li
-  // console.log(cache.schemas)
   for (var t in cache.schemas) {
     li = document.createElement('li')
     a = document.createElement('a')
@@ -423,7 +438,6 @@ function renderPage () {
   var item = /^\/admin\/(\w{6})/.exec(window.location.pathname)
   var params = window.location.search.substr(1)
 
-  console.log(newItem)
   if (newItem) {
     return showItem({type: newItem[1]})
   }
