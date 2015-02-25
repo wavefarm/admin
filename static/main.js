@@ -46,6 +46,14 @@ function renderInput (name, value, type) {
   return input
 }
 
+function trunc (str) {
+  str = str || ''
+  if (str.length > 60) {
+    str = str.substr(0, 60) + '...'
+  }
+  return str
+}
+
 function fieldFactory (form, item) {
   return function (name, label) {
     var type = 'text'
@@ -72,6 +80,35 @@ function fieldFactory (form, item) {
       textarea.textContent = value
       textarea.rows = 10
       return form.appendChild(textarea)
+    }
+    if (type.indexOf('rel') === 0) {
+      form.appendChild(renderLabel(name, label))
+      var rels = document.createElement('div')
+      rels.className = 'rels'
+      var relList = document.createElement('ul')
+      if (value) value.forEach(function (rel) {
+        var relEl = document.createElement('li')
+        var relA = document.createElement('a')
+        relA.href = rel.id
+        relA.target = '_blank'
+        relA.textContent = trunc(rel.main)
+        relEl.appendChild(relA)
+        var relBut = document.createElement('button')
+        relBut.className = 'fa fa-unlink'
+        relBut.title = 'unlink'
+        relEl.appendChild(relBut)
+        relList.appendChild(relEl)
+      })
+      rels.appendChild(relList)
+      var relInput = document.createElement('input')
+      relInput.type = 'text'
+      relInput.autocomplete = 'off'
+      rels.appendChild(relInput)
+      var relLinkBut = document.createElement('button')
+      relLinkBut.className = 'fa fa-link'
+      relLinkBut.title = 'link'
+      rels.appendChild(relLinkBut)
+      return form.appendChild(rels)
     }
     form.appendChild(renderLabel(name, label))
     form.appendChild(renderInput(name, value, type))
