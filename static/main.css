@@ -105,9 +105,8 @@ input[type=submit], input[type=button] {
 textarea {
 }
 .action {
-  background-color: #eee;
-  border: 1px solid #bbb;
-  color: #000;
+  background-color: #ddd;
+  border: none;
   margin: 0 0 0 5px;
   padding: 5px 7px;
 }
