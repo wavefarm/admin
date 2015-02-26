@@ -9,6 +9,8 @@ var cache = {
   hits: []
 }
 
+cache.typeahead = document.createElement('ul')
+cache.typeahead.className = 'typeahead'
 
 function api (method, path, data, cb) {
   if (!cb) {
@@ -108,6 +110,24 @@ function fieldFactory (form, item) {
       relLinkBut.className = 'fa fa-link'
       relLinkBut.title = 'link'
       rels.appendChild(relLinkBut)
+
+      relInput.addEventListener('keyup', function (e) {
+        e.preventDefault()
+        var typed = e.target.value
+        if (typed.length < 3) return
+        var params = {q: 'type:' + type.substr(4) + ' main:"' + e.target.value + '"'}
+        api('GET', 'search?' + queryString.stringify(params), function (err, data) {
+          if (err) console.error(err)
+          while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
+          rels.appendChild(cache.typeahead)
+          data.hits.forEach(function (hit) {
+            var hitLi = document.createElement('li')
+            hitLi.textContent = hit.main
+            cache.typeahead.appendChild(hitLi)
+          })
+        })
+      })
+
       return form.appendChild(rels)
     }
     form.appendChild(renderLabel(name, label))

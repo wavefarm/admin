@@ -195,6 +195,11 @@ textarea {
 .submit {
   margin: 0 0 0 10px;
 }
+.typeahead {
+  background: #fff;
+  position: absolute;
+  z-index: 10;
+}
 .types {
   margin: 10px 0 20px;
 }
