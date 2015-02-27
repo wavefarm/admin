@@ -40,12 +40,13 @@ function renderLabel (name, label) {
   return labelEl
 }
 
-function renderInput (name, value, type) {
+function renderInput (name, value, type, required) {
   var input = document.createElement('input')
   input.id = name
   input.name = name
   if (value) input.value = value
   input.type = type || name
+  input.required = required
   return input
 }
 
@@ -58,7 +59,8 @@ function trunc (str) {
 }
 
 function fieldFactory (form, item) {
-  return function (name, label) {
+  return function (name, options) {
+    options = options || {}
     var type = 'text'
     var value = item[name]
     var schemaField = cache.schemas[item.type].fields[name]
@@ -71,30 +73,35 @@ function fieldFactory (form, item) {
       var input = renderInput(name, null, type)
       input.checked = value
       form.appendChild(input)
-      var labelEl = renderLabel(name, label)
+      var labelEl = renderLabel(name, options.label)
       labelEl.className = 'for-check'
       return form.appendChild(labelEl)
     }
     if (type === 'textarea') {
-      form.appendChild(renderLabel(name, label))
+      form.appendChild(renderLabel(name, options.label))
       var textarea = document.createElement('textarea')
       textarea.id = name
       textarea.name = name
       textarea.textContent = value
       textarea.rows = 10
+      textarea.required = options.required
       return form.appendChild(textarea)
     }
     if (type.indexOf('rel') === 0) {
-      form.appendChild(renderLabel(name, label))
+      var relType = type.substr(4)
+      form.appendChild(renderLabel(name, options.label))
       var rels = document.createElement('div')
       rels.className = 'rels'
       var relList = document.createElement('ul')
       if (value) value.forEach(function (rel) {
         var relEl = document.createElement('li')
         var relA = document.createElement('a')
+        relA.className = 'rel'
         relA.href = rel.id
         relA.target = '_blank'
         relA.textContent = trunc(rel.main)
+        relA.dataset.relType = relType
+        relA.dataset.relId = rel.id
         relEl.appendChild(relA)
         var relBut = document.createElement('button')
         relBut.className = 'fa fa-unlink'
@@ -116,7 +123,7 @@ function fieldFactory (form, item) {
         e.preventDefault()
         var typed = e.target.value
         if (typed.length < 3) return
-        var params = {q: 'type:' + type.substr(4) + ' main:"' + e.target.value + '"'}
+        var params = {q: 'type:' + relType + ' main:"' + e.target.value + '"'}
         api('GET', 'search?' + queryString.stringify(params), function (err, data) {
           if (err) console.error(err)
           while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
@@ -131,8 +138,8 @@ function fieldFactory (form, item) {
 
       return form.appendChild(rels)
     }
-    form.appendChild(renderLabel(name, label))
-    form.appendChild(renderInput(name, value, type))
+    form.appendChild(renderLabel(name, options.label))
+    form.appendChild(renderInput(name, value, type, options.required))
   }
 }
 
@@ -176,12 +183,39 @@ function prepItem () {
   itemDelete.type = 'button'
   itemDelete.className = 'action delete'
   itemDelete.value = 'delete'
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault()
+    var item = {id: el.id}
+    // console.log(form.elements)
+    for (var i = 0; i < form.elements.length; i++) {
+      var inputEl = form.elements[i]
+      if (inputEl.type === 'checkbox') {
+        if (inputEl.checked) item[inputEl.name] = true
+      } else if (inputEl.name && inputEl.value) {
+        item[inputEl.name] = inputEl.value
+      }
+    }
+    var relAs = form.querySelectorAll('.rel')
+    for (i = 0; i < relAs.length; i++) {
+      var relA = relAs[i]
+      if (!item[relA.dataset.relType]) item[relA.dataset.relType] = []
+      item[relA.dataset.relType].push({
+        main: relA.textContent,
+        id: relA.dataset.relId
+      })
+    }
+    console.log(item)
+  })
 }
 
 function showItem (item) {
+  console.log(item)
   if (!cache.item) prepItem()
   var el = cache.item
   cache.main.appendChild(el)
+
+  el.id = item.id
 
   var publicLink = el.firstChild
   publicLink.style.display = item.public ? 'block' : 'none'
@@ -214,7 +248,7 @@ function showItem (item) {
     field('bio')
     field('url')
     field('email')
-    field('publicEmail', 'public')
+    field('publicEmail', {label: 'public'})
     field('portrait')
     field('portraitCaption')
     field('longDescription')
@@ -319,7 +353,7 @@ function showItem (item) {
     field('active')
     field('url')
     field('title')
-    field('caption')
+    field('credit')
     field('description')
     field('mimetype')
     field('categories')
@@ -330,8 +364,8 @@ function showItem (item) {
     field('events')
     field('shows')
   } else if (item.type === 'user') {
-    field('name')
-    field('password')
+    field('name', {required: true})
+    field('password', {required: true})
     field('email')
     // TODO Show role only if admin?
     field('role')
@@ -352,16 +386,16 @@ function showItem (item) {
   } else if (item.type === 'work') {
     field('public')
     field('nonsort')
-    field('title')
+    field('title', {required: true})
     field('subtitle')
     field('date')
     field('description')
     field('url')
     field('categories')
     field('email')
-    field('publicEmail', 'public')
+    field('publicEmail', {label: 'public'})
     field('image')
-    field('imageCaption', 'image caption')
+    field('imageCaption', {label: 'image caption'})
     field('audio')
     field('artists')
     field('events')
