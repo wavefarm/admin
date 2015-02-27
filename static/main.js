@@ -2,6 +2,7 @@
 'use strict'
 
 var cache = {
+  container: document.getElementById('container'),
   head: document.getElementById('head'),
   controls: document.getElementById('controls'),
   main: document.getElementById('main'),
@@ -434,29 +435,6 @@ function showTypes () {
   if (!cache.types.parentNode) cache.controls.appendChild(cache.types)
 }
 
-function logout () {
-  var elems = [
-    cache.count,
-    cache.search,
-    cache.types,
-    cache.user,
-    cache.item
-  ]
-  elems = elems.concat(cache.hits)
-  elems.forEach(function (elem) {
-    if (elem && elem.parentNode) {
-      elem.parentNode.removeChild(elem)
-    }
-  })
-  dropCookie('token')
-  showLogin()
-}
-
-function showLogin () {
-  if (!cache.login) prepLogin()
-  if (!cache.login.parentNode) document.body.appendChild(cache.login)
-}
-
 function prepLogin () {
   cache.login = document.createElement('form')
   cache.login.className = 'login'
@@ -499,6 +477,30 @@ function prepLogin () {
       login()
     })
   })
+}
+
+function showLogin () {
+  if (!cache.login) prepLogin()
+  if (!cache.login.parentNode) cache.container.appendChild(cache.login)
+}
+
+function logout () {
+  var elems = [
+    cache.count,
+    cache.search,
+    cache.types,
+    cache.user,
+    cache.item,
+    cache.newButton
+  ]
+  elems = elems.concat(cache.hits)
+  elems.forEach(function (elem) {
+    if (elem && elem.parentNode) {
+      elem.parentNode.removeChild(elem)
+    }
+  })
+  dropCookie('token')
+  showLogin()
 }
 
 function prepSearch () {
