@@ -37,24 +37,15 @@ http.createServer(function (req, res) {
   }
   path = path.replace('/admin', '')
 
-  var mimetype = mime.lookup(path)
+  res.setHeader('Content-Type', mime.lookup(path) + '; charset=utf-8')
+  var fileStream = fs.createReadStream('static' + path)
+  fileStream.pipe(res)
 
-  // Assume paths without extension will be handled by index
-  // Exception for /text because it's interpreted as text/plain
-  if (mimetype === 'application/octet-stream' || path === '/text') {
+  // If we can't create a stream (because file doesn't exist), send the index
+  fileStream.on('error', function () {
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     return fs.createReadStream('static/index.html').pipe(inject(reload)).pipe(res)
-  }
-
-  var file = 'static' + path
-  if (!fs.existsSync(file)) {
-    console.warn(404)
-    res.statusCode = 404
-    return res.end('Not Found')
-  }
-
-  res.setHeader('Content-Type', mimetype + '; charset=utf-8')
-  fs.createReadStream(file).pipe(res)
+  })
 }).listen(process.env.PORT || 1040, function () {
   if (process.send) process.send('online')
 })
