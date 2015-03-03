@@ -201,6 +201,11 @@ function prepItem () {
   itemDelete.className = 'action delete'
   itemDelete.value = 'delete'
 
+  form.addEventListener('change', function (e) {
+    itemSave.disabled = false
+    itemSave.value = 'save'
+  })
+
   form.addEventListener('submit', function (e) {
     e.preventDefault()
     var item = {}
