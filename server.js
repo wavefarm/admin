@@ -41,7 +41,7 @@ http.createServer(function (req, res) {
   var fileStream = fs.createReadStream('static' + path)
   fileStream.pipe(res)
 
-  // If we can't create a stream (because file doesn't exist), send the index
+  // If we can't create a stream (because file doesn't exist) send the index
   fileStream.on('error', function () {
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     return fs.createReadStream('static/index.html').pipe(inject(reload)).pipe(res)
