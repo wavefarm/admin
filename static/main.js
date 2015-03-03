@@ -61,8 +61,24 @@ function trunc (str) {
 function fieldFactory (form, item) {
   return function (name, options) {
     options = options || {}
-    var type = 'text'
     var value = item[name]
+    if (options.select) {
+      form.appendChild(renderLabel(name, options.label))
+      options.select.forEach(function (choice, i) {
+        var id = name + i
+        var input = renderInput(id, null, 'checkbox')
+        if (value.indexOf(choice) !== -1) input.checked = true
+        input.dataset.select = true
+        input.dataset.selName = name
+        input.dataset.choice = choice
+        form.appendChild(input)
+        var labelEl = renderLabel(id, choice)
+        labelEl.className = 'for-check'
+        form.appendChild(labelEl)
+      })
+      return
+    }
+    var type = 'text'
     var schemaField = cache.schemas[item.type].fields[name]
     if (schemaField) {
       if (schemaField.type === 'boolean') type = 'checkbox'
@@ -193,7 +209,13 @@ function prepItem () {
     for (var i = 0; i < form.elements.length; i++) {
       var inputEl = form.elements[i]
       if (inputEl.type === 'checkbox') {
-        if (inputEl.checked) item[inputEl.name] = true
+        if (inputEl.checked) {
+          if (inputEl.dataset.select) {
+            var selName = inputEl.dataset.selName
+            if (!item[selName]) item[selName] = []
+            item[selName].push(inputEl.dataset.choice)
+          } else item[inputEl.name] = true
+        }
       } else if (inputEl.name && inputEl.value) {
         item[inputEl.name] = inputEl.value
       }
@@ -218,6 +240,7 @@ function prepItem () {
       api('PUT', el.id, item, function (err) {
         if (err) return console.error(err)
         itemSave.value = 'saved'
+        main.textContent = item.main
       })
     } else {
       api('POST', 'new', item, function (err, item) {
@@ -380,7 +403,7 @@ function showItem (item) {
     field('mimetype')
     field('categories')
     field('date')
-    field('sites')
+    field('sites', {select: ['transmissionarts', 'wgxc']})
     field('artists')
     field('works')
     field('events')

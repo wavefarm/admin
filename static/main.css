@@ -54,7 +54,7 @@ button, input[type=button] {
 }
 label {
   display: block;
-  margin: 10px 0 0 0;
+  margin: 14px 0 0 0;
 }
 table {
   border-collapse: collapse;
@@ -137,7 +137,8 @@ textarea {
   color: #777;
 }
 .for-check {
-  display: inline;
+  display: inline-block;
+  margin: 0 10px 0 0;
 }
 .item {
   display: block;
