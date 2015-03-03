@@ -62,6 +62,7 @@ function fieldFactory (form, item) {
   return function (name, options) {
     options = options || {}
     var value = item[name]
+    if (name === 'sites') options.select = ['transmissionarts', 'wgxc']
     if (options.select) {
       form.appendChild(renderLabel(name, options.label))
       options.select.forEach(function (choice, i) {
@@ -301,6 +302,7 @@ function showItem (item) {
     field('portrait')
     field('portraitCaption')
     field('longDescription')
+    field('sites')
     field('artists')
     field('works')
     field('shows')
@@ -314,7 +316,7 @@ function showItem (item) {
     field('active')
     field('url')
     field('title')
-    field('caption')
+    field('credit')
     field('description')
     field('mimetype')
     field('categories')
@@ -332,6 +334,8 @@ function showItem (item) {
     field('genStart')
     field('genEnd')
     field('description')
+    // TODO broadcast is always sites:wgxc
+    field('sites')
     field('hosts')
     field('guests')
     field('works')
@@ -351,6 +355,7 @@ function showItem (item) {
     field('url')
     field('briefDescription')
     field('longDescription')
+    field('sites')
     field('artists')
     field('works')
     field('shows')
@@ -394,6 +399,8 @@ function showItem (item) {
     field('description')
     field('start')
     field('end')
+    // TODO show is always sites:wgxc
+    field('sites')
     field('hosts')
     field('works')
     field('events')
@@ -408,7 +415,7 @@ function showItem (item) {
     field('mimetype')
     field('categories')
     field('date')
-    field('sites', {select: ['transmissionarts', 'wgxc']})
+    field('sites')
     field('artists')
     field('works')
     field('events')
@@ -446,6 +453,7 @@ function showItem (item) {
     field('publicEmail', {label: 'public'})
     field('image')
     field('imageCaption', {label: 'image caption'})
+    field('sites')
     field('audio')
     field('artists')
     field('events')
