@@ -40,7 +40,8 @@ http.createServer(function (req, res) {
   var mimetype = mime.lookup(path)
 
   // Assume paths without extension will be handled by index
-  if (mimetype == 'application/octet-stream') {
+  // Exception for /text because it's interpreted as text/plain
+  if (mimetype === 'application/octet-stream' || path === '/text') {
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     return fs.createReadStream('static/index.html').pipe(inject(reload)).pipe(res)
   }
