@@ -68,7 +68,7 @@ function fieldFactory (form, item) {
       options.select.forEach(function (choice, i) {
         var id = name + i
         var input = renderInput(id, null, 'checkbox')
-        if (value.indexOf(choice) !== -1) input.checked = true
+        if (value && value.indexOf(choice) !== -1) input.checked = true
         input.dataset.select = true
         input.dataset.selName = name
         input.dataset.choice = choice
