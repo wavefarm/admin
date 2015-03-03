@@ -21,9 +21,9 @@ function api (method, path, data, cb) {
 
   var xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
-    if (xhr.readyState != 4) return
+    if (xhr.readyState !== 4) return
     var data = JSON.parse(xhr.responseText)
-    if (xhr.status != 200) {
+    if (xhr.status !== 200) {
       return cb({status: xhr.status, message: data.message})
     }
     cb(null, data)
@@ -100,6 +100,7 @@ function fieldFactory (form, item) {
         relA.href = rel.id
         relA.target = '_blank'
         relA.textContent = trunc(rel.main)
+        relA.dataset.relField = name
         relA.dataset.relType = relType
         relA.dataset.relId = rel.id
         relEl.appendChild(relA)
@@ -186,7 +187,8 @@ function prepItem () {
 
   form.addEventListener('submit', function (e) {
     e.preventDefault()
-    var item = {id: el.id}
+    var item = {}
+    itemSave.disabled = true
     // console.log(form.elements)
     for (var i = 0; i < form.elements.length; i++) {
       var inputEl = form.elements[i]
@@ -199,13 +201,33 @@ function prepItem () {
     var relAs = form.querySelectorAll('.rel')
     for (i = 0; i < relAs.length; i++) {
       var relA = relAs[i]
-      if (!item[relA.dataset.relType]) item[relA.dataset.relType] = []
-      item[relA.dataset.relType].push({
+      var relField = relA.dataset.relField
+      if (!item[relField]) item[relField] = []
+      item[relField].push({
         main: relA.textContent,
         id: relA.dataset.relId
       })
     }
+    // console.log(type.textContent)
+    item.type = type.textContent
+    item.main = item[cache.schemas[item.type].main]
     console.log(item)
+    // If item has an ID we put, otherwise post new item
+    if (el.id) {
+      item.id = el.id
+      api('PUT', el.id, item, function (err) {
+        if (err) return console.error(err)
+        itemSave.value = 'saved'
+      })
+    } else {
+      api('POST', 'new', item, function (err, item) {
+        if (err) return console.error(err)
+        itemSave.value = 'saved'
+        el.id = item.id
+        main.textContent = item.main
+        itemDelete.style.display = 'inline'
+      })
+    }
   })
 }
 
@@ -223,16 +245,15 @@ function showItem (item) {
   publicLink.href = '//' + publicUrl
   publicLink.textContent = publicUrl
 
-  // If no item.main assume we're adding a new item
   var header = el.querySelector('h3')
+  el.querySelector('.item-main').textContent = item.main
+  el.querySelector('.item-type').textContent = item.type
+
+  // If no item.id assume we're adding a new item
   var deleteButton = el.querySelector('.delete')
-  if (item.main) {
-    el.querySelector('.item-main').textContent = item.main
-    el.querySelector('.item-type').textContent = item.type
-    header.style.display = 'block'
+  if (item.id) {
     deleteButton.style.display = 'inline'
   } else {
-    header.style.display = 'none'
     deleteButton.style.display = 'none'
   }
 
@@ -350,6 +371,7 @@ function showItem (item) {
     field('events')
     field('shows')
   } else if (item.type === 'text') {
+    fields.appendChild(renderInput('oldId', item.oldId, 'hidden'))
     field('active')
     field('url')
     field('title')
@@ -430,7 +452,7 @@ function prepHit () {
 }
 
 function showHits (items) {
-  for (var i=0; i < items.length; i++) {
+  for (var i = 0; i < items.length; i++) {
     var item = items[i]
     var desc = item.description || item.briefDescription || item.longDescription || ''
 

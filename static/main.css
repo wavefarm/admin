@@ -78,7 +78,7 @@ input[type=text],
 input[type=url],
 textarea {
   display: block;
-  width: 99%;
+  width: 100%;
 }
 input[type=date],
 input[type=email],
@@ -157,6 +157,7 @@ textarea {
   line-height: 20px;
 }
 .item form {
+  margin: 16px 6px 0 0;
 }
 .item h3 {
   font-size: 20px;
