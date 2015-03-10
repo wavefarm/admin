@@ -293,7 +293,7 @@ function showItem (item) {
 
   if (item.type === 'artist') {
     field('active')
-    field('name')
+    field('name', {required: true})
     field('sortName')
     field('bio')
     field('url')
