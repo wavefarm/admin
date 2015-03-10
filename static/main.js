@@ -266,7 +266,7 @@ function showItem (item) {
   var el = cache.item
   cache.main.appendChild(el)
 
-  el.id = item.id
+  if (item.id) el.id = item.id
 
   var publicLink = el.firstChild
   publicLink.style.display = item.public ? 'block' : 'none'
