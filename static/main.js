@@ -249,12 +249,14 @@ function prepItem () {
         main.textContent = item.main
       })
     } else {
-      api('POST', 'new', item, function (err, item) {
+      api('POST', '', item, function (err, savedItem) {
         if (err) return console.error(err)
+        console.log(savedItem)
         itemSave.value = 'saved'
-        el.id = item.id
-        main.textContent = item.main
+        el.id = savedItem.id
+        main.textContent = savedItem.main
         itemDelete.style.display = 'inline'
+        history.pushState(savedItem, savedItem.main, savedItem.id)
       })
     }
   })
@@ -704,16 +706,24 @@ function showNewButton () {
   cache.main.appendChild(cache.newButton)
 }
 
-function renderPage () {
-  var newItemRe = new RegExp('/admin/\(' + Object.keys(cache.schemas).join('|') + '\)')
-  var newItem = newItemRe.exec(window.location.pathname)
-  var item = /^\/admin\/(\w{6})/.exec(window.location.pathname)
+var itemRe = /^\/admin\/(\w{6})/
+
+function renderPage (e) {
+  if(e && e.state) console.log('state:', e.state)
+
+  if (!cache.newItemRe) {
+    cache.newItemRe = new RegExp('/admin/\(' + Object.keys(cache.schemas).join('|') + '\)')
+  }
+
+  var newItem = cache.newItemRe.exec(window.location.pathname)
+  var item = itemRe.exec(window.location.pathname)
   var params = window.location.search.substr(1)
 
   if (newItem) {
     return showItem({type: newItem[1]})
   }
   if (item) {
+    if (e && e.state && e.state.id) return showItem(e.state)
     return api('GET', item[1], function (err, item) {
       if (err) console.error(err)
       showItem(item)
@@ -747,3 +757,5 @@ function initialize () {
 }
 
 initialize()
+
+window.onpopstate = renderPage
