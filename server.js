@@ -14,6 +14,7 @@ function reload () {
 }
 
 var apiurl = url.parse(process.env.APIURL || 'https://wavefarm.org/api/')
+var agent = (apiurl.protocol === 'http:' ? http.globalAgent : https.globalAgent)
 
 http.createServer(function (req, res) {
   console.log(req.method, req.url)
@@ -24,7 +25,7 @@ http.createServer(function (req, res) {
     req.url = req.url.replace('/api', '')
     return proxy.web(req, res, {
       target: apiurl,
-      agent: https.globalAgent,
+      agent: agent,
       headers: {host: apiurl.hostname}
     })
   }
