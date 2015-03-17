@@ -58,109 +58,6 @@ function trunc (str) {
   return str
 }
 
-function fieldFactory (form, item) {
-  return function (name, options) {
-    options = options || {}
-    var value = item[name]
-    if (name === 'sites') options.select = ['transmissionarts', 'wgxc']
-    if (options.select) {
-      form.appendChild(renderLabel(name, options.label))
-      options.select.forEach(function (choice, i) {
-        var id = name + i
-        var input = renderInput(id, null, 'checkbox')
-        if (value && value.indexOf(choice) !== -1) input.checked = true
-        input.dataset.select = true
-        input.dataset.selName = name
-        input.dataset.choice = choice
-        form.appendChild(input)
-        var labelEl = renderLabel(id, choice)
-        labelEl.className = 'for-check'
-        form.appendChild(labelEl)
-      })
-      return
-    }
-    var type = 'text'
-    var schemaField = cache.schemas[item.type].fields[name]
-    if (schemaField) {
-      if (schemaField.type === 'boolean') type = 'checkbox'
-      else if (schemaField.type === 'text') type = 'textarea'
-      else if (schemaField.type) type = schemaField.type
-    }
-    if (type === 'checkbox') {
-      var input = renderInput(name, null, type)
-      input.checked = value
-      form.appendChild(input)
-      var labelEl = renderLabel(name, options.label)
-      labelEl.className = 'for-check'
-      return form.appendChild(labelEl)
-    }
-    if (type === 'textarea') {
-      form.appendChild(renderLabel(name, options.label))
-      var textarea = document.createElement('textarea')
-      textarea.id = name
-      textarea.name = name
-      textarea.textContent = value
-      textarea.rows = 10
-      textarea.required = options.required
-      return form.appendChild(textarea)
-    }
-    if (type.indexOf('rel') === 0) {
-      var relType = type.substr(4)
-      form.appendChild(renderLabel(name, options.label))
-      var rels = document.createElement('div')
-      rels.className = 'rels'
-      var relList = document.createElement('ul')
-      if (value) value.forEach(function (rel) {
-        var relEl = document.createElement('li')
-        var relA = document.createElement('a')
-        relA.className = 'rel'
-        relA.href = rel.id
-        relA.target = '_blank'
-        relA.textContent = trunc(rel.main)
-        relA.dataset.relField = name
-        relA.dataset.relType = relType
-        relA.dataset.relId = rel.id
-        relEl.appendChild(relA)
-        var relBut = document.createElement('button')
-        relBut.className = 'fa fa-unlink'
-        relBut.title = 'unlink'
-        relEl.appendChild(relBut)
-        relList.appendChild(relEl)
-      })
-      rels.appendChild(relList)
-      var relInput = document.createElement('input')
-      relInput.type = 'text'
-      relInput.autocomplete = 'off'
-      rels.appendChild(relInput)
-      var relLinkBut = document.createElement('button')
-      relLinkBut.className = 'fa fa-link'
-      relLinkBut.title = 'link'
-      rels.appendChild(relLinkBut)
-
-      relInput.addEventListener('keyup', function (e) {
-        e.preventDefault()
-        var typed = e.target.value
-        if (typed.length < 3) return
-        var params = {q: 'type:' + relType + ' main:"' + e.target.value + '"'}
-        api('GET', 'search?' + queryString.stringify(params), function (err, data) {
-          if (err) console.error(err)
-          while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
-          rels.appendChild(cache.typeahead)
-          data.hits.forEach(function (hit) {
-            var hitLi = document.createElement('li')
-            hitLi.textContent = hit.main
-            cache.typeahead.appendChild(hitLi)
-          })
-        })
-      })
-
-      return form.appendChild(rels)
-    }
-    form.appendChild(renderLabel(name, options.label))
-    form.appendChild(renderInput(name, value, type, options.required))
-  }
-}
-
 function prepItem () {
   var el = cache.item = document.createElement('a')
   el.className = 'item'
@@ -219,7 +116,7 @@ function prepItem () {
           if (inputEl.dataset.select) {
             var selName = inputEl.dataset.selName
             if (!item[selName]) item[selName] = []
-            item[selName].push(inputEl.dataset.choice)
+            item[selName].push(inputEl.dataset.option)
           } else item[inputEl.name] = true
         }
       } else if (inputEl.name && inputEl.value) {
@@ -291,177 +188,94 @@ function showItem (item) {
   var fields = el.querySelector('#fields')
   while (fields.firstChild) fields.removeChild(fields.firstChild)
 
-  var field = fieldFactory(fields, item)
-
-  if (item.type === 'artist') {
-    field('active')
-    field('name', {required: true})
-    field('sortName')
-    field('bio')
-    field('url')
-    field('email')
-    field('publicEmail', {label: 'public'})
-    field('portrait')
-    field('portraitCaption')
-    field('longDescription')
-    field('sites')
-    field('artists')
-    field('works')
-    field('shows')
-    field('locations')
-    field('events')
-    field('audio')
-    field('video')
-    field('image')
-    field('text')
-  } else if (item.type === 'audio') {
-    field('active')
-    field('url')
-    field('title')
-    field('credit')
-    field('description')
-    field('mimetype')
-    field('categories')
-    field('date')
-    field('sites')
-    field('artists')
-    field('works')
-    field('events')
-    field('shows')
-  } else if (item.type === 'broadcast') {
-    field('public')
-    field('title')
-    field('start')
-    field('end')
-    field('genStart')
-    field('genEnd')
-    field('description')
-    // TODO broadcast is always sites:wgxc
-    field('sites')
-    field('hosts')
-    field('guests')
-    field('works')
-    field('shows')
-    field('locations')
-    field('events')
-    field('image')
-    field('categories')
-  } else if (item.type === 'event') {
-    field('active')
-    field('name')
-    field('startDate')
-    field('startTime')
-    field('endDate')
-    field('endTime')
-    field('categories')
-    field('url')
-    field('briefDescription')
-    field('longDescription')
-    field('sites')
-    field('artists')
-    field('works')
-    field('shows')
-    field('locations')
-    field('events')
-    field('image')
-    field('broadcastCategories')
-    field('hosts')
-  } else if (item.type === 'image') {
-    field('active')
-    field('url')
-    field('title')
-    field('caption')
-    field('description')
-    field('mimetype')
-    field('categories')
-    field('date')
-    field('sites')
-    field('artists')
-    field('works')
-    field('events')
-    field('shows')
-  } else if (item.type === 'location') {
-    field('active')
-    field('name')
-    field('address')
-    field('address2')
-    field('city')
-    field('state')
-    field('country')
-    field('postalCode')
-    field('phone')
-    field('url')
-  } else if (item.type === 'show') {
-    field('public')
-    field('nonsort')
-    field('title')
-    field('subtitle')
-    field('credit')
-    field('airtime')
-    field('description')
-    field('start')
-    field('end')
-    // TODO show is always sites:wgxc
-    field('sites')
-    field('hosts')
-    field('works')
-    field('events')
-    field('shows')
-  } else if (item.type === 'text') {
-    fields.appendChild(renderInput('oldId', item.oldId, 'hidden'))
-    field('active')
-    field('url')
-    field('title')
-    field('credit')
-    field('description')
-    field('mimetype')
-    field('categories')
-    field('date')
-    field('sites')
-    field('artists')
-    field('works')
-    field('events')
-    field('shows')
-  } else if (item.type === 'user') {
-    field('name', {required: true})
-    field('password', {required: true})
-    field('email')
-    // TODO Show role only if admin?
-    field('role')
-  } else if (item.type === 'video') {
-    field('active')
-    field('url')
-    field('title')
-    field('caption')
-    field('description')
-    field('mimetype')
-    field('categories')
-    field('date')
-    field('sites')
-    field('artists')
-    field('works')
-    field('events')
-    field('shows')
-  } else if (item.type === 'work') {
-    field('public')
-    field('nonsort')
-    field('title', {required: true})
-    field('subtitle')
-    field('date')
-    field('description')
-    field('url')
-    field('categories')
-    field('email')
-    field('publicEmail', {label: 'public'})
-    field('image')
-    field('imageCaption', {label: 'image caption'})
-    field('sites')
-    field('audio')
-    field('artists')
-    field('events')
-    field('shows')
-    field('works')
-  }
+  cache.schemas[item.type].fields.forEach(function (field) {
+    var value = item[field.name]
+    if (field.type === 'hidden') {
+      fields.appendChild(renderInput(field.name, value, 'hidden'))
+    } else if (field.type === 'select-multiple') {
+      fields.appendChild(renderLabel(field.name, field.label))
+      field.options.forEach(function (option, i) {
+        var id = field.name + i
+        var input = renderInput(id, null, 'checkbox')
+        if (value && value.indexOf(option) !== -1) input.checked = true
+        input.dataset.select = true
+        input.dataset.selName = field.name
+        input.dataset.option = option
+        fields.appendChild(input)
+        var labelEl = renderLabel(id, option)
+        labelEl.className = 'for-check'
+        fields.appendChild(labelEl)
+      })
+    } else if (field.type === 'boolean') {
+      var input = renderInput(field.name, null, 'checkbox')
+      input.checked = value
+      fields.appendChild(input)
+      var labelEl = renderLabel(field.name, field.label)
+      labelEl.className = 'for-check'
+      fields.appendChild(labelEl)
+    } else if (field.type === 'text') {
+      fields.appendChild(renderLabel(field.name, field.label))
+      var textarea = document.createElement('textarea')
+      textarea.id = field.name
+      textarea.name = field.name
+      textarea.textContent = value
+      textarea.rows = 10
+      textarea.required = field.required
+      fields.appendChild(textarea)
+    } else if (field.type && field.type.indexOf('rel') === 0) {
+      var relType = field.type.substr(4)
+      fields.appendChild(renderLabel(field.name, field.label))
+      var rels = document.createElement('div')
+      rels.className = 'rels'
+      var relList = document.createElement('ul')
+      if (value) value.forEach(function (rel) {
+        var relEl = document.createElement('li')
+        var relA = document.createElement('a')
+        relA.className = 'rel'
+        relA.href = rel.id
+        relA.target = '_blank'
+        relA.textContent = trunc(rel.main)
+        relA.dataset.relField = field.name
+        relA.dataset.relType = relType
+        relA.dataset.relId = rel.id
+        relEl.appendChild(relA)
+        var relBut = document.createElement('button')
+        relBut.className = 'fa fa-unlink'
+        relBut.title = 'unlink'
+        relEl.appendChild(relBut)
+        relList.appendChild(relEl)
+      })
+      rels.appendChild(relList)
+      var relInput = document.createElement('input')
+      relInput.type = 'text'
+      relInput.autocomplete = 'off'
+      relInput.addEventListener('keyup', function (e) {
+        e.preventDefault()
+        var typed = e.target.value
+        if (typed.length < 3) return
+        var params = {q: 'type:' + relType + ' main:"' + e.target.value + '"'}
+        api('GET', 'search?' + queryString.stringify(params), function (err, data) {
+          if (err) console.error(err)
+          while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
+          rels.appendChild(cache.typeahead)
+          data.hits.forEach(function (hit) {
+            var hitLi = document.createElement('li')
+            hitLi.textContent = hit.main
+            cache.typeahead.appendChild(hitLi)
+          })
+        })
+      })
+      rels.appendChild(relInput)
+      var relLinkBut = document.createElement('button')
+      relLinkBut.className = 'fa fa-link'
+      relLinkBut.title = 'link'
+      rels.appendChild(relLinkBut)
+      fields.appendChild(rels)
+    } else {
+      fields.appendChild(renderLabel(field.name, field.label))
+      fields.appendChild(renderInput(field.name, value, 'text', field.required))
+    }
+  })
 }
 
 function prepHit () {
