@@ -273,7 +273,7 @@ function showItem (item) {
       fields.appendChild(rels)
     } else {
       fields.appendChild(renderLabel(field.name, field.label))
-      fields.appendChild(renderInput(field.name, value, 'text', field.required))
+      fields.appendChild(renderInput(field.name, value, field.type || 'text', field.required))
     }
   })
 }
