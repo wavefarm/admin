@@ -119,6 +119,10 @@ function prepItem () {
             item[selName].push(inputEl.dataset.option)
           } else item[inputEl.name] = true
         }
+      } else if (inputEl.type === 'radio') {
+        if (inputEl.checked) {
+          item[inputEl.name] = inputEl.value
+        }
       } else if (inputEl.name && inputEl.value) {
         item[inputEl.name] = inputEl.value
       }
@@ -192,6 +196,21 @@ function showItem (item) {
     var value = item[field.name]
     if (field.type === 'hidden') {
       fields.appendChild(renderInput(field.name, value, 'hidden'))
+    } else if (field.type === 'select') {
+      fields.appendChild(renderLabel(field.name, field.label))
+      field.options.forEach(function (option, i) {
+        var id = field.name + i
+        var noBreak = document.createElement('div')
+        noBreak.style.display = 'inline-block'
+        var input = renderInput(field.name, option, 'radio')
+        input.id = id
+        if (value && value.indexOf(option) !== -1) input.checked = true
+        noBreak.appendChild(input)
+        var labelEl = renderLabel(id, option)
+        labelEl.className = 'for-check'
+        noBreak.appendChild(labelEl)
+        fields.appendChild(noBreak)
+      })
     } else if (field.type === 'select-multiple') {
       fields.appendChild(renderLabel(field.name, field.label))
       field.options.forEach(function (option, i) {
