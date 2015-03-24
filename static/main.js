@@ -13,6 +13,19 @@ var cache = {
 cache.typeahead = document.createElement('ul')
 cache.typeahead.className = 'typeahead'
 
+document.addEventListener('click', function (e) {
+  // Click outside of typeahead to make it go away
+  if (!cache.typeahead.parentNode) return
+  var inTypeahead = false
+  if (event.target === cache.typeahead) inTypeahead = true
+  var parent = event.target.parentNode;
+  while (parent) {
+    if (parent === cache.typeahead) inTypeahead = true
+    else parent = parent.parentNode
+  }
+  if (!inTypeahead) cache.typeahead.parentNode.removeChild(cache.typeahead)
+})
+
 function api (method, path, data, cb) {
   if (!cb) {
     cb = data
@@ -283,6 +296,12 @@ function showItem (item) {
           data.hits.forEach(function (hit) {
             var hitLi = document.createElement('li')
             hitLi.textContent = hit.main
+            hitLi.style.cursor = 'pointer'
+            hitLi.addEventListener('click', function (e) {
+              relInput.value = hitLi.textContent
+              cache.typeahead.parentNode.removeChild(cache.typeahead)
+              relInput.focus()
+            })
             cache.typeahead.appendChild(hitLi)
           })
         })
