@@ -196,15 +196,18 @@ function showItem (item) {
       fields.appendChild(renderLabel(field.name, field.label))
       field.options.forEach(function (option, i) {
         var id = field.name + i
+        var noBreak = document.createElement('div')
+        noBreak.style.display = 'inline-block'
         var input = renderInput(id, null, 'checkbox')
         if (value && value.indexOf(option) !== -1) input.checked = true
         input.dataset.select = true
         input.dataset.selName = field.name
         input.dataset.option = option
-        fields.appendChild(input)
+        noBreak.appendChild(input)
         var labelEl = renderLabel(id, option)
         labelEl.className = 'for-check'
-        fields.appendChild(labelEl)
+        noBreak.appendChild(labelEl)
+        fields.appendChild(noBreak)
       })
     } else if (field.type === 'boolean') {
       var input = renderInput(field.name, null, 'checkbox')
