@@ -197,6 +197,10 @@ function relAdd (rel) {
   var relBut = document.createElement('button')
   relBut.className = 'fa fa-unlink'
   relBut.title = 'unlink'
+  relBut.addEventListener('click', function (e) {
+    e.preventDefault()
+    rel.list.removeChild(relEl)
+  })
   relEl.appendChild(relBut)
   rel.list.appendChild(relEl)
 }
