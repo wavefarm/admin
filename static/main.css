@@ -199,9 +199,14 @@ textarea {
 }
 .typeahead {
   background: #fff;
+  border: 1px solid #bbb;
   margin-top: 1px;
   position: absolute;
+  width: 100%;
   z-index: 10;
+}
+.typeahead .highlight {
+  background: #ddd;
 }
 .types {
   margin: 10px 0 20px;

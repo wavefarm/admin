@@ -315,10 +315,11 @@ function showItem (item) {
           if (err) return console.error(err)
           while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
           rels.appendChild(cache.typeahead)
-          data.hits.forEach(function (hit) {
+          data.hits.forEach(function (hit, i) {
             var hitLi = document.createElement('li')
             hitLi.textContent = hit.main
             hitLi.style.cursor = 'pointer'
+            if (i === 0) hitLi.className = 'highlight'
             hitLi.addEventListener('click', function () {
               var rel = {id: hit.id, main: hit.main}
               rel.field = field.name
@@ -329,16 +330,19 @@ function showItem (item) {
               relInput.value = ''
               relInput.focus()
             })
+            hitLi.addEventListener('mouseover', function() {
+              var c = cache.typeahead.children
+              for (var i = 0; i < c.length; i++) c[i].className = ''
+              hitLi.className = 'highlight'
+            })
             cache.typeahead.appendChild(hitLi)
           })
         })
       }
       relInput.addEventListener('keyup', function (e) {
         e.preventDefault()
-        var v = e.target.value.trim()
-        if (v.length < 3) return
-        if (v === typed) return
-        typed = v
+        typed = e.target.value.trim()
+        if (typed.length < 3) return
         typeaheadScheduled = Date.now();
         setTimeout(typeaheadGo, typeaheadDelay);
         console.log('typeahead scheduled')
