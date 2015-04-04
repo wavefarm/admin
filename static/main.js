@@ -13,23 +13,10 @@ var cache = {
 cache.typeahead = document.createElement('ul')
 cache.typeahead.className = 'typeahead'
 
-document.addEventListener('click', function (e) {
-  // Click outside of typeahead to make it go away
-  if (!cache.typeahead.parentNode) return
-  var inTypeahead = false
-  if (e.target === cache.typeahead) inTypeahead = true
-  var parent = e.target.parentNode;
-  while (parent) {
-    if (parent === cache.typeahead) inTypeahead = true
-    else parent = parent.parentNode
-  }
-  if (!inTypeahead) cache.typeahead.parentNode.removeChild(cache.typeahead)
-})
-
 document.addEventListener('keypress', function (e) {
   var t = e.target
   if (t.tagName === 'INPUT' && t.type !== 'search' && e.keyCode === 13) {
-    e.preventDefault() // Ignore enter in inputs to avoid submit
+    e.preventDefault() // Ignore enter in inputs to avoid form submit
   }
 })
 
@@ -302,11 +289,15 @@ function showItem (item) {
       var relInput = document.createElement('input')
       relInput.type = 'text'
       relInput.autocomplete = 'off'
+      relInput.addEventListener('blur', function (e) {
+        if (cache.typeahead.parentNode)
+          cache.typeahead.parentNode.removeChild(cache.typeahead)
+        relInput.value = ''
+      })
       var typeaheadScheduled
       var typeaheadDelay = 500
       var typed
       relInput.addEventListener('keyup', function (e) {
-        e.preventDefault()
         if (cache.typeahead.parentNode && cache.typeahead.children) {
           var highlighted = cache.typeahead.querySelector('.highlight')
           var newHighlight
