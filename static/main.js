@@ -290,7 +290,7 @@ function showItem (item) {
         if (typed.length < 3) return
         var params = {q: 'type:' + relType + ' main:"' + e.target.value + '"'}
         api('GET', 'search?' + queryString.stringify(params), function (err, data) {
-          if (err) console.error(err)
+          if (err) return console.error(err)
           while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
           rels.appendChild(cache.typeahead)
           data.hits.forEach(function (hit) {
@@ -580,12 +580,14 @@ function renderPage (e) {
   if (item) {
     if (e && e.state && e.state.id) return showItem(e.state)
     return api('GET', item[1], function (err, item) {
-      if (err) console.error(err)
+      // TODO Display an error message in main content
+      if (err) return console.error(err)
       showItem(item)
     })
   }
   api('GET', 'search?' + params, function (err, data) {
-    if (err) console.error(err)
+    // TODO Display an error message in main content
+    if (err) return console.error(err)
     showSearch(params)
     showTypes()
     showNewButton()
@@ -598,7 +600,7 @@ function login () {
   showUser()
 
   if (!cache.schemas) return api('GET', 'schemas', function (err, data) {
-    if (err) console.error(err)
+    if (err) return console.error(err)
     cache.schemas = data
     renderPage()
   })

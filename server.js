@@ -16,6 +16,12 @@ function reload () {
 var apiurl = url.parse(process.env.APIURL || 'https://wavefarm.org/api/')
 var agent = (apiurl.protocol === 'http:' ? http.globalAgent : https.globalAgent)
 
+proxy.on('error', function (err, req, res) {
+  console.error('API', err.message)
+  res.statusCode = 502
+  res.end('{"message": "Bad Gateway"}')
+})
+
 http.createServer(function (req, res) {
   console.log(req.method, req.url)
 
