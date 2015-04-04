@@ -183,6 +183,24 @@ function prepItem () {
   })
 }
 
+function relAdd (rel) {
+  var relEl = document.createElement('li')
+  var relA = document.createElement('a')
+  relA.className = 'rel'
+  relA.href = rel.id
+  relA.target = '_blank'
+  relA.textContent = trunc(rel.main)
+  relA.dataset.relField = rel.field
+  relA.dataset.relType = rel.type
+  relA.dataset.relId = rel.id
+  relEl.appendChild(relA)
+  var relBut = document.createElement('button')
+  relBut.className = 'fa fa-unlink'
+  relBut.title = 'unlink'
+  relEl.appendChild(relBut)
+  rel.list.appendChild(relEl)
+}
+
 function showItem (item) {
   console.log(item)
   if (!cache.item) prepItem()
@@ -271,21 +289,10 @@ function showItem (item) {
       rels.className = 'rels'
       var relList = document.createElement('ul')
       if (value) value.forEach(function (rel) {
-        var relEl = document.createElement('li')
-        var relA = document.createElement('a')
-        relA.className = 'rel'
-        relA.href = rel.id
-        relA.target = '_blank'
-        relA.textContent = trunc(rel.main)
-        relA.dataset.relField = field.name
-        relA.dataset.relType = relType
-        relA.dataset.relId = rel.id
-        relEl.appendChild(relA)
-        var relBut = document.createElement('button')
-        relBut.className = 'fa fa-unlink'
-        relBut.title = 'unlink'
-        relEl.appendChild(relBut)
-        relList.appendChild(relEl)
+        rel.field = field.name
+        rel.type = relType
+        rel.list = relList
+        relAdd(rel)
       })
       rels.appendChild(relList)
       var relInput = document.createElement('input')
@@ -309,8 +316,13 @@ function showItem (item) {
             hitLi.textContent = hit.main
             hitLi.style.cursor = 'pointer'
             hitLi.addEventListener('click', function () {
-              relInput.value = hitLi.textContent
+              var rel = {id: hit.id, main: hit.main}
+              rel.field = field.name
+              rel.type = relType
+              rel.list = relList
+              relAdd(rel)
               cache.typeahead.parentNode.removeChild(cache.typeahead)
+              relInput.value = ''
               relInput.focus()
             })
             cache.typeahead.appendChild(hitLi)
@@ -328,10 +340,6 @@ function showItem (item) {
         console.log('typeahead scheduled')
       })
       rels.appendChild(relInput)
-      var relLinkBut = document.createElement('button')
-      relLinkBut.className = 'fa fa-link'
-      relLinkBut.title = 'link'
-      rels.appendChild(relLinkBut)
       fields.appendChild(rels)
     } else {
       fields.appendChild(renderLabel(field.name, field.label))
