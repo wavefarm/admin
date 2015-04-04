@@ -305,47 +305,87 @@ function showItem (item) {
       var typeaheadScheduled
       var typeaheadDelay = 500
       var typed
-      function typeaheadGo () {
-        var since = Date.now() - typeaheadScheduled
-        console.log(since)
-        if (since < typeaheadDelay) return
-        console.log('calling api')
-        var params = {q: 'type:' + relType + ' main:(' + typed + ')'}
-        api('GET', 'search?' + queryString.stringify(params), function (err, data) {
-          if (err) return console.error(err)
-          while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
-          rels.appendChild(cache.typeahead)
-          data.hits.forEach(function (hit, i) {
-            var hitLi = document.createElement('li')
-            hitLi.textContent = hit.main
-            hitLi.style.cursor = 'pointer'
-            if (i === 0) hitLi.className = 'highlight'
-            hitLi.addEventListener('click', function () {
-              var rel = {id: hit.id, main: hit.main}
-              rel.field = field.name
-              rel.type = relType
-              rel.list = relList
-              relAdd(rel)
-              cache.typeahead.parentNode.removeChild(cache.typeahead)
-              relInput.value = ''
-              relInput.focus()
-            })
-            hitLi.addEventListener('mouseover', function() {
-              var c = cache.typeahead.children
-              for (var i = 0; i < c.length; i++) c[i].className = ''
-              hitLi.className = 'highlight'
-            })
-            cache.typeahead.appendChild(hitLi)
-          })
-        })
-      }
       relInput.addEventListener('keyup', function (e) {
         e.preventDefault()
+        console.log(e.keyCode)
+        if (cache.typeahead.children) {
+          var highlighted = cache.typeahead.querySelector('.highlight')
+          var newHighlight
+          switch (e.keyCode) {
+            case 13: // enter
+              relAdd({
+                id: highlighted.dataset.itemId,
+                main: highlighted.textContent,
+                field: field.name,
+                type: relType,
+                list: relList
+              })
+              relInput.value = ''
+              cache.typeahead.parentNode.removeChild(cache.typeahead)
+              return
+            case 38: // up arrow
+              newHighlight = highlighted.previousSibling
+              console.log('new', newHighlight)
+              if (newHighlight) {
+                highlighted.className = ''
+                newHighlight.className = 'highlight'
+              }
+              return
+            case 40: // down arrow
+              newHighlight = highlighted.nextSibling
+              console.log('new', newHighlight)
+              if (newHighlight) {
+                highlighted.className = ''
+                newHighlight.className = 'highlight'
+              }
+              return
+          }
+        }
         typed = e.target.value.trim()
-        if (typed.length < 3) return
         typeaheadScheduled = Date.now();
-        setTimeout(typeaheadGo, typeaheadDelay);
-        console.log('typeahead scheduled')
+        setTimeout(function () {
+          var since = Date.now() - typeaheadScheduled
+          if (since < typeaheadDelay) return
+
+          if (typed.length < 3) {
+            // No API calls for less than 3 characters
+            if (cache.typeahead.parentNode)
+              cache.typeahead.parentNode.removeChild(cache.typeahead)
+            return
+          }
+
+          var params = {q: 'type:' + relType + ' main:(' + typed + ')'}
+          api('GET', 'search?' + queryString.stringify(params), function (err, data) {
+            if (err) return console.error(err)
+            while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
+            rels.appendChild(cache.typeahead)
+            data.hits.forEach(function (hit, i) {
+              var hitLi = document.createElement('li')
+              hitLi.textContent = hit.main
+              hitLi.dataset.itemId = hit.id
+              hitLi.style.cursor = 'pointer'
+              if (i === 0) hitLi.className = 'highlight'
+              hitLi.addEventListener('click', function () {
+                relAdd({
+                  id: hit.id,
+                  main: hit.main,
+                  field: field.name,
+                  type: relType,
+                  list: relList
+                })
+                cache.typeahead.parentNode.removeChild(cache.typeahead)
+                relInput.value = ''
+                relInput.focus()
+              })
+              hitLi.addEventListener('mouseover', function() {
+                var c = cache.typeahead.children
+                for (var i = 0; i < c.length; i++) c[i].className = ''
+                hitLi.className = 'highlight'
+              })
+              cache.typeahead.appendChild(hitLi)
+            })
+          })
+        }, typeaheadDelay);
       })
       rels.appendChild(relInput)
       fields.appendChild(rels)
