@@ -284,11 +284,15 @@ function showItem (item) {
       var relInput = document.createElement('input')
       relInput.type = 'text'
       relInput.autocomplete = 'off'
-      relInput.addEventListener('keyup', function (e) {
-        e.preventDefault()
-        var typed = e.target.value
-        if (typed.length < 3) return
-        var params = {q: 'type:' + relType + ' main:"' + e.target.value + '"'}
+      var typeaheadScheduled
+      var typeaheadDelay = 500
+      var typed
+      function typeaheadGo () {
+        var since = Date.now() - typeaheadScheduled
+        console.log(since)
+        if (since < typeaheadDelay) return
+        console.log('calling api')
+        var params = {q: 'type:' + relType + ' main:(' + typed + ')'}
         api('GET', 'search?' + queryString.stringify(params), function (err, data) {
           if (err) return console.error(err)
           while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
@@ -297,7 +301,7 @@ function showItem (item) {
             var hitLi = document.createElement('li')
             hitLi.textContent = hit.main
             hitLi.style.cursor = 'pointer'
-            hitLi.addEventListener('click', function (e) {
+            hitLi.addEventListener('click', function () {
               relInput.value = hitLi.textContent
               cache.typeahead.parentNode.removeChild(cache.typeahead)
               relInput.focus()
@@ -305,6 +309,16 @@ function showItem (item) {
             cache.typeahead.appendChild(hitLi)
           })
         })
+      }
+      relInput.addEventListener('keyup', function (e) {
+        e.preventDefault()
+        var v = e.target.value.trim()
+        if (v.length < 3) return
+        if (v === typed) return
+        typed = v
+        typeaheadScheduled = Date.now();
+        setTimeout(typeaheadGo, typeaheadDelay);
+        console.log('typeahead scheduled')
       })
       rels.appendChild(relInput)
       var relLinkBut = document.createElement('button')
