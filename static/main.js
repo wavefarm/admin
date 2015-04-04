@@ -307,8 +307,7 @@ function showItem (item) {
       var typed
       relInput.addEventListener('keyup', function (e) {
         e.preventDefault()
-        console.log(e.keyCode)
-        if (cache.typeahead.children) {
+        if (cache.typeahead.parentNode && cache.typeahead.children) {
           var highlighted = cache.typeahead.querySelector('.highlight')
           var newHighlight
           switch (e.keyCode) {
@@ -325,7 +324,6 @@ function showItem (item) {
               return
             case 38: // up arrow
               newHighlight = highlighted.previousSibling
-              console.log('new', newHighlight)
               if (newHighlight) {
                 highlighted.className = ''
                 newHighlight.className = 'highlight'
@@ -333,7 +331,6 @@ function showItem (item) {
               return
             case 40: // down arrow
               newHighlight = highlighted.nextSibling
-              console.log('new', newHighlight)
               if (newHighlight) {
                 highlighted.className = ''
                 newHighlight.className = 'highlight'
