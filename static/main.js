@@ -17,13 +17,20 @@ document.addEventListener('click', function (e) {
   // Click outside of typeahead to make it go away
   if (!cache.typeahead.parentNode) return
   var inTypeahead = false
-  if (event.target === cache.typeahead) inTypeahead = true
-  var parent = event.target.parentNode;
+  if (e.target === cache.typeahead) inTypeahead = true
+  var parent = e.target.parentNode;
   while (parent) {
     if (parent === cache.typeahead) inTypeahead = true
     else parent = parent.parentNode
   }
   if (!inTypeahead) cache.typeahead.parentNode.removeChild(cache.typeahead)
+})
+
+document.addEventListener('keypress', function (e) {
+  var t = e.target
+  if (t.tagName === 'INPUT' && t.type !== 'search' && e.keyCode === 13) {
+    e.preventDefault() // Ignore enter in inputs to avoid submit
+  }
 })
 
 function api (method, path, data, cb) {
