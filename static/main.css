@@ -143,7 +143,6 @@ textarea {
 .item {
   display: block;
   margin: 20px 0 0 0;
-  overflow: auto;
   transition: opacity .5s ease;
   -webkit-transition: opacity .5s ease;
 }
@@ -189,7 +188,7 @@ textarea {
   position: absolute;
   right: 6px;
 }
-.rels ul {
+.rels .linked {
   margin: 0 0 6px 0;
 }
 .search input {
@@ -200,6 +199,7 @@ textarea {
 }
 .typeahead {
   background: #fff;
+  margin-top: 1px;
   position: absolute;
   z-index: 10;
 }
