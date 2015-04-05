@@ -180,6 +180,7 @@ function relAdd (rel) {
   relA.dataset.relField = rel.field
   relA.dataset.relType = rel.type
   relA.dataset.relId = rel.id
+  relA.tabIndex = -1
   relEl.appendChild(relA)
   var relBut = document.createElement('button')
   relBut.className = 'fa fa-unlink'
@@ -188,6 +189,7 @@ function relAdd (rel) {
     e.preventDefault()
     rel.list.removeChild(relEl)
   })
+  relBut.tabIndex = -1
   relEl.appendChild(relBut)
   rel.list.appendChild(relEl)
 }
