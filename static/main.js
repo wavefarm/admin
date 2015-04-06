@@ -177,9 +177,9 @@ function relAdd (rel) {
   relA.href = rel.id
   relA.target = '_blank'
   relA.textContent = trunc(rel.main)
+  relA.dataset.relId = rel.id
   relA.dataset.relField = rel.field
   relA.dataset.relType = rel.type
-  relA.dataset.relId = rel.id
   relA.tabIndex = -1
   relEl.appendChild(relA)
   var relBut = document.createElement('button')
@@ -306,7 +306,7 @@ function showItem (item) {
           switch (e.keyCode) {
             case 13: // enter
               relAdd({
-                id: highlighted.dataset.itemId,
+                id: highlighted.dataset.relId,
                 main: highlighted.textContent,
                 field: field.name,
                 type: relType,
@@ -349,10 +349,16 @@ function showItem (item) {
             if (err) return console.error(err)
             while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
             rels.appendChild(cache.typeahead)
+
+            // Drop hits already in the link list
+            data.hits = data.hits.filter(function (hit) {
+              return !relList.querySelector('[data-rel-id="' + hit.id + '"]')
+            })
+
             data.hits.forEach(function (hit, i) {
               var hitLi = document.createElement('li')
               hitLi.textContent = hit.main
-              hitLi.dataset.itemId = hit.id
+              hitLi.dataset.relId = hit.id
               hitLi.style.cursor = 'pointer'
               if (i === 0) hitLi.className = 'highlight'
               hitLi.addEventListener('click', function () {
