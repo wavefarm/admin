@@ -130,6 +130,11 @@ function prepItem () {
         if (inputEl.checked) {
           item[inputEl.name] = inputEl.value
         }
+      } else if (inputEl.type === 'date' && !inputEl.name.indexOf('Dt')) {
+        item[inputEl.name.substr(2)] = inputEl.value
+      } else if (inputEl.type === 'time' && !inputEl.name.indexOf('dT')) {
+        item[inputEl.name.substr(2)] += 'T' + inputEl.value + (
+          (inputEl.value.length == 5) ? ':00' : '')
       } else if (inputEl.name && inputEl.value) {
         item[inputEl.name] = inputEl.value
       }
@@ -280,11 +285,11 @@ function showItem (item) {
       fields.appendChild(textarea)
     } else if (field.type === 'datetime') {
       fields.appendChild(renderLabel(field.name, field.label))
-      var splitDatetime = value.split('T')
+      var splitDatetime = value ? value.split('T') : ['', '']
       var date = splitDatetime[0]
       var time = splitDatetime[1]
-      fields.appendChild(renderInput(field.name + 'Date', date, 'date', field.required))
-      fields.appendChild(renderInput(field.name + 'Time', time, 'time', field.required))
+      fields.appendChild(renderInput('Dt' + field.name, date, 'date', field.required))
+      fields.appendChild(renderInput('dT' + field.name, time, 'time', field.required))
     } else if (field.type && field.type.indexOf('rel') === 0) {
       var relType = field.type.substr(4)
       fields.appendChild(renderLabel(field.name, field.label))
