@@ -260,12 +260,15 @@ function showItem (item) {
         fields.appendChild(noBreak)
       })
     } else if (field.type === 'boolean') {
+      var checkboxBox = document.createElement('div')
+      checkboxBox.className = 'checkbox-box'
       var input = renderInput(field.name, null, 'checkbox')
       input.checked = value
-      fields.appendChild(input)
+      checkboxBox.appendChild(input)
       var labelEl = renderLabel(field.name, field.label)
       labelEl.className = 'for-check'
-      fields.appendChild(labelEl)
+      checkboxBox.appendChild(labelEl)
+      fields.appendChild(checkboxBox)
     } else if (field.type === 'text') {
       fields.appendChild(renderLabel(field.name, field.label))
       var textarea = document.createElement('textarea')

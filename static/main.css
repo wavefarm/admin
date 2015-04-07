@@ -111,6 +111,9 @@ textarea {
 .checkbox {
   margin: 10px 0 0 0;
 }
+.checkbox-box {
+  margin: 14px 0 0 0;
+}
 .count {
   font-size: smaller;
   margin: 5px 0 20px;
