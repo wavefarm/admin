@@ -96,6 +96,9 @@ input[type=submit], input[type=button] {
   font-family: inherit;
   font-size: 14px;
 }
+input[type=time] {
+  margin-left: 10px;
+}
 textarea {
 }
 .action {

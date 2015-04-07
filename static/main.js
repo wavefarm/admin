@@ -278,6 +278,13 @@ function showItem (item) {
       textarea.rows = 10
       textarea.required = field.required
       fields.appendChild(textarea)
+    } else if (field.type === 'datetime') {
+      fields.appendChild(renderLabel(field.name, field.label))
+      var splitDatetime = value.split('T')
+      var date = splitDatetime[0]
+      var time = splitDatetime[1]
+      fields.appendChild(renderInput(field.name + 'Date', date, 'date', field.required))
+      fields.appendChild(renderInput(field.name + 'Time', time, 'time', field.required))
     } else if (field.type && field.type.indexOf('rel') === 0) {
       var relType = field.type.substr(4)
       fields.appendChild(renderLabel(field.name, field.label))
