@@ -110,6 +110,14 @@ function prepItem () {
   itemDelete.type = 'button'
   itemDelete.className = 'action delete'
   itemDelete.value = 'delete'
+  itemDelete.addEventListener('click', function (e) {
+    if (window.confirm('Are you sure you want to delete this item?')){
+      api('DELETE', el.id, function (err) {
+        if (err) return console.error(err)
+        window.location = '/admin/'
+      })
+    }
+  })
 
   form.addEventListener('change', function (e) {
     itemSave.disabled = false
@@ -657,7 +665,7 @@ function showNewButton () {
 var itemRe = /^\/admin\/(\w{6})/
 
 function renderPage (e) {
-  if(e && e.state) console.log('state:', e.state)
+  if (e && e.state) console.log('state:', e.state)
 
   if (!cache.newItemRe) {
     cache.newItemRe = new RegExp('/admin/\(' + Object.keys(cache.schemas).join('|') + '\)')
