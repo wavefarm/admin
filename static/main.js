@@ -15,8 +15,13 @@ cache.typeahead.className = 'typeahead'
 
 document.addEventListener('keypress', function (e) {
   var t = e.target
-  if (t.tagName === 'INPUT' && t.type !== 'search' && e.keyCode === 13) {
-    e.preventDefault() // Ignore enter in inputs to avoid form submit
+  if (t.tagName === 'INPUT' &&
+      e.keyCode === 13 &&
+      e.parent.className !== 'login' &&
+      t.type !== 'search' &&
+      t.type !== 'submit' &&
+      t.type !== 'button') {
+    e.preventDefault() // Ignore enter in some inputs to avoid form submit
   }
 })
 
