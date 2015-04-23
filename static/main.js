@@ -445,7 +445,8 @@ function prepHit () {
   return el
 }
 
-function showHits (items) {
+function showHits (items, from) {
+  from = from || 0
   for (var i = 0; i < items.length; i++) {
     var item = items[i]
     var desc = item.description || item.briefDescription || item.longDescription || ''
@@ -454,7 +455,7 @@ function showHits (items) {
     desc = desc.replace(/<[^>]*>/g, '')
     desc = desc.length > 60 ? desc.substr(0, 60) + '...' : desc
 
-    var el = cache.hits[i] = cache.hits[i] || prepHit()
+    var el = cache.hits[i + from] = cache.hits[i + from] || prepHit()
 
     el.id = item.id
     el.href = item.id
@@ -662,6 +663,26 @@ function showNewButton () {
   cache.main.appendChild(cache.newButton)
 }
 
+function infiniteScroll (data, params) {
+  var actingOnScroll, from = 0, size = 30
+  window.addEventListener('scroll', function (e) {
+    if (actingOnScroll) return
+    actingOnScroll = true
+    window.requestAnimationFrame(function () {
+      if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 100 && data.total > (from + size)) {
+        from = from + size;
+        api('GET', 'search?' + params + '&from=' + from, function (err, moreData) {
+          if (err) return console.error(err)
+          showHits(moreData.hits, from)
+          actingOnScroll = false
+        })
+      } else {
+        actingOnScroll = false
+      }
+    })
+  })
+}
+
 var itemRe = /^\/admin\/(\w{6})/
 
 function renderPage (e) {
@@ -686,7 +707,7 @@ function renderPage (e) {
       showItem(item)
     })
   }
-  api('GET', 'search?' + params, function (err, data) {
+  api('GET', 'search?' + params + '&size=30', function (err, data) {
     // TODO Display an error message in main content
     if (err) return console.error(err)
     showSearch(params)
@@ -694,6 +715,7 @@ function renderPage (e) {
     showNewButton()
     showCount(data.total)
     showHits(data.hits)
+    infiniteScroll(data, params)
   })
 }
 
