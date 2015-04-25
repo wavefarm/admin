@@ -42,6 +42,9 @@ function api (method, path, data, cb) {
   }
   xhr.open(method, '/api/' + path)
   xhr.setRequestHeader('Content-Type', 'application/json')
+  if (cache.token) {
+    xhr.setRequestHeader('Authorization', cache.token)
+  }
   xhr.send(JSON.stringify(data))
 }
 
@@ -519,7 +522,8 @@ function prepLogin () {
         return cache.login.appendChild(cache.errDiv)
       }
       if (cache.errDiv && cache.errDiv.parentNode) cache.login.removeChild(cache.errDiv)
-      setCookie('token', user.token, 100)
+      if (user.token) setCookie('token', user.token, 100)
+      else console.error('No token for user')
       setCookie('username', user.name, 100)
       setCookie('userid', user.id, 100)
       cache.login.parentNode.removeChild(cache.login)
