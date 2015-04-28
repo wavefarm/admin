@@ -573,7 +573,7 @@ function prepSearch () {
 
 function showSearch (params) {
   if (!cache.search) prepSearch()
-  cache.search.elements.q.value = queryString.parse(params).q || ''
+  cache.search.elements.q.value = params.q || ''
   if (!cache.search.parentNode) {
     cache.controls.appendChild(cache.search)
   }
@@ -592,6 +592,34 @@ function showCount (total) {
   if (!cache.count) prepCount()
   cache.count.firstChild.textContent = total
   if (!cache.count.parentNode) cache.main.appendChild(cache.count)
+}
+
+function prepSort () {
+  cache.sort = document.createElement('div')
+  cache.sort.className = 'sort'
+
+  cache.sort.appendChild(document.createTextNode('Sort by '))
+  var relevance = document.createElement('a')
+  relevance.textContent = 'relevance'
+  cache.sort.appendChild(relevance)
+  cache.sort.appendChild(document.createTextNode(' '))
+  var timestamp = document.createElement('a')
+  timestamp.textContent = 'timestamp'
+  cache.sort.appendChild(timestamp)
+}
+
+function showSort (params) {
+  if (!cache.sort) prepSort()
+  var relevance = cache.sort.children[0];
+  var timestamp = cache.sort.children[1];
+  if (params.sort) {
+    relevance.href = '/admin/?' + queryString.stringify({q: params.q})
+    timestamp.removeAttribute('href')
+  } else {
+    relevance.removeAttribute('href')
+    timestamp.href = '/admin/?' + queryString.stringify({q: params.q, sort: '-timestamp'})
+  }
+  if (!cache.sort.parentNode) cache.main.appendChild(cache.sort)
 }
 
 function prepUser () {
@@ -714,10 +742,12 @@ function renderPage (e) {
   api('GET', 'search?' + params + '&size=30', function (err, data) {
     // TODO Display an error message in main content
     if (err) return console.error(err)
-    showSearch(params)
+    var paramsParsed = queryString.parse(params)
+    showSearch(paramsParsed)
     showTypes()
     showNewButton()
     showCount(data.total)
+    if (paramsParsed.q) showSort(paramsParsed)
     showHits(data.hits)
     infiniteScroll(data, params)
   })

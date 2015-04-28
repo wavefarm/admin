@@ -119,7 +119,16 @@ textarea {
 }
 .count {
   font-size: smaller;
-  margin: 5px 0 20px;
+  margin: 5px 0 4px;
+}
+.sort {
+  font-size: smaller;
+}
+.sort a {
+  color: #777;
+}
+.sort a[href] {
+  color: #000;
 }
 .actions {
   float: right;
