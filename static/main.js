@@ -122,10 +122,14 @@ function prepItem () {
     }
   })
 
-  form.addEventListener('change', function (e) {
+  function enableSave (e) {
     itemSave.disabled = false
     itemSave.value = 'save'
-  })
+  }
+
+  // Input event catches any value change
+  form.addEventListener('change', enableSave)
+  form.addEventListener('input', enableSave)
 
   form.addEventListener('submit', function (e) {
     e.preventDefault()
