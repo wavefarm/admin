@@ -17,7 +17,7 @@ document.addEventListener('keypress', function (e) {
   var t = e.target
   if (t.tagName === 'INPUT' &&
       e.keyCode === 13 &&
-      e.parent.className !== 'login' &&
+      t.parentNode.className !== 'login' &&
       t.type !== 'search' &&
       t.type !== 'submit' &&
       t.type !== 'button') {
