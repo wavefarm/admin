@@ -130,6 +130,7 @@ function prepItem () {
   // Input event catches any value change
   form.addEventListener('change', enableSave)
   form.addEventListener('input', enableSave)
+  form.addEventListener('click', enableSave)
 
   form.addEventListener('submit', function (e) {
     e.preventDefault()
