@@ -328,9 +328,12 @@ function showItem (item) {
       relInput.type = 'text'
       relInput.autocomplete = 'off'
       relInput.addEventListener('blur', function (e) {
-        if (cache.typeahead.parentNode)
-          cache.typeahead.parentNode.removeChild(cache.typeahead)
-        relInput.value = ''
+        // RAF to allow for click event on typeahead to happen first
+        window.requestAnimationFrame(function () {
+          if (cache.typeahead.parentNode)
+            cache.typeahead.parentNode.removeChild(cache.typeahead)
+          relInput.value = ''
+        })
       })
       var typeaheadScheduled
       var typeaheadDelay = 500
