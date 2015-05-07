@@ -729,7 +729,7 @@ function renderPage (e) {
   if (e && e.state) console.log('state:', e.state)
 
   if (!cache.newItemRe) {
-    cache.newItemRe = new RegExp('/admin/\(' + Object.keys(cache.schemas).join('|') + '\)')
+    cache.newItemRe = new RegExp('/admin/(' + Object.keys(cache.schemas).join('|') + ')')
   }
 
   var newItem = cache.newItemRe.exec(window.location.pathname)
