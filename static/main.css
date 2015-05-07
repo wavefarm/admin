@@ -186,6 +186,10 @@ textarea {
   float: right;
   font-size: 14px;
 }
+.rel-list {
+  max-height: 15rem;
+  overflow: auto;
+}
 .rels {
   font-size: 14px;
   position: relative;

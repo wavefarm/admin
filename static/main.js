@@ -317,6 +317,7 @@ function showItem (item) {
       var rels = document.createElement('div')
       rels.className = 'rels'
       var relList = document.createElement('ul')
+      relList.className = 'rel-list'
       if (value) value.forEach(function (rel) {
         rel.field = field.name
         rel.type = relType
