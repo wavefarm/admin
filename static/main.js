@@ -490,7 +490,7 @@ function showTypes () {
   var typeA
   for (var t in cache.schemas) {
     typeA = document.createElement('a')
-    typeA.href = '/admin/?q=type:' + t
+    typeA.href = '/admin/?q=type:' + t + '&sort=-timestamp'
     typeA.appendChild(document.createTextNode(t))
     cache.types.appendChild(typeA)
     cache.types.appendChild(document.createTextNode(' '))
@@ -578,6 +578,10 @@ function prepSearch () {
   searchInput.type = 'search'
   searchInput.placeholder = 'search'
   cache.search.appendChild(searchInput)
+
+  cache.sortInput = document.createElement('input')
+  cache.sortInput.name = 'sort'
+  cache.sortInput.type = 'hidden'
 }
 
 function showSearch (params) {
@@ -585,6 +589,12 @@ function showSearch (params) {
   cache.search.elements.q.value = params.q || ''
   if (!cache.search.parentNode) {
     cache.controls.appendChild(cache.search)
+  }
+  if (params.sort) {
+    cache.sortInput.value = params.sort
+    cache.search.appendChild(cache.sortInput)
+  } else if (cache.sortInput.parentNode) {
+    cache.sortInput.parentNode.removeChild(cache.sortInput)
   }
 }
 
