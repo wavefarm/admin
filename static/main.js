@@ -563,6 +563,7 @@ function logout () {
       elem.parentNode.removeChild(elem)
     }
   })
+  cache.token = null
   dropCookie('token')
   showLogin()
 }
@@ -776,7 +777,7 @@ function login () {
   showUser()
 
   if (!cache.schemas) return api('GET', 'schemas', function (err, data) {
-    if (err) return console.error(err)
+    if (err) return logout()
     cache.schemas = data
     renderPage()
   })
