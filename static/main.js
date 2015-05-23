@@ -172,15 +172,14 @@ function prepItem () {
     }
     // console.log(type.textContent)
     item.type = type.textContent
-    item.main = item[cache.schemas[item.type].main]
     console.log(item)
     // If item has an ID we put, otherwise post new item
     if (el.id) {
       item.id = el.id
-      api('PUT', el.id, item, function (err) {
+      api('PUT', el.id, item, function (err, savedItem) {
         if (err) return console.error(err)
         itemSave.value = 'saved'
-        main.textContent = item.main
+        main.textContent = savedItem.main
       })
     } else {
       api('POST', '', item, function (err, savedItem) {
