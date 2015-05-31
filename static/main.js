@@ -122,20 +122,11 @@ function prepItem () {
     }
   })
 
-  function enableSave (e) {
-    itemSave.disabled = false
-    itemSave.value = 'save'
-  }
-
-  // Input event catches any value change
-  form.addEventListener('change', enableSave)
-  form.addEventListener('input', enableSave)
-  form.addEventListener('click', enableSave)
-
   form.addEventListener('submit', function (e) {
     e.preventDefault()
     var item = {}
     itemSave.disabled = true
+    itemSave.value = 'saving'
     // console.log(form.elements)
     for (var i = 0; i < form.elements.length; i++) {
       var inputEl = form.elements[i]
@@ -178,18 +169,16 @@ function prepItem () {
       item.id = el.id
       api('PUT', el.id, item, function (err, savedItem) {
         if (err) return console.error(err)
-        itemSave.value = 'saved'
         main.textContent = savedItem.main
+        window.location.reload()
       })
     } else {
       api('POST', '', item, function (err, savedItem) {
         if (err) return console.error(err)
         console.log(savedItem)
-        itemSave.value = 'saved'
         el.id = savedItem.id
         main.textContent = savedItem.main
-        itemDelete.style.display = 'inline'
-        history.pushState(savedItem, savedItem.main, savedItem.id)
+        window.location = '/admin/' + savedItem.id
       })
     }
   })
