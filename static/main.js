@@ -237,8 +237,12 @@ function showItem (item) {
   var fields = el.querySelector('#fields')
   while (fields.firstChild) fields.removeChild(fields.firstChild)
 
-  cache.schemas[item.type].fields.forEach(function (field) {
+  var schema = cache.schemas[item.type]
+  schema.fields.forEach(function (field) {
     var value = item[field.name]
+    if (schema.main === field.name) {
+      field.required = true
+    }
     if (field.type === 'hidden') {
       fields.appendChild(renderInput(field.name, value, 'hidden'))
     } else if (field.type === 'select') {
