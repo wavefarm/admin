@@ -181,6 +181,9 @@ textarea {
 .form-field {
   padding: 10px 0 0 0;
 }
+.no-show-new {
+  display: none;
+}
 .public {
   display: block;
   float: right;

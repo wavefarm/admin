@@ -108,10 +108,15 @@ function prepItem () {
   itemSave.className = 'action'
   itemSave.type = 'submit'
   itemSave.value = 'save'
+  var itemCopy = document.createElement('input')
+  itemActions.appendChild(itemCopy)
+  itemCopy.className = 'action no-show-new item-copy'
+  itemCopy.type = 'button'
+  itemCopy.value = 'copy'
   var itemDelete = document.createElement('input')
   itemActions.appendChild(itemDelete)
   itemDelete.type = 'button'
-  itemDelete.className = 'action delete'
+  itemDelete.className = 'action no-show-new'
   itemDelete.value = 'delete'
   itemDelete.addEventListener('click', function (e) {
     if (window.confirm('Are you sure you want to delete this item?')){
@@ -227,12 +232,16 @@ function showItem (item) {
   el.querySelector('.item-type').textContent = item.type
 
   // If no item.id assume we're adding a new item
-  var deleteButton = el.querySelector('.delete')
+  var noShowNew = el.querySelectorAll('.no-show-new')
   if (item.id) {
-    deleteButton.style.display = 'inline'
-  } else {
-    deleteButton.style.display = 'none'
+    for (var i = 0; i < noShowNew.length; i++) {
+      noShowNew[i].style.display = 'inline'
+    }
   }
+
+  el.querySelector('.item-copy').addEventListener('click', function (e) {
+    window.open('/admin/' + item.type + '?copy=' + item.id)
+  })
 
   var fields = el.querySelector('#fields')
   while (fields.firstChild) fields.removeChild(fields.firstChild)
@@ -736,16 +745,23 @@ function renderPage (e) {
     cache.newItemRe = new RegExp('/admin/(' + Object.keys(cache.schemas).join('|') + ')')
   }
 
-  var newItem = cache.newItemRe.exec(window.location.pathname)
-  var item = itemRe.exec(window.location.pathname)
+  var newItemMatch = cache.newItemRe.exec(window.location.pathname)
+  var itemMatch = itemRe.exec(window.location.pathname)
   var params = window.location.search.substr(1)
+  var paramsParsed = queryString.parse(params)
 
-  if (newItem) {
-    return showItem({type: newItem[1]})
+  if (newItemMatch) {
+    if (!paramsParsed.copy) return showItem({type: newItemMatch[1]})
+    return api('GET', paramsParsed.copy, function (err, item) {
+      if (err) return console.error(err)
+      delete item.id
+      showItem(item)
+    })
+    
   }
-  if (item) {
+  if (itemMatch) {
     if (e && e.state && e.state.id) return showItem(e.state)
-    return api('GET', item[1], function (err, item) {
+    return api('GET', itemMatch[1], function (err, item) {
       // TODO Display an error message in main content
       if (err) return console.error(err)
       showItem(item)
@@ -754,7 +770,6 @@ function renderPage (e) {
   api('GET', 'search?' + params + '&size=30', function (err, data) {
     // TODO Display an error message in main content
     if (err) return console.error(err)
-    var paramsParsed = queryString.parse(params)
     showSearch(paramsParsed)
     showTypes()
     showNewButton()
