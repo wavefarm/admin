@@ -267,3 +267,13 @@ textarea {
 .rel-add input {
   width: 20%;
 }
+
+
+.results-label {
+	clear:both;
+	margin-top:100px;
+}
+
+.results-list {
+	text-weight: bold;
+}
