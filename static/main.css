@@ -223,6 +223,8 @@ textarea {
   background: #fff;
   border: 1px solid #bbb;
   margin-top: 1px;
+  max-height: 15rem;
+  overflow: auto;
   position: absolute;
   width: 100%;
   z-index: 10;
