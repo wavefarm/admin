@@ -404,7 +404,7 @@ function showItem (item) {
             return
           }
 
-          var params = {q: 'type:' + relType + ' main:(' + typed + ')'}
+          var params = {q: 'type:' + relType + ' main:(' + typed + ')', size: 99}
           api('GET', 'search?' + queryString.stringify(params), function (err, data) {
             if (err) return console.error(err)
             while (cache.typeahead.firstChild) cache.typeahead.removeChild(cache.typeahead.firstChild)
