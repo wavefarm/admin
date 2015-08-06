@@ -103,6 +103,7 @@ function prepItem () {
   var itemActions = document.createElement('div')
   form.appendChild(itemActions)
   itemActions.className = 'actions'
+
   var itemSave = document.createElement('input')
   itemActions.appendChild(itemSave)
   itemSave.className = 'action'
@@ -214,7 +215,7 @@ function relAdd (rel) {
 }
 
 function showItem (item) {
-  console.log(item)
+  //console.log(item)
   if (!cache.item) prepItem()
   var el = cache.item
   cache.main.appendChild(el)
@@ -242,6 +243,24 @@ function showItem (item) {
   el.querySelector('.item-copy').addEventListener('click', function (e) {
     window.open('/admin/' + item.type + '?copy=' + item.id)
   })
+  
+  
+  if (item.id ) {
+    var itemActions = el.querySelector('.actions')
+
+    var itemGenb = document.createElement('input')
+	  itemActions.appendChild(itemGenb)
+	  itemGenb.className = 'action no-show-new item-genb'
+	  itemGenb.type = 'button'
+	  itemGenb.value = 'gen broadcasts'
+	  itemGenb.style.display='inline'
+	  	
+  	itemGenb.addEventListener('click', function (e) {
+      document.location.href='/admin/genb?id=' + item.id
+    })
+	  	
+	}	  
+
 
   var fields = el.querySelector('#fields')
   while (fields.firstChild) fields.removeChild(fields.firstChild)
@@ -431,6 +450,171 @@ function showItem (item) {
       fields.appendChild(renderInput(field.name, value, field.type || 'text', field.required))
     }
   })
+}
+
+function prepGenb() {
+	
+  var el = cache.item = document.createElement('a')
+  el.className = 'item'
+
+  var publicLink = document.createElement('a')
+  el.appendChild(publicLink)
+  publicLink.className = 'public'
+  publicLink.target = '_blank'
+  publicLink.title = 'public location'
+
+  var header = document.createElement('h3')
+  el.appendChild(header)
+  var main = document.createElement('span')
+  header.appendChild(main)
+  main.className = 'item-main'
+  header.appendChild(document.createTextNode(' '))
+  var type = document.createElement('span')
+  header.appendChild(type)
+  type.className = 'item-type'
+
+  var form = document.createElement('form')
+  el.appendChild(form)
+
+  var fields = document.createElement('div')
+  fields.id = 'fields'
+  form.appendChild(fields)
+  	
+  var itemActions = document.createElement('div')
+  form.appendChild(itemActions)
+  itemActions.className = 'actions'
+  	
+  var itemBack = document.createElement('input')
+  itemActions.appendChild(itemBack)
+  itemBack.className = 'action item-back-button'
+  itemBack.type = 'button'
+  itemBack.value = 'back to show'
+    	
+
+  var itemTest = document.createElement('input')
+  itemActions.appendChild(itemTest)
+  itemTest.className = 'action'
+  itemTest.type = 'button'
+  itemTest.value = 'test'  	
+  itemTest.addEventListener('click', function (e) {
+  	showGenbResults(true)
+  })  	
+  	 
+  var itemGenerate = document.createElement('input')
+  itemActions.appendChild(itemGenerate)
+  itemGenerate.className = 'action'
+  itemGenerate.type = 'button'
+  itemGenerate.value = 'generate'
+  itemGenerate.addEventListener('click', function (e) {
+    if (window.confirm('Are you sure you want to generate these broadcasts?')){
+    	showGenbResults(false)
+     }
+  })
+    
+  // results area
+  var resultsAreaLabel = document.createElement('h3')
+  el.appendChild(resultsAreaLabel)
+  resultsAreaLabel.className = 'results-label'
+  resultsAreaLabel.innerText = 'Results'
+  	
+  var resultsAreaUl = document.createElement('ul')
+  resultsAreaUl.id = 'resultsAreaUl'
+  resultsAreaUl.className = 'results-list'
+  el.appendChild(resultsAreaUl)
+
+}
+
+function showGenbResults(test) {
+  
+	var el = cache.item
+	var form = el.querySelector('form')
+	var resultsAreaUl = el.querySelector('#resultsAreaUl')
+	
+	resultsAreaUl.innerText = '';
+	
+	var item = {}    
+  item['id'] = form.elements['id'].value    
+  item['startDate'] = form.elements['genbStart'].value
+  item['endDate'] = form.elements['genbEnd'].value
+  item['test'] = test  
+  
+  // If item has an ID we put, otherwise post new item
+  api('POST', 'genb', item, function (err, broadcasts) {
+    if (err) {
+    	var li = document.createElement('li')
+    	resultsAreaUl.appendChild(li)      	
+    	li.innerText =  err.message
+    	return console.error(err)
+    }
+    
+    resultsAreaUl.innerText = '';
+  	var li = document.createElement('li')
+  	resultsAreaUl.appendChild(li)
+  	li.innerText = 'total of ' + broadcasts.length + ' broadcasts'
+    
+    for (var i=0; i<broadcasts.length; i++) {      	
+    	var li = document.createElement('li')
+    	resultsAreaUl.appendChild(li)
+    	var start = new Date(broadcasts[i].start).toUTCString().replace(' GMT','')
+    	var end = new Date(broadcasts[i].end).toUTCString().replace(' GMT','')
+    	//var start = broadcasts[i].start;
+    	//var end = broadcasts[i].end;
+    	var desc = broadcasts[i].main + ': ' + start +  ' - ' + end  
+    	if (!test) {
+      	var a = document.createElement('a')
+      	a.innerText = desc
+      	a.href = '/admin/'+broadcasts[i].id
+      	a.target = '_new'
+      	li.appendChild( a )
+    	}
+    	else {
+      	li.innerText = desc     		
+    	}
+    }      
+  })
+	
+	
+}
+
+function showGenb (item) {
+	
+  if (!cache.item) prepGenb()
+  var el = cache.item
+  cache.main.appendChild(el)
+
+  if (item.id) el.id = item.id
+
+  var publicLink = el.firstChild
+  publicLink.style.display = item.public ? 'block' : 'none'
+  var publicUrl = 'wavefarm.org/archive/' + item.id
+  publicLink.href = '//' + publicUrl
+  publicLink.textContent = publicUrl
+
+  var header = el.querySelector('h3')
+  el.querySelector('.item-main').textContent = item.main
+  el.querySelector('.item-type').textContent = item.type
+  
+  el.querySelector('.item-back-button').addEventListener('click', function (e) {
+  	document.location.href='/admin/'+item.id
+  })
+  
+  fields.appendChild(renderInput('id', item['id'], 'hidden'))
+  
+  fields.appendChild(renderLabel('airtime', 'airtime (read only)'))
+  fields.appendChild(renderInput('airtime', item['airtime'], 'text', 'true'))
+  el.querySelector('#airtime').readOnly = true
+  
+  fields.appendChild(renderLabel('genbAirtime', 'genb airtime (read only)'))
+  fields.appendChild(renderInput('genbAirtime', item['genbAirtime'], 'text', 'true'))
+  el.querySelector('#genbAirtime').readOnly = true
+  
+    
+  fields.appendChild(renderLabel('genbStart', 'genb start'))
+  fields.appendChild(renderInput('genbStart', item['genbStart'], 'date', 'true'))
+
+  fields.appendChild(renderLabel('genbEnd', 'genb end'))
+  fields.appendChild(renderInput('genbEnd', item['genbEnd'], 'date', 'true'))
+              
 }
 
 function prepHit () {
@@ -737,6 +921,7 @@ function infiniteScroll (data, params) {
 }
 
 var itemRe = /^\/admin\/(\w{6})/
+var genbRe = /^\/admin\/genb\?id=(\w{6})/
 
 function renderPage (e) {
   if (e && e.state) console.log('state:', e.state)
@@ -747,9 +932,10 @@ function renderPage (e) {
 
   var newItemMatch = cache.newItemRe.exec(window.location.pathname)
   var itemMatch = itemRe.exec(window.location.pathname)
+  var genbMatch = genbRe.exec(window.location.pathname + window.location.search )
   var params = window.location.search.substr(1)
   var paramsParsed = queryString.parse(params)
-
+  
   if (newItemMatch) {
     if (!paramsParsed.copy) return showItem({type: newItemMatch[1]})
     return api('GET', paramsParsed.copy, function (err, item) {
@@ -765,6 +951,14 @@ function renderPage (e) {
       // TODO Display an error message in main content
       if (err) return console.error(err)
       showItem(item)
+    })
+  }
+  if (genbMatch) {
+    if (e && e.state && e.state.id) return showGenb(e.state)
+    return api('GET', genbMatch[1], function (err, item) {
+      // TODO Display an error message in main content
+      if (err) return console.error(err)
+      showGenb(item)
     })
   }
   api('GET', 'search?' + params + '&size=30', function (err, data) {
