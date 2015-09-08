@@ -245,7 +245,7 @@ function showItem (item) {
   })
   
   
-  if (item.id ) {
+  if (item.id && item.type && item.type=='show') {
     var itemActions = el.querySelector('.actions')
 
     var itemGenb = document.createElement('input')
