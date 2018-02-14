@@ -555,10 +555,18 @@ function showGenbResults(test) {
     for (var i=0; i<broadcasts.length; i++) {      	
     	var li = document.createElement('li')
     	resultsAreaUl.appendChild(li)
-    	var start = new Date(broadcasts[i].start).toUTCString().replace(' GMT','')
-    	var end = new Date(broadcasts[i].end).toUTCString().replace(' GMT','')
+    	//var start = new Date(broadcasts[i].start).toUTCString().replace(' GMT','')
+    	//var end = new Date(broadcasts[i].end).toUTCString().replace(' GMT','')
     	//var start = broadcasts[i].start;
     	//var end = broadcasts[i].end;
+    	var start = new Date(broadcasts[i].start).toString()
+    	if (start && start.indexOf(':00 GMT') > -1) {
+    		start = start.substring(0,start.indexOf(':00 GMT'))
+    	}
+    	var end = new Date(broadcasts[i].end).toString()
+    	if (end && end.indexOf(':00 GMT') > -1) {
+    		end = end.substring(0,end.indexOf(':00 GMT'))
+    	}
     	var desc = broadcasts[i].main + ': ' + start +  ' - ' + end  
     	if (!test) {
       	var a = document.createElement('a')
